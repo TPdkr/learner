@@ -9,8 +9,4 @@ Android 8.0+
 
 # Key Features 
 # Bugs
-
-
-
-
-# Learner App
+# Screens
