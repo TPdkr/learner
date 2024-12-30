@@ -1,6 +1,9 @@
 package com.example.learner.ui
 
+import android.content.Intent
+import android.widget.Button
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -30,86 +33,101 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import com.example.learner.LessonActivity
+import com.example.learner.MainActivity
+import com.example.learner.R
 import com.example.learner.ui.theme.LearnerTheme
 
 @Preview(showBackground = true)
 @Composable
 fun MainScreen() {
     val openDialog = remember { mutableStateOf(false) }
+    val context = LocalContext.current
     LearnerTheme {
-        Surface(modifier = Modifier.fillMaxSize().statusBarsPadding()) {
-            Column(
+        Surface(
+            modifier = Modifier
+                .fillMaxSize()
+        ) {
+            Box(
                 modifier = Modifier
                     .fillMaxSize()
                     .statusBarsPadding()
-                    .verticalScroll(rememberScrollState())
-                    .safeDrawingPadding(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                //TITLE:
-                Text(
-                    text = "Genau",
-                    style = typography.titleLarge,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 40.sp,
-                    textAlign = TextAlign.Center
-                )
-                Spacer(modifier = Modifier.height(100.dp))
-                val buttonModifier = Modifier
-                    .width(300.dp)
-                    .padding(8.dp)
-                //NAVIGATION:
-                Card{
-                    Button(onClick = { print(6) }, modifier = buttonModifier) {
-                        Icon(
-                            Icons.Default.PlayArrow,
-                            contentDescription = null
-                        )
-                        Text(text = "continue learning")
-                    }
-                    Button(onClick = { print(3) }, modifier = buttonModifier) {
-                        Icon(
-                            Icons.Default.Menu,
-                            contentDescription = null
-                        )
-                        Text(text = "lessons")
-                    }
-                    /*Button(
-                        onClick = { openDialog.value = true },
-                        modifier = buttonModifier
-                    ) {
-                        Icon(
-                            Icons.Default.Info,
-                            contentDescription = null
-                        )
-                        Text(text = "about")
-                    }*/
-                }
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .statusBarsPadding()
+                        .verticalScroll(rememberScrollState())
+                        .safeDrawingPadding(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    //TITLE:
+                    Text(
+                        text = "Genau",
+                        style = typography.titleLarge,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 40.sp,
+                        textAlign = TextAlign.Center
+                    )
+                    Spacer(modifier = Modifier.height(100.dp))
+                    val buttonModifier = Modifier
+                        .width(300.dp)
+                        .padding(8.dp)
+                    //NAVIGATION:
+                    Card {
+                        Button(onClick = {
 
-                Text(
-                    text = "made by TPdkr",
-                    textAlign = TextAlign.Center,
-                    style = typography.labelMedium,
-                    modifier = Modifier.fillMaxWidth().padding(10.dp)
-                )
-            }
-            if (openDialog.value) {
-                InfoDialog(onDismissRequest = { openDialog.value = false })
-            }
-            //INFO DIALOG BUTTON
-            TextButton(onClick = {openDialog.value = true}, modifier = Modifier.fillMaxWidth().height(30.dp).wrapContentSize(Alignment.TopEnd)) {
-                Icon(
-                    Icons.Default.Info,
-                    contentDescription = null,
-                    //tint = MaterialTheme.colorScheme.onSurface
-                )
+                            val intent = Intent(context, LessonActivity::class.java)
+                            context.startActivity(intent)
+                        }, modifier = buttonModifier) {
+                            Icon(
+                                Icons.Default.PlayArrow,
+                                contentDescription = null
+                            )
+                            Text(text = "test lesson")
+                        }
+                        Button(onClick = { print(3) }, modifier = buttonModifier) {
+                            Icon(
+                                Icons.Default.Menu,
+                                contentDescription = null
+                            )
+                            Text(text = "dummy 2")
+                        }
+                    }
+                    Text(
+                        text = "made by TPdkr",
+                        textAlign = TextAlign.Center,
+                        style = typography.labelMedium,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(10.dp)
+                    )
+                }
+                if (openDialog.value) {
+                    InfoDialog(onDismissRequest = { openDialog.value = false })
+                }
+                //INFO DIALOG BUTTON
+                TextButton(
+                    onClick = { openDialog.value = true },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(40.dp)
+                        .wrapContentSize(Alignment.TopEnd)
+                ) {
+                    Icon(
+                        Icons.Default.Info,
+                        contentDescription = null,
+                        //tint = MaterialTheme.colorScheme.onSurface
+                    )
+                }
             }
         }
     }
@@ -125,8 +143,10 @@ fun InfoDialog(onDismissRequest: () -> Unit) {
                 .padding(5.dp),
             shape = RoundedCornerShape(16.dp),
         ) {
-            Column(verticalArrangement = Arrangement.Center,
-                modifier = Modifier.fillMaxSize()) {
+            Column(
+                verticalArrangement = Arrangement.Center,
+                modifier = Modifier.fillMaxSize()
+            ) {
                 Text(
                     text = "Tanks for testing!",
                     textAlign = TextAlign.Center,
