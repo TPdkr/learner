@@ -1,29 +1,25 @@
 package com.example.learner
 
-import android.content.Intent
 import android.os.Bundle
-import android.widget.Button
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import com.example.learner.ui.MainScreen
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.Surface
+import androidx.compose.ui.Modifier
+import com.example.learner.ui.LessonScreen
 import com.example.learner.ui.theme.LearnerTheme
 
-class MainActivity : ComponentActivity() {
+class LessonActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             LearnerTheme {
-                MainScreen()
+                Surface(modifier = Modifier.fillMaxSize()){
+                    LessonScreen()
+                }
             }
         }
-        /*val button: Button = findViewById(R.id.button_open_activity)
-        button.setOnClickListener {
-            // Launch SecondActivity
-            val intent = Intent(this, LessonActivity::class.java)
-            startActivity(intent)
-        }*/
     }
 }
-
