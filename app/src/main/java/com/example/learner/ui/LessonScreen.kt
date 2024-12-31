@@ -22,6 +22,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -30,11 +32,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.learner.ui.viewModels.LessonViewModel
 
 
 @Preview
 @Composable
-fun LessonScreen() {
+fun LessonScreen(lessonViewModel: LessonViewModel=LessonViewModel()) {
+    val lessonUiState by lessonViewModel.uiState.collectAsState()
     Surface(modifier = Modifier.fillMaxSize()) {
 
     }
@@ -64,23 +68,24 @@ fun LessonScreen() {
             ) {
                 Text(text = "XP: 0")
                 Text(
-                    text = "Word in english",
+                    text = lessonUiState.currentTrans,
                     style = typography.titleLarge,
                     fontWeight = FontWeight.Bold,
                     fontSize = 40.sp,
+                    lineHeight = 40.sp,
                     textAlign = TextAlign.Center
                 )
                 OutlinedTextField(
-                    value = "",
+                    value = lessonViewModel.userGuess,
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth(),
-                    onValueChange = { },
+                    onValueChange = {lessonViewModel.updateUserGuess(it) },
                     colors = TextFieldDefaults.colors(
                         focusedContainerColor = colorScheme.surface,
                         unfocusedContainerColor = colorScheme.surface,
                         disabledContainerColor = colorScheme.surface,
                     ),
-                    label = { Text(text = "enter trans") },
+                    label = { Text(text = "enter translation") },
                     isError = false,
                     keyboardOptions = KeyboardOptions.Default.copy(
                         imeAction = ImeAction.Done
