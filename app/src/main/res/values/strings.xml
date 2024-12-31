@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">genau</string>
+    <string name="xp">XP: %d</string>
+    <string name="task_number">%d/%d</string>
 </resources>

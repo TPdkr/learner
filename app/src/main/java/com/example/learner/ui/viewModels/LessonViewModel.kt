@@ -33,11 +33,18 @@ class LessonViewModel : ViewModel() {
     fun updateUserGuess(newGuess: String){
         userGuess=newGuess
     }
+    fun nextTask(){
+        TODO()
+    }
+    fun checkAnswer(){
+        TODO()
+    }
 }
 
 data class LessonUiState(
     val isChecked: Boolean = false,
     val taskNumber: Int = 0,
+    val taskCount: Int = 15,
     val score: Int = 0,
     val wordCount: Int = 0,
     val currentTrans: String=""

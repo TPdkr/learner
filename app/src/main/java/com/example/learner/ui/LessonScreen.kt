@@ -26,18 +26,19 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.learner.R
 import com.example.learner.ui.viewModels.LessonViewModel
-
 
 @Preview
 @Composable
-fun LessonScreen(lessonViewModel: LessonViewModel=LessonViewModel()) {
+fun LessonScreen(lessonViewModel: LessonViewModel = LessonViewModel()) {
     val lessonUiState by lessonViewModel.uiState.collectAsState()
     Surface(modifier = Modifier.fillMaxSize()) {
 
@@ -53,7 +54,15 @@ fun LessonScreen(lessonViewModel: LessonViewModel=LessonViewModel()) {
         horizontalAlignment = Alignment.CenterHorizontally
     )
     {
-        Text(text = "0/15", style = typography.bodyLarge, modifier = Modifier.padding(20.dp))
+        //This is the progress in lesson
+        Text(
+            text = stringResource(
+                R.string.task_number,
+                lessonUiState.taskNumber,
+                lessonUiState.taskCount
+            ), style = typography.bodyLarge, modifier = Modifier.padding(20.dp)
+        )
+        //This is the task card
         Card(
             modifier = Modifier
                 .fillMaxWidth()
@@ -66,7 +75,9 @@ fun LessonScreen(lessonViewModel: LessonViewModel=LessonViewModel()) {
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(text = "XP: 0")
+                Text(
+                    text = stringResource(R.string.xp, lessonUiState.score)
+                )
                 Text(
                     text = lessonUiState.currentTrans,
                     style = typography.titleLarge,
@@ -79,7 +90,7 @@ fun LessonScreen(lessonViewModel: LessonViewModel=LessonViewModel()) {
                     value = lessonViewModel.userGuess,
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth(),
-                    onValueChange = {lessonViewModel.updateUserGuess(it) },
+                    onValueChange = { lessonViewModel.updateUserGuess(it) },
                     colors = TextFieldDefaults.colors(
                         focusedContainerColor = colorScheme.surface,
                         unfocusedContainerColor = colorScheme.surface,
@@ -91,20 +102,25 @@ fun LessonScreen(lessonViewModel: LessonViewModel=LessonViewModel()) {
                         imeAction = ImeAction.Done
                     ),
                     keyboardActions = KeyboardActions(
-                        onDone = { }
+                        onDone = { }//TODO!!!!!
                     )
                 )
             }
         }
+        //This is the button section that changes depending on context to either check or next
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(40.dp)
         ) {
-            Button(onClick = {}, modifier = Modifier.width(300.dp)) {
+            Button(onClick = {}, modifier = Modifier.width(300.dp)) {//TODO!!!!
                 Text(text = "Check")
             }
         }
-
     }
+}
+
+@Composable
+fun TaskCard() {
+
 }
