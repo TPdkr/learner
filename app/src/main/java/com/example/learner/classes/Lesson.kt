@@ -8,6 +8,5 @@ This is where information about a lesson is stored
 */
 data class Lesson (
     val words: List<Word>,
-    val lesson_length: Int = words.size,
-    val totalScore: Int = words.sumOf { it.score }
+    val lesson_length: Int = words.size
 )
