@@ -23,11 +23,12 @@ val testWords: List<Word> = listOf(
         gender = Gender.DER,
         plural = Plural.NO_CHANGE
     ),
-    Word(german = "Dauer", translation = "duration"),
-    Word(german = "Schulweg", translation = "trip to school"),
-    Word(german = "Fremdsprache", translation = "foreign langugae"),
+    Word(german = "Dauer", translation = "duration", gender = Gender.DIE),
+    Word(german = "Schulweg", translation = "trip to school", gender = Gender.DER),
+    Word(german = "Fremdsprache", translation = "foreign langugae", gender = Gender.DIE),
     Word(german = "laut", translation = "loud"),
-    Word(german = "langweilig", translation = "boring")
+    Word(german = "langweilig", translation = "boring"),
+    Word(german = "lachen", translation = "to laugh")
 )
 
 val testLesson: Lesson = Lesson(words = testWords.shuffled())

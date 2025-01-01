@@ -19,11 +19,15 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SegmentedButtonDefaults
+import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
@@ -101,6 +105,7 @@ fun StatusRow(lessonUiState: LessonUiState) {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TypeTaskCard(lessonUiState: LessonUiState, lessonViewModel: LessonViewModel) {
     //This is the task card
@@ -125,6 +130,23 @@ fun TypeTaskCard(lessonUiState: LessonUiState, lessonViewModel: LessonViewModel)
                 lineHeight = 40.sp,
                 textAlign = TextAlign.Center
             )
+            //here we allow the user to choose the gender of the word
+            if (lessonUiState.isNoun) {
+                val genders = listOf("DER", "DIE", "DAS")
+                SingleChoiceSegmentedButtonRow {
+                    genders.forEachIndexed() { index, label ->
+                        SegmentedButton(
+                            shape = SegmentedButtonDefaults.itemShape(
+                                index = index,
+                                count = genders.size
+                            ),
+                            onClick = { lessonViewModel.updateGenderGuess(index) },
+                            selected = index == lessonViewModel.userGenderGuess,
+                            label = { Text(label) }
+                        )
+                    }
+                }
+            }
             OutlinedTextField(
                 value = lessonViewModel.userGuess,
                 singleLine = true,
