@@ -19,7 +19,7 @@ enum class Gender(val code: Int) {
     DER(0),
     DIE(1),
     DAS(2),
-    NOT_SET(3)
+    NOT_SET(-1)
 }
 
 /**
@@ -33,7 +33,9 @@ enum class Plural(val code: Int) {
     S(3),
     ER_UMLAUT(4),
     EN(5),
-    NOT_SET(6)
+    N(6),
+    NOT_SET(-1),
+
 }
 
 /**

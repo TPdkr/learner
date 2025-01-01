@@ -32,9 +32,12 @@ class LessonViewModel : ViewModel() {
         startLesson()
     }
 
+    //User guess variables
     var userGuess by mutableStateOf("")
         private set
-    var userGenderGuess by mutableIntStateOf(3)
+    var userGenderGuess by mutableIntStateOf(-1)
+        private set
+    var userPluralGuess by mutableIntStateOf(-1)
         private set
 
     //Start the lesson and set the default values
@@ -62,6 +65,10 @@ class LessonViewModel : ViewModel() {
         userGenderGuess = gender
     }
 
+    fun updatePluralGuess(plural: Int) {
+        userPluralGuess = plural
+    }
+
     //move to next task if possible
     fun nextTask() {
         if (_uiState.value.taskNumber < _uiState.value.taskCount - 1) {
@@ -87,9 +94,8 @@ class LessonViewModel : ViewModel() {
     //check the input
     fun checkAnswer() {
         val isCorrect = userGuess.equals(
-            currentWord.german,
-            ignoreCase = true
-        ) && userGenderGuess == (currentWord.gender.code)
+            currentWord.german, ignoreCase = true
+        ) && userGenderGuess == (currentWord.gender.code) && (userPluralGuess == (currentWord.plural.code))
         _uiState.update { currentState ->
             val newScore = if (isCorrect) currentState.score.plus(20) else currentState.score
             currentState.copy(score = newScore, isChecked = true, isWrong = !isCorrect)
