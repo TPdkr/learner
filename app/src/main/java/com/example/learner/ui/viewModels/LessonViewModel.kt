@@ -84,6 +84,8 @@ class LessonViewModel : ViewModel() {
                 )
             }
             updateUserGuess("")
+            updatePluralGuess(-1)
+            updateGenderGuess(-1)
         } else {
             //need to handle the end of the lesson
         }

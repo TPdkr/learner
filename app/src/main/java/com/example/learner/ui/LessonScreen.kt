@@ -132,7 +132,7 @@ fun TypeTaskCard(lessonUiState: LessonUiState, lessonViewModel: LessonViewModel)
             )
             //here we allow the user to choose the gender of the word
             if (lessonUiState.isNoun) {
-                val genders = listOf("DER", "DIE", "DAS")
+                val genders = listOf("Der", "Die", "Das")
                 SingleChoiceSegmentedButtonRow {
                     genders.forEachIndexed() { index, label ->
                         SegmentedButton(
@@ -170,6 +170,22 @@ fun TypeTaskCard(lessonUiState: LessonUiState, lessonViewModel: LessonViewModel)
                     onDone = { }//TODO!!!!!Sch
                 )
             )
+            if (lessonUiState.isNoun) {
+                val endings = listOf("-","e", "e:", "s","er:","en","n")
+                SingleChoiceSegmentedButtonRow {
+                    endings.forEachIndexed() { index, label ->
+                        SegmentedButton(
+                            shape = SegmentedButtonDefaults.itemShape(
+                                index = index,
+                                count = endings.size
+                            ),
+                            onClick = { lessonViewModel.updatePluralGuess(index) },
+                            selected = index == lessonViewModel.userPluralGuess,
+                            label = { Text(label) }
+                        )
+                    }
+                }
+            }
         }
     }
 }
