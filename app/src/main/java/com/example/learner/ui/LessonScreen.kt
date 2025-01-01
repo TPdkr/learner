@@ -1,7 +1,9 @@
 package com.example.learner.ui
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -17,6 +19,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.OutlinedButton
@@ -42,6 +45,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.learner.R
+import com.example.learner.ui.viewModels.LessonUiState
 import com.example.learner.ui.viewModels.LessonViewModel
 
 @Preview
@@ -49,110 +53,154 @@ import com.example.learner.ui.viewModels.LessonViewModel
 fun LessonScreen(lessonViewModel: LessonViewModel = viewModel()) {
     val lessonUiState by lessonViewModel.uiState.collectAsState()
     var isSubmitted by remember { mutableStateOf(false) }
-    Surface(modifier = Modifier.fillMaxSize()) {
-
-    }
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .statusBarsPadding()
-            .verticalScroll(rememberScrollState())
-            .safeDrawingPadding()
-            .padding(20.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    )
-    {
-        //This is the progress in lesson
-        Text(
-            text = stringResource(
-                R.string.task_number,
-                lessonUiState.taskNumber+1,
-                lessonUiState.taskCount
-            ), style = typography.bodyLarge, modifier = Modifier.padding(20.dp)
-        )
-        //This is the task card
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(300.dp)
-        ) {
+    Surface(modifier = Modifier.fillMaxSize().statusBarsPadding()) {
+        Column {
+            LessonProgressBar(lessonUiState)
             Column(
                 modifier = Modifier
                     .fillMaxSize()
+                    .statusBarsPadding()
+                    .verticalScroll(rememberScrollState())
+                    .safeDrawingPadding()
                     .padding(20.dp),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    text = stringResource(R.string.xp, lessonUiState.score)
-                )
-                Text(
-                    text = lessonUiState.currentTrans,
-                    style = typography.titleLarge,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 40.sp,
-                    lineHeight = 40.sp,
-                    textAlign = TextAlign.Center
-                )
-                OutlinedTextField(
-                    value = lessonViewModel.userGuess,
-                    singleLine = true,
-                    modifier = Modifier.fillMaxWidth(),
-                    onValueChange = { lessonViewModel.updateUserGuess(it) },
-                    colors = TextFieldDefaults.colors(
-                        focusedContainerColor = colorScheme.surface,
-                        unfocusedContainerColor = colorScheme.surface,
-                        disabledContainerColor = colorScheme.surface,
-                    ),
-                    label = { Text(text = "enter translation") },
-                    isError = lessonUiState.isWrong,
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        imeAction = ImeAction.Done
-                    ),
-                    keyboardActions = KeyboardActions(
-                        onDone = { }//TODO!!!!!Sch
-                    )
-                )
+            )
+            {
+                //This is the progress in lesson displayed right above the task card
+                StatusRow(lessonUiState)
+                //This is the task card
+                TypeTaskCard(lessonUiState, lessonViewModel)
+                //This is the button section that changes depending on context to either check or next
+                ControlBlock(lessonUiState, lessonViewModel) { isSubmitted = true }
+
             }
         }
-        //This is the button section that changes depending on context to either check or next
+
+    }
+
+    if (isSubmitted) {
+        FinalDialog(lessonUiState.score) { isSubmitted = false }
+    }
+}
+
+@Composable
+fun StatusRow(lessonUiState: LessonUiState) {
+    Row(horizontalArrangement = Arrangement.SpaceEvenly, modifier = Modifier.fillMaxWidth()) {
+        /*Text(
+            text = stringResource(
+                R.string.task_number,
+                lessonUiState.taskNumber + 1,
+                lessonUiState.taskCount
+            ), style = typography.bodyLarge
+        )*/
+        Text(
+            text = stringResource(R.string.xp, lessonUiState.score),
+            style = typography.bodyLarge
+        )
+    }
+}
+
+@Composable
+fun TypeTaskCard(lessonUiState: LessonUiState, lessonViewModel: LessonViewModel) {
+    //This is the task card
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(300.dp)
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(40.dp)
+                .padding(20.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            if (!lessonUiState.isChecked) {
-                Button(
-                    onClick = { lessonViewModel.checkAnswer() },
-                    modifier = Modifier.width(300.dp)
-                ) {
-                    Text(text = "Check")
-                }
-            } else if (lessonUiState.taskNumber+1==lessonUiState.taskCount){
-                OutlinedButton(onClick = { isSubmitted=true}, modifier = Modifier.width(300.dp)) {
-                    Text(text = "Submit")
-                }
-            }else {
-                OutlinedButton(onClick = {lessonViewModel.nextTask()}, modifier = Modifier.width(300.dp)) {
-                    Text(text = "Next")
-                }
+
+            Text(
+                text = lessonUiState.currentTrans,
+                style = typography.titleLarge,
+                fontWeight = FontWeight.Bold,
+                fontSize = 40.sp,
+                lineHeight = 40.sp,
+                textAlign = TextAlign.Center
+            )
+            OutlinedTextField(
+                value = lessonViewModel.userGuess,
+                singleLine = true,
+                modifier = Modifier.fillMaxWidth(),
+                onValueChange = { lessonViewModel.updateUserGuess(it) },
+                colors = TextFieldDefaults.colors(
+                    focusedContainerColor = colorScheme.surface,
+                    unfocusedContainerColor = colorScheme.surface,
+                    disabledContainerColor = colorScheme.surface,
+                ),
+                label = {
+                    if (!lessonUiState.isWrong) Text(text = "enter translation") else Text(
+                        text = "answer is wrong"
+                    )
+                },
+                isError = lessonUiState.isWrong,
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    imeAction = ImeAction.Done
+                ),
+                keyboardActions = KeyboardActions(
+                    onDone = { }//TODO!!!!!Sch
+                )
+            )
+        }
+    }
+}
+
+@Composable
+fun ControlBlock(
+    lessonUiState: LessonUiState,
+    lessonViewModel: LessonViewModel,
+    onSubmit: () -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(40.dp)
+    ) {
+        if (!lessonUiState.isChecked) {
+            Button(
+                onClick = { lessonViewModel.checkAnswer() },
+                modifier = Modifier.width(300.dp)
+            ) {
+                Text(text = "Check")
+            }
+        } else if (lessonUiState.taskNumber + 1 == lessonUiState.taskCount) {
+            OutlinedButton(
+                onClick = onSubmit,
+                modifier = Modifier.width(300.dp)
+            ) {
+                Text(text = "Submit")
+            }
+        } else {
+            OutlinedButton(
+                onClick = { lessonViewModel.nextTask() },
+                modifier = Modifier.width(300.dp)
+            ) {
+                Text(text = "Next")
             }
         }
     }
-    if (isSubmitted){
-        FinalDialog(lessonUiState.score)
-    }
 }
 
 @Composable
-fun TaskCard() {
-
+fun LessonProgressBar(lessonUiState: LessonUiState) {
+    LinearProgressIndicator(
+        progress = {
+            (lessonUiState.taskNumber).toFloat() / (lessonUiState.taskCount).toFloat()
+        },
+        modifier = Modifier.fillMaxWidth().height(20.dp)
+    )
 }
 
 @Composable
-fun FinalDialog(score: Int){
-    Dialog(onDismissRequest = {}) {
+fun FinalDialog(score: Int, onDismissRequest: () -> Unit) {
+    Dialog(onDismissRequest = onDismissRequest) {
         Card(
             modifier = Modifier
                 .fillMaxWidth()
