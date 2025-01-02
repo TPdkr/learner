@@ -53,6 +53,9 @@ import com.example.learner.classes.TaskType
 import com.example.learner.ui.viewModels.LessonUiState
 import com.example.learner.ui.viewModels.LessonViewModel
 
+val endings = listOf("-", "e", "e:", "s", "er:", "en", "n")
+val genders = listOf("Der", "Die", "Das")
+
 @Preview
 @Composable
 fun LessonScreen(lessonViewModel: LessonViewModel = viewModel()) {
@@ -132,22 +135,12 @@ fun TypeTaskCard(lessonUiState: LessonUiState, lessonViewModel: LessonViewModel)
                 lineHeight = 40.sp,
                 textAlign = TextAlign.Center
             )
-            //here we allow the user to choose the gender of the word
-            if (lessonUiState.isNoun) {
-                val genders = listOf("Der", "Die", "Das")
-                SingleChoiceSegmentedButtonRow {
-                    genders.forEachIndexed() { index, label ->
-                        SegmentedButton(
-                            shape = SegmentedButtonDefaults.itemShape(
-                                index = index,
-                                count = genders.size
-                            ),
-                            onClick = { lessonViewModel.updateGenderGuess(index) },
-                            selected = index == lessonViewModel.userGenderGuess,
-                            label = { Text(label) }
-                        )
-                    }
-                }
+            if (lessonUiState.isNoun) {//here we allow the user to choose the gender of the word
+                AnswerSegmentedButton(
+                    genders,
+                    { index -> lessonViewModel.updateGenderGuess(index) },
+                    lessonViewModel.userGenderGuess
+                )
             }
             OutlinedTextField(
                 value = lessonViewModel.userGuess,
@@ -172,26 +165,12 @@ fun TypeTaskCard(lessonUiState: LessonUiState, lessonViewModel: LessonViewModel)
                     onDone = { }//TODO!!!!!Sch
                 )
             )
-            if (lessonUiState.isNoun) {
-                val endings = listOf("-", "e", "e:", "s", "er:", "en", "n")
+            if (lessonUiState.isNoun) {//here the user chooses the plural form
                 AnswerSegmentedButton(
                     endings,
                     { index -> lessonViewModel.updatePluralGuess(index) },
                     lessonViewModel.userPluralGuess
                 )
-                /*SingleChoiceSegmentedButtonRow {
-                    endings.forEachIndexed() { index, label ->
-                        SegmentedButton(
-                            shape = SegmentedButtonDefaults.itemShape(
-                                index = index,
-                                count = endings.size
-                            ),
-                            onClick = { lessonViewModel.updatePluralGuess(index) },
-                            selected = index == lessonViewModel.userPluralGuess,
-                            label = { Text(label) }
-                        )
-                    }
-                }*/
             }
         }
     }
