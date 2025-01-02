@@ -39,8 +39,8 @@ import com.example.learner.data.testUnit
 
 @Composable
 fun UnitScreen(course: Course) {
-    var showUnit = remember { mutableStateOf(false) }
-    var currentUni = remember { mutableStateOf(testUnit) }
+    val showUnit = remember { mutableStateOf(false) }
+    val currentUni = remember { mutableStateOf(testUnit) }
     val units = course.units.chunked(2)
     Surface(
         modifier = Modifier
@@ -92,7 +92,7 @@ fun UnitScreen(course: Course) {
         }
     }
     if (showUnit.value) {
-        UnitDetailedCard(currentUni.value, { showUnit.value = false })
+        UnitDetailedCard(currentUni.value){ showUnit.value = false }
     }
 }
 
@@ -157,19 +157,26 @@ fun UnitDetailedCard(unit: CourseUnit, onDismissRequest: () -> Unit) {
                     modifier = Modifier
                         .fillMaxSize()
                         .weight(8f),
-                    colors = CardColors(containerColor = MaterialTheme.colorScheme.background,
+                    colors = CardColors(
+                        containerColor = MaterialTheme.colorScheme.background,
                         contentColor = MaterialTheme.colorScheme.onBackground,
                         disabledContentColor = MaterialTheme.colorScheme.onBackground,
-                        disabledContainerColor = MaterialTheme.colorScheme.background)
+                        disabledContainerColor = MaterialTheme.colorScheme.background
+                    )
                 ) {
-                    LazyColumn(modifier = Modifier.fillMaxSize().padding(10.dp)) {
+                    LazyColumn(modifier = Modifier
+                        .fillMaxSize()
+                        .padding(10.dp)) {
                         items(unit.word) { word ->
-                            Row(modifier = Modifier.height(25.dp), verticalAlignment = Alignment.CenterVertically) {
-                                when(word.gender){
-                                    Gender.DER-> Text("Der ")
-                                    Gender.DAS->Text("Das ")
-                                    Gender.DIE->Text("Die ")
-                                    else->Text("")
+                            Row(
+                                modifier = Modifier.height(25.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                when (word.gender) {
+                                    Gender.DER -> Text("Der ")
+                                    Gender.DAS -> Text("Das ")
+                                    Gender.DIE -> Text("Die ")
+                                    else -> Text("")
                                 }
                                 Text(word.german)
                                 Text(" = ")
