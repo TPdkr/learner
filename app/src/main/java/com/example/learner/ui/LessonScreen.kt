@@ -57,7 +57,9 @@ import com.example.learner.ui.viewModels.LessonViewModel
 fun LessonScreen(lessonViewModel: LessonViewModel = viewModel()) {
     val lessonUiState by lessonViewModel.uiState.collectAsState()
     var isSubmitted by remember { mutableStateOf(false) }
-    Surface(modifier = Modifier.fillMaxSize().statusBarsPadding()) {
+    Surface(modifier = Modifier
+        .fillMaxSize()
+        .statusBarsPadding()) {
         Column {
             LessonProgressBar(lessonUiState)
             Column(
@@ -91,13 +93,6 @@ fun LessonScreen(lessonViewModel: LessonViewModel = viewModel()) {
 @Composable
 fun StatusRow(lessonUiState: LessonUiState) {
     Row(horizontalArrangement = Arrangement.SpaceEvenly, modifier = Modifier.fillMaxWidth()) {
-        /*Text(
-            text = stringResource(
-                R.string.task_number,
-                lessonUiState.taskNumber + 1,
-                lessonUiState.taskCount
-            ), style = typography.bodyLarge
-        )*/
         Text(
             text = stringResource(R.string.xp, lessonUiState.score),
             style = typography.bodyLarge
@@ -171,8 +166,13 @@ fun TypeTaskCard(lessonUiState: LessonUiState, lessonViewModel: LessonViewModel)
                 )
             )
             if (lessonUiState.isNoun) {
-                val endings = listOf("-","e", "e:", "s","er:","en","n")
-                SingleChoiceSegmentedButtonRow {
+                val endings = listOf("-", "e", "e:", "s", "er:", "en", "n")
+                AnswerSegmentedButton(
+                    endings,
+                    { index -> lessonViewModel.updatePluralGuess(index) },
+                    lessonViewModel.userPluralGuess
+                )
+                /*SingleChoiceSegmentedButtonRow {
                     endings.forEachIndexed() { index, label ->
                         SegmentedButton(
                             shape = SegmentedButtonDefaults.itemShape(
@@ -184,8 +184,26 @@ fun TypeTaskCard(lessonUiState: LessonUiState, lessonViewModel: LessonViewModel)
                             label = { Text(label) }
                         )
                     }
-                }
+                }*/
             }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AnswerSegmentedButton(options: List<String>, onClick: (Int) -> Unit, choice: Int) {
+    SingleChoiceSegmentedButtonRow {
+        options.forEachIndexed() { index, label ->
+            SegmentedButton(
+                shape = SegmentedButtonDefaults.itemShape(
+                    index = index,
+                    count = options.size
+                ),
+                onClick = { onClick(index) },
+                selected = index == choice,
+                label = { Text(label) }
+            )
         }
     }
 }
@@ -232,7 +250,9 @@ fun LessonProgressBar(lessonUiState: LessonUiState) {
         progress = {
             (lessonUiState.taskNumber).toFloat() / (lessonUiState.taskCount).toFloat()
         },
-        modifier = Modifier.fillMaxWidth().height(20.dp)
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(20.dp)
     )
 }
 

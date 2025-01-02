@@ -42,9 +42,9 @@ class LessonViewModel : ViewModel() {
 
     //Start the lesson and set the default values
     private fun startLesson() {
-        Log.d("Lesson error", "Start lesson is called")
+        //Log.d("Lesson error", "Start lesson is called")
         if (currentLesson.words.isNotEmpty()) {
-            currentWord = currentLesson.words.first()
+            currentWord = currentLesson.words.first()//will need to change with list
             _uiState.value = LessonUiState(
                 currentTrans = currentWord.translation,
                 isNoun = isNoun(currentWord),
@@ -73,7 +73,7 @@ class LessonViewModel : ViewModel() {
     fun nextTask() {
         if (_uiState.value.taskNumber < _uiState.value.taskCount - 1) {
             val nextTaskNumber = _uiState.value.taskNumber + 1
-            currentWord = currentLesson.words[nextTaskNumber]
+            currentWord = currentLesson.words[nextTaskNumber]//Will need to change with list
             _uiState.update { currentState ->
                 currentState.copy(
                     isChecked = false,
@@ -89,7 +89,7 @@ class LessonViewModel : ViewModel() {
         } else {
             //need to handle the end of the lesson
         }
-        Log.d("Lesson error", currentWord.german)
+        //Log.d("Lesson error", currentWord.german)
 
     }
 
