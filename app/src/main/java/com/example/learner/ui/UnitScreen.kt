@@ -9,14 +9,17 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MaterialTheme.typography
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -33,7 +36,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.example.learner.R
-import com.example.learner.classes.Course
 import com.example.learner.classes.CourseUnit
 import com.example.learner.classes.Gender
 import com.example.learner.data.testCourse
@@ -51,13 +53,17 @@ fun UnitScreen(courseUnitViewModel: CourseUnitViewModel) {
             .statusBarsPadding()
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
-            Text(
-                text = courseUiState.courseName,
-                style = typography.titleLarge,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth()
-            )
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = courseUiState.courseName,
+                    style = typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(30.dp)
+                )
+            }
             LazyColumn(Modifier.fillMaxSize()) {
                 items(courseUiState.units.chunked(2)) { pair ->
                     Row {
@@ -95,7 +101,7 @@ fun UnitScreen(courseUnitViewModel: CourseUnitViewModel) {
         }
     }
     if (showUnit.value) {
-        UnitDetailedCard(courseUnitViewModel.chosenUnit){ showUnit.value = false }
+        UnitDetailedCard(courseUnitViewModel.chosenUnit) { showUnit.value = false }
     }
 }
 
@@ -154,6 +160,7 @@ fun UnitDetailedCard(unit: CourseUnit, onDismissRequest: () -> Unit) {
                     )
                     Text(text = unit.name, style = typography.titleMedium)
                     Text(text = unit.desc)
+
                 }
                 Text(text = "Words in this unit:", fontWeight = FontWeight.Bold)
                 Card(
@@ -167,9 +174,11 @@ fun UnitDetailedCard(unit: CourseUnit, onDismissRequest: () -> Unit) {
                         disabledContainerColor = MaterialTheme.colorScheme.background
                     )
                 ) {
-                    LazyColumn(modifier = Modifier
-                        .fillMaxSize()
-                        .padding(10.dp)) {
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(10.dp)
+                    ) {
                         items(unit.word) { word ->
                             Row(
                                 modifier = Modifier.height(25.dp),
@@ -189,7 +198,17 @@ fun UnitDetailedCard(unit: CourseUnit, onDismissRequest: () -> Unit) {
                         }
                     }
                 }
-
+                Row(
+                    horizontalArrangement = Arrangement.SpaceAround, verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth().weight(0.7f)
+                ) {
+                    Button(onClick = {}, modifier = Modifier.width(130.dp)) {
+                        Text(text = "learn words")
+                    }
+                    OutlinedButton(onClick = {}, modifier = Modifier.width(130.dp)) {
+                        Text(text = "add")
+                    }
+                }
             }
         }
     }
