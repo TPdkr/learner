@@ -82,7 +82,7 @@ fun LessonScreen(lessonViewModel: LessonViewModel = viewModel()) {
                 when (lessonUiState.currentTaskType) {
                     TaskType.TYPE_TEXT -> TypeTaskCard(lessonUiState, lessonViewModel)
                     TaskType.INFO -> Text(text = "info card is being built")
-                    else -> Text(text = "error in task type info")
+                    //else -> Text(text = "error in task type info")
                 }
                 //This is the button section that changes depending on context to either check or next
                 ControlBlock(lessonUiState, lessonViewModel) { isSubmitted = true }
