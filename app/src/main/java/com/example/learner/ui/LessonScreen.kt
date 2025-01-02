@@ -50,13 +50,13 @@ import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.learner.R
 import com.example.learner.classes.TaskType
+import com.example.learner.data.testLesson
 import com.example.learner.ui.viewModels.LessonUiState
 import com.example.learner.ui.viewModels.LessonViewModel
 
 val endings = listOf("-", "e", "e:", "s", "er:", "en", "n")
 val genders = listOf("Der", "Die", "Das")
 
-@Preview
 @Composable
 fun LessonScreen(lessonViewModel: LessonViewModel = viewModel()) {
     val lessonUiState by lessonViewModel.uiState.collectAsState()
@@ -283,4 +283,10 @@ fun FinalDialog(score: Int, onDismissRequest: () -> Unit) {
             }
         }
     }
+}
+
+@Preview
+@Composable
+fun LessonPreview(){
+    LessonScreen(LessonViewModel(testLesson))
 }

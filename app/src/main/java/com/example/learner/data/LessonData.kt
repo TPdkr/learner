@@ -1,11 +1,12 @@
 package com.example.learner.data
 
+import com.example.learner.classes.Course
 import com.example.learner.classes.Gender
 import com.example.learner.classes.Lesson
 import com.example.learner.classes.Plural
 import com.example.learner.classes.TaskType
 import com.example.learner.classes.Word
-
+import com.example.learner.classes.CourseUnit
 /**
  *
  *
@@ -46,3 +47,6 @@ val testTasks: List<Pair<Word, TaskType>> =
 
 val testLesson: Lesson = Lesson(words = testWords.shuffled(), tasks = testTasks)
 
+val testUnit: CourseUnit = CourseUnit(testWords, "Test", 1, "test description")
+
+val testCourse: Course = Course(List(91, {testUnit}), "test course try")

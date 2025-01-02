@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.example.learner.LessonActivity
+import com.example.learner.UnitActivity
 import com.example.learner.ui.theme.LearnerTheme
 
 @Preview(showBackground = true)
@@ -92,12 +93,16 @@ fun MainScreen() {
                             Text(text = "test lesson")
                         }
                         //this is a dummy
-                        Button(onClick = { print(3) }, modifier = buttonModifier) {
+                        Button(onClick = {
+                            val intent= Intent(context, UnitActivity::class.java)
+                            context.startActivity((intent))
+
+                        }, modifier = buttonModifier) {
                             Icon(
                                 Icons.Default.Menu,
                                 contentDescription = null
                             )
-                            Text(text = "dummy 2")
+                            Text(text = "test unit screen")
                         }
                     }
                     Text(
