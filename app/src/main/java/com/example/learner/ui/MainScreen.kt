@@ -1,7 +1,6 @@
 package com.example.learner.ui
 
 import android.content.Intent
-import android.widget.Button
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -41,8 +40,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.example.learner.LessonActivity
-import com.example.learner.MainActivity
-import com.example.learner.R
 import com.example.learner.ui.theme.LearnerTheme
 
 @Preview(showBackground = true)
@@ -83,8 +80,8 @@ fun MainScreen() {
                         .padding(8.dp)
                     //NAVIGATION:
                     Card {
+                        //this button starts a lesson test
                         Button(onClick = {
-
                             val intent = Intent(context, LessonActivity::class.java)
                             context.startActivity(intent)
                         }, modifier = buttonModifier) {
@@ -94,6 +91,7 @@ fun MainScreen() {
                             )
                             Text(text = "test lesson")
                         }
+                        //this is a dummy
                         Button(onClick = { print(3) }, modifier = buttonModifier) {
                             Icon(
                                 Icons.Default.Menu,
@@ -133,6 +131,9 @@ fun MainScreen() {
     }
 }
 
+/**
+ * This is a little info dialog that stores some information about the app.
+ *  */
 @Composable
 fun InfoDialog(onDismissRequest: () -> Unit) {
     Dialog(onDismissRequest = onDismissRequest) {
