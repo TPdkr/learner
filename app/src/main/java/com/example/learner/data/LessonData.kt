@@ -50,3 +50,5 @@ val testLesson: Lesson = Lesson(words = testWords.shuffled(), tasks = testTasks)
 val testUnit: CourseUnit = CourseUnit(testWords, "Test", 1, "test description")
 
 val testCourse: Course = Course(List(91, {testUnit}), "test course try")
+
+val testCourses: List<Course> = listOf(Course(listOf(), "Netzwerk A2.1"), Course(listOf(), "Netzwerk A2.2"))
