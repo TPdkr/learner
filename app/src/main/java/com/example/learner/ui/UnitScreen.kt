@@ -46,7 +46,6 @@ import com.example.learner.ui.viewModels.CourseUnitViewModel
 fun UnitScreen(courseUnitViewModel: CourseUnitViewModel) {
     val courseUiState by courseUnitViewModel.uiState.collectAsState()
     val showUnit = remember { mutableStateOf(false) }
-    val currentUni = remember { mutableStateOf(testUnit) }//DELETE
     Surface(
         modifier = Modifier
             .fillMaxSize()
