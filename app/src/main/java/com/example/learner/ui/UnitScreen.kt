@@ -20,6 +20,8 @@ import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -36,12 +38,13 @@ import com.example.learner.classes.CourseUnit
 import com.example.learner.classes.Gender
 import com.example.learner.data.testCourse
 import com.example.learner.data.testUnit
+import com.example.learner.ui.viewModels.CourseUnitViewModel
 
 @Composable
-fun UnitScreen(course: Course) {
+fun UnitScreen(courseUnitViewModel: CourseUnitViewModel) {
+    val courseUiState by courseUnitViewModel.uiState.collectAsState()
     val showUnit = remember { mutableStateOf(false) }
-    val currentUni = remember { mutableStateOf(testUnit) }
-    val units = course.units.chunked(2)
+    val currentUni = remember { mutableStateOf(testUnit) }//DELETE
     Surface(
         modifier = Modifier
             .fillMaxSize()
@@ -49,20 +52,20 @@ fun UnitScreen(course: Course) {
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
             Text(
-                text = course.name,
+                text = courseUiState.courseName,
                 style = typography.titleLarge,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth()
             )
             LazyColumn(Modifier.fillMaxSize()) {
-                items(units) { pair ->
+                items(courseUiState.units.chunked(2)) { pair ->
                     Row {
                         UnitCard(
                             pair[0],
                             {
                                 showUnit.value = true
-                                currentUni.value = pair[0]
+                                courseUnitViewModel.chooseUnit(pair[0])
                             },
                             modifier = Modifier
                                 .weight(1f)
@@ -73,7 +76,7 @@ fun UnitScreen(course: Course) {
                                 pair[1],
                                 {
                                     showUnit.value = true
-                                    currentUni.value = pair[1]
+                                    courseUnitViewModel.chooseUnit(pair[1])
                                 },
                                 modifier = Modifier
                                     .weight(1f)
@@ -92,7 +95,7 @@ fun UnitScreen(course: Course) {
         }
     }
     if (showUnit.value) {
-        UnitDetailedCard(currentUni.value){ showUnit.value = false }
+        UnitDetailedCard(courseUnitViewModel.chosenUnit){ showUnit.value = false }
     }
 }
 
@@ -203,5 +206,5 @@ fun CardPreview() {
 @Preview
 @Composable
 fun UnitPreview() {
-    UnitScreen(testCourse)
+    UnitScreen(CourseUnitViewModel(testCourse))
 }

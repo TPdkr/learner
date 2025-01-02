@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import com.example.learner.data.testCourse
 import com.example.learner.ui.UnitScreen
 import com.example.learner.ui.theme.LearnerTheme
+import com.example.learner.ui.viewModels.CourseUnitViewModel
 
 class UnitActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -18,7 +19,7 @@ class UnitActivity : ComponentActivity() {
         setContent {
             LearnerTheme {
                 Surface(modifier = Modifier.fillMaxSize()) {
-                    UnitScreen(testCourse)
+                    UnitScreen(CourseUnitViewModel(testCourse))
                 }
             }
         }
