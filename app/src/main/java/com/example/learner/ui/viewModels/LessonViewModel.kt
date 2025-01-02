@@ -1,6 +1,5 @@
 package com.example.learner.ui.viewModels
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -9,30 +8,30 @@ import androidx.lifecycle.ViewModel
 import com.example.learner.classes.Gender
 import com.example.learner.classes.Lesson
 import com.example.learner.classes.Plural
+import com.example.learner.classes.TaskType
 import com.example.learner.classes.Word
-import com.example.learner.data.testLesson
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-class LessonViewModel : ViewModel() {
-    //Game ui state
+class LessonViewModel(lesson: Lesson) : ViewModel() {
+    //game ui state as state flow
     private val _uiState = MutableStateFlow(LessonUiState())
     val uiState: StateFlow<LessonUiState> = _uiState.asStateFlow()
 
-    //this is the lesson data
-    private val currentLesson: Lesson = testLesson
+    //this is the lesson data passed to the function
+    private val currentLesson: Lesson = lesson
 
-    //this is the current word
+    //this is the current word data
     private lateinit var currentWord: Word
 
-    //we start the lesson
+    //we start the lesson in default state
     init {
         startLesson()
     }
 
-    //User guess variables
+    //user guess variables for inputs
     var userGuess by mutableStateOf("")
         private set
     var userGenderGuess by mutableIntStateOf(-1)
@@ -40,19 +39,21 @@ class LessonViewModel : ViewModel() {
     var userPluralGuess by mutableIntStateOf(-1)
         private set
 
-    //Start the lesson and set the default values
+    //start the lesson and set the default values
     private fun startLesson() {
-        //Log.d("Lesson error", "Start lesson is called")
-        if (currentLesson.words.isNotEmpty()) {
-            currentWord = currentLesson.words.first()//will need to change with list
+        if (currentLesson.tasks.isNotEmpty()) {
+            currentWord = currentLesson.tasks.first().first//will need to change with list
+            val newTaskType = currentLesson.tasks.first().second
             _uiState.value = LessonUiState(
                 currentTrans = currentWord.translation,
+                currentTaskType = newTaskType,
                 isNoun = isNoun(currentWord),
                 taskCount = currentLesson.words.size
             )
         }
     }
 
+    //is a given word a noun?
     private fun isNoun(word: Word): Boolean =
         (word.gender != Gender.NOT_SET && word.plural != Plural.NOT_SET)
 
@@ -61,10 +62,12 @@ class LessonViewModel : ViewModel() {
         userGuess = newGuess
     }
 
+    //update user gender guess for the word
     fun updateGenderGuess(gender: Int) {
         userGenderGuess = gender
     }
 
+    //update plural guess for the word
     fun updatePluralGuess(plural: Int) {
         userPluralGuess = plural
     }
@@ -73,14 +76,16 @@ class LessonViewModel : ViewModel() {
     fun nextTask() {
         if (_uiState.value.taskNumber < _uiState.value.taskCount - 1) {
             val nextTaskNumber = _uiState.value.taskNumber + 1
-            currentWord = currentLesson.words[nextTaskNumber]//Will need to change with list
+            currentWord = currentLesson.tasks[nextTaskNumber].first//Will need to change with list
+            val newTaskType = currentLesson.tasks[nextTaskNumber].second
             _uiState.update { currentState ->
                 currentState.copy(
                     isChecked = false,
                     isWrong = false,
                     isNoun = isNoun(currentWord),
                     taskNumber = nextTaskNumber,
-                    currentTrans = currentWord.translation
+                    currentTrans = currentWord.translation,
+                    currentTaskType = newTaskType
                 )
             }
             updateUserGuess("")
@@ -89,22 +94,27 @@ class LessonViewModel : ViewModel() {
         } else {
             //need to handle the end of the lesson
         }
-        //Log.d("Lesson error", currentWord.german)
-
     }
 
     //check the input
     fun checkAnswer() {
+        //is this answer correct?
         val isCorrect = userGuess.equals(
             currentWord.german, ignoreCase = true
         ) && userGenderGuess == (currentWord.gender.code) && (userPluralGuess == (currentWord.plural.code))
+        //update ui state
         _uiState.update { currentState ->
             val newScore = if (isCorrect) currentState.score.plus(20) else currentState.score
             currentState.copy(score = newScore, isChecked = true, isWrong = !isCorrect)
         }
+        //we want to show the correct answer
+        updateUserGuess(currentWord.german)
+        updateGenderGuess(currentWord.gender.code)
+        updatePluralGuess(currentWord.plural.code)
     }
 }
 
+//These variables determine the state of the UI
 data class LessonUiState(
     val isChecked: Boolean = false,
     val isWrong: Boolean = false,
@@ -113,5 +123,6 @@ data class LessonUiState(
     val taskCount: Int = 0,
     val score: Int = 0,
     val wordCount: Int = 0,
-    val currentTrans: String = ""
+    val currentTrans: String = "",
+    val currentTaskType: TaskType = TaskType.TYPE_TEXT
 )
