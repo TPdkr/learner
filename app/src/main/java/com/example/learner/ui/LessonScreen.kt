@@ -49,6 +49,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.learner.R
+import com.example.learner.classes.TaskType
 import com.example.learner.ui.viewModels.LessonUiState
 import com.example.learner.ui.viewModels.LessonViewModel
 
@@ -57,9 +58,11 @@ import com.example.learner.ui.viewModels.LessonViewModel
 fun LessonScreen(lessonViewModel: LessonViewModel = viewModel()) {
     val lessonUiState by lessonViewModel.uiState.collectAsState()
     var isSubmitted by remember { mutableStateOf(false) }
-    Surface(modifier = Modifier
-        .fillMaxSize()
-        .statusBarsPadding()) {
+    Surface(
+        modifier = Modifier
+            .fillMaxSize()
+            .statusBarsPadding()
+    ) {
         Column {
             LessonProgressBar(lessonUiState)
             Column(
@@ -76,7 +79,11 @@ fun LessonScreen(lessonViewModel: LessonViewModel = viewModel()) {
                 //This is the progress in lesson displayed right above the task card
                 StatusRow(lessonUiState)
                 //This is the task card
-                TypeTaskCard(lessonUiState, lessonViewModel)
+                when (lessonUiState.currentTaskType) {
+                    TaskType.TYPE_TEXT -> TypeTaskCard(lessonUiState, lessonViewModel)
+                    TaskType.INFO -> Text(text = "info card is being built")
+                    else -> Text(text = "error in task type info")
+                }
                 //This is the button section that changes depending on context to either check or next
                 ControlBlock(lessonUiState, lessonViewModel) { isSubmitted = true }
 
