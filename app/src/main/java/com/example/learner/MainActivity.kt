@@ -13,16 +13,9 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             LearnerTheme {
-                //MainScreen()
                 LearnerApp()
             }
         }
-        /*val button: Button = findViewById(R.id.button_open_activity)
-        button.setOnClickListener {
-            // Launch SecondActivity
-            val intent = Intent(this, LessonActivity::class.java)
-            startActivity(intent)
-        }*/
     }
 }
 

@@ -73,9 +73,6 @@ fun MainScreen(toUnits: () -> Unit = {}, toCourses: () -> Unit = {}, toLesson:()
                         textAlign = TextAlign.Center
                     )
                     Spacer(modifier = Modifier.height(100.dp))
-                    val buttonModifier = Modifier
-                        .width(300.dp)
-                        .padding(8.dp)
                     //NAVIGATION:
                     Card {
                         //this button starts a lesson test
