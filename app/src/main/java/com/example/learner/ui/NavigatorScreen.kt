@@ -37,13 +37,13 @@ fun LearnerApp(
     navController: NavHostController = rememberNavController()
 ) {
     //the ui state of the app
-    val appUiState by appViewModel.uiState.collectAsState()
+    //val appUiState by appViewModel.uiState.collectAsState()
     // Get current back stack entry
-    val backStackEntry by navController.currentBackStackEntryAsState()
+    //val backStackEntry by navController.currentBackStackEntryAsState()
     // Get the name of the current screen
-    val currentScreen = ScreenSate.valueOf(
+    /*val currentScreen = ScreenSate.valueOf(
         backStackEntry?.destination?.route ?: ScreenSate.MainScreen.name
-    )
+    )*/
     NavHost(
         navController = navController,
         startDestination = ScreenSate.MainScreen.name,
