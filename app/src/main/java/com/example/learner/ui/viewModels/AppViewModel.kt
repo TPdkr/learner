@@ -14,6 +14,6 @@ class AppViewModel() : ViewModel() {
 }
 
 data class AppUiState(
-    val lesson: Lesson = Lesson(listOf(), listOf()),
+    val lesson: Lesson = Lesson(listOf(), listOf()),//maybe make the var private set instead?
     val course: Course = Course(listOf(), "")
 )

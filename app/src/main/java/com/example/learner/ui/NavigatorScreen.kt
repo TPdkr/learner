@@ -49,8 +49,9 @@ fun LearnerApp(
         composable(route = ScreenSate.MainScreen.name) {
             MainScreen(
                 toUnits = { navController.navigate(ScreenSate.UnitsScreen.name) },
-                toCourses={navController.navigate(ScreenSate.CoursesScreen.name)},
-                toLesson = {navController.navigate(ScreenSate.LessonScreen.name)}
+                toCourses = { navController.navigate(ScreenSate.CoursesScreen.name) },
+                toLesson = { navController.navigate(ScreenSate.LessonScreen.name) },
+                toPrevious = {navController.popBackStack()}
             )
         }
         composable(route = ScreenSate.UnitsScreen.name) {
@@ -60,7 +61,7 @@ fun LearnerApp(
             CoursesScreen()
         }
         composable(route = ScreenSate.LessonScreen.name) {
-            LessonScreen(LessonViewModel(testLesson))
+            LessonScreen(LessonViewModel(testLesson)) { navController.popBackStack() }
         }
     }
 }

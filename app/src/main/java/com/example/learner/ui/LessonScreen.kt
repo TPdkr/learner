@@ -30,6 +30,7 @@ import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -58,15 +59,14 @@ val endings = listOf("-", "e", "e:", "s", "er:", "en", "n")
 val genders = listOf("Der", "Die", "Das")
 
 @Composable
-fun LessonScreen(lessonViewModel: LessonViewModel = viewModel()) {
+fun LessonScreen(lessonViewModel: LessonViewModel = viewModel(), toPrevious: ()->Unit) {
     val lessonUiState by lessonViewModel.uiState.collectAsState()
     var isSubmitted by remember { mutableStateOf(false) }
     Surface(
         modifier = Modifier
             .fillMaxSize()
-            .statusBarsPadding()
     ) {
-        Column {
+        Column(modifier = Modifier.statusBarsPadding()) {
             LessonProgressBar(lessonUiState)
             Column(
                 modifier = Modifier
@@ -96,7 +96,7 @@ fun LessonScreen(lessonViewModel: LessonViewModel = viewModel()) {
     }
 
     if (isSubmitted) {
-        FinalDialog(lessonUiState.score) { isSubmitted = false }
+        FinalDialog(lessonUiState.score, { isSubmitted = false }, toPrevious = toPrevious)
     }
 }
 
@@ -110,7 +110,6 @@ fun StatusRow(lessonUiState: LessonUiState) {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TypeTaskCard(lessonUiState: LessonUiState, lessonViewModel: LessonViewModel) {
     //This is the task card
@@ -180,7 +179,7 @@ fun TypeTaskCard(lessonUiState: LessonUiState, lessonViewModel: LessonViewModel)
 @Composable
 fun AnswerSegmentedButton(options: List<String>, onClick: (Int) -> Unit, choice: Int) {
     SingleChoiceSegmentedButtonRow {
-        options.forEachIndexed() { index, label ->
+        options.forEachIndexed { index, label ->
             SegmentedButton(
                 shape = SegmentedButtonDefaults.itemShape(
                     index = index,
@@ -243,7 +242,7 @@ fun LessonProgressBar(lessonUiState: LessonUiState) {
 }
 
 @Composable
-fun FinalDialog(score: Int, onDismissRequest: () -> Unit) {
+fun FinalDialog(score: Int, onDismissRequest: () -> Unit, toPrevious: () -> Unit) {
     Dialog(onDismissRequest = onDismissRequest) {
         Card(
             modifier = Modifier
@@ -262,13 +261,13 @@ fun FinalDialog(score: Int, onDismissRequest: () -> Unit) {
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .wrapContentSize(Alignment.Center)
+                        .wrapContentSize(Alignment.Center).padding(5.dp)
                 )
                 Text(
                     text = "Good boy ;)",
                     modifier = Modifier
                         .fillMaxWidth()
-                        .wrapContentSize(Alignment.Center),
+                        .wrapContentSize(Alignment.Center).padding(5.dp),
                     textAlign = TextAlign.Center
                 )
                 Text(
@@ -278,8 +277,11 @@ fun FinalDialog(score: Int, onDismissRequest: () -> Unit) {
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .wrapContentSize(Alignment.Center)
+                        .wrapContentSize(Alignment.Center).padding(10.dp)
                 )
+                TextButton(onClick = toPrevious, modifier=Modifier.fillMaxWidth()){
+                    Text("return back",textAlign = TextAlign.Center)
+                }
             }
         }
     }
@@ -288,5 +290,5 @@ fun FinalDialog(score: Int, onDismissRequest: () -> Unit) {
 @Preview
 @Composable
 fun LessonPreview(){
-    LessonScreen(LessonViewModel(testLesson))
+    LessonScreen(LessonViewModel(testLesson)){}
 }

@@ -43,7 +43,7 @@ import com.example.learner.ui.theme.LearnerTheme
 
 @Preview(showBackground = true)
 @Composable
-fun MainScreen(toUnits: () -> Unit = {}, toCourses: () -> Unit = {}, toLesson:()->Unit={}) {
+fun MainScreen(toUnits: () -> Unit = {}, toCourses: () -> Unit = {}, toLesson:()->Unit={}, toPrevious: ()->Unit={}) {
     val openDialog = remember { mutableStateOf(false) }
     LearnerTheme {
         Surface(
