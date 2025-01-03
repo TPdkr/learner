@@ -1,6 +1,5 @@
 package com.example.learner.ui
 
-import android.content.Intent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -34,23 +33,18 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import com.example.learner.CoursesActivity
-import com.example.learner.LessonActivity
-import com.example.learner.UnitActivity
 import com.example.learner.ui.theme.LearnerTheme
 
 @Preview(showBackground = true)
 @Composable
-fun MainScreen() {
+fun MainScreen(toUnits: () -> Unit = {}, toCourses: () -> Unit = {}, toLesson:()->Unit={}) {
     val openDialog = remember { mutableStateOf(false) }
-    val context = LocalContext.current
     LearnerTheme {
         Surface(
             modifier = Modifier
@@ -85,19 +79,10 @@ fun MainScreen() {
                     //NAVIGATION:
                     Card {
                         //this button starts a lesson test
-                        MenuButton({
-                            val intent = Intent(context, LessonActivity::class.java)
-                            context.startActivity((intent))
-                        }, "learn words", Icons.Default.PlayArrow)
+                        MenuButton(toLesson, "learn words", Icons.Default.PlayArrow)
                         //these are the units of current course
-                        MenuButton({
-                            val intent = Intent(context, UnitActivity::class.java)
-                            context.startActivity((intent))
-                        }, "units", Icons.Default.Info)
-                        MenuButton({
-                            val intent = Intent(context, CoursesActivity::class.java)
-                            context.startActivity((intent))
-                        }, "courses catalogue", Icons.Default.Menu)
+                        MenuButton(toUnits, "units", Icons.Default.Info)
+                        MenuButton(toCourses, "courses catalogue", Icons.Default.Menu)
                     }
                     Text(
                         text = "made by TPdkr",

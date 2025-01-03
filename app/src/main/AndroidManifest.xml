@@ -27,13 +27,6 @@
             android:name=".LessonActivity"
             android:label="@string/app_name">
         </activity>
-        <activity
-            android:name=".UnitActivity"
-            android:label="@string/app_name">
-        </activity>
-        <activity
-            android:name=".CoursesActivity">
-        </activity>
 
     </application>
 

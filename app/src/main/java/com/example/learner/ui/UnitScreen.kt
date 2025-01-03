@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -46,53 +47,55 @@ import com.example.learner.ui.viewModels.CourseUnitViewModel
 fun UnitScreen(courseUnitViewModel: CourseUnitViewModel) {
     val courseUiState by courseUnitViewModel.uiState.collectAsState()
     val showUnit = remember { mutableStateOf(false) }
-    Surface(
-        modifier = Modifier
-            .fillMaxSize()
-            .statusBarsPadding()
-    ) {
-        Column(modifier = Modifier.fillMaxSize()) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(
-                    text = courseUiState.courseName,
-                    style = typography.titleLarge,
-                    fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(30.dp)
-                )
-            }
-            LazyColumn(Modifier.fillMaxSize()) {
-                items(courseUiState.units.chunked(2)) { pair ->
-                    Row {
-                        UnitCard(
-                            pair[0],
-                            {
-                                showUnit.value = true
-                                courseUnitViewModel.chooseUnit(pair[0])
-                            },
-                            modifier = Modifier
-                                .weight(1f)
-                                .padding(top = 8.dp, end = 8.dp, start = 8.dp)
-                        )
-                        if (pair.size == 2) {
+    Surface(modifier = Modifier.fillMaxSize()) {
+        Surface(
+            modifier = Modifier
+                .fillMaxSize()
+                .statusBarsPadding()
+        ) {
+            Column(modifier = Modifier.fillMaxSize()) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = courseUiState.courseName,
+                        style = typography.titleLarge,
+                        fontWeight = FontWeight.Bold,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(30.dp)
+                    )
+                }
+                LazyColumn(Modifier.fillMaxSize()) {
+                    items(courseUiState.units.chunked(2)) { pair ->
+                        Row {
                             UnitCard(
-                                pair[1],
+                                pair[0],
                                 {
                                     showUnit.value = true
-                                    courseUnitViewModel.chooseUnit(pair[1])
+                                    courseUnitViewModel.chooseUnit(pair[0])
                                 },
                                 modifier = Modifier
                                     .weight(1f)
-                                    .padding(top = 8.dp, end = 8.dp)
+                                    .padding(top = 8.dp, end = 8.dp, start = 8.dp)
                             )
-                        } else {
-                            Box(
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .padding(top = 8.dp, end = 8.dp)
-                            )
+                            if (pair.size == 2) {
+                                UnitCard(
+                                    pair[1],
+                                    {
+                                        showUnit.value = true
+                                        courseUnitViewModel.chooseUnit(pair[1])
+                                    },
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .padding(top = 8.dp, end = 8.dp)
+                                )
+                            } else {
+                                Box(
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .padding(top = 8.dp, end = 8.dp)
+                                )
+                            }
                         }
                     }
                 }
@@ -110,12 +113,12 @@ fun UnitCard(unit: CourseUnit, onClick: () -> Unit, modifier: Modifier = Modifie
         Row(
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(5.dp)
+            modifier = Modifier.padding(10.dp)
         ) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .weight(4f),
+                    .weight(3f),
             ) {
                 Text(
                     text = stringResource(R.string.unit_number, unit.number),
@@ -124,9 +127,10 @@ fun UnitCard(unit: CourseUnit, onClick: () -> Unit, modifier: Modifier = Modifie
                 )
                 Text(text = unit.name)
             }
+
             CircularProgressIndicator(
                 progress = { 0.8F },
-                modifier = Modifier
+                modifier = Modifier.size(50.dp)
                     .fillMaxSize()
                     .weight(1f)
             )

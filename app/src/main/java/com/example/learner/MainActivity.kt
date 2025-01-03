@@ -1,12 +1,10 @@
 package com.example.learner
 
-import android.content.Intent
 import android.os.Bundle
-import android.widget.Button
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import com.example.learner.ui.MainScreen
+import com.example.learner.ui.LearnerApp
 import com.example.learner.ui.theme.LearnerTheme
 
 class MainActivity : ComponentActivity() {
@@ -15,7 +13,8 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             LearnerTheme {
-                MainScreen()
+                //MainScreen()
+                LearnerApp()
             }
         }
         /*val button: Button = findViewById(R.id.button_open_activity)
