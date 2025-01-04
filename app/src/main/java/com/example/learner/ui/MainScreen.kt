@@ -17,9 +17,11 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
@@ -43,7 +45,15 @@ import com.example.learner.ui.theme.LearnerTheme
 
 @Preview(showBackground = true)
 @Composable
-fun MainScreen(toUnits: () -> Unit = {}, toCourses: () -> Unit = {}, toLesson:()->Unit={}, toPrevious: ()->Unit={}) {
+fun MainScreen(
+    toUnits: () -> Unit = {},
+    toCourses: () -> Unit = {},
+    toLesson: () -> Unit = {},
+    toPrevious: () -> Unit = {},
+    toReview: () -> Unit={},
+    canReview: Boolean = false,
+    canLearn: Boolean = false
+) {
     val openDialog = remember { mutableStateOf(false) }
     LearnerTheme {
         Surface(
@@ -75,11 +85,12 @@ fun MainScreen(toUnits: () -> Unit = {}, toCourses: () -> Unit = {}, toLesson:()
                     Spacer(modifier = Modifier.height(100.dp))
                     //NAVIGATION:
                     Card {
+                        MenuButton(toReview, "review words", Icons.Default.Refresh, canReview)
                         //this button starts a lesson test
-                        MenuButton(toLesson, "learn words", Icons.Default.PlayArrow)
+                        MenuButton(toLesson, "learn words", Icons.Default.PlayArrow, canLearn)
                         //these are the units of current course
-                        MenuButton(toUnits, "units", Icons.Default.Info)
-                        MenuButton(toCourses, "courses catalogue", Icons.Default.Menu)
+                        MenuButton(toUnits, "units", Icons.Default.Menu)
+                        MenuButton(toCourses, "courses catalogue", Icons.Default.Add)
                     }
                     Text(
                         text = "made by TPdkr",
@@ -113,11 +124,11 @@ fun MainScreen(toUnits: () -> Unit = {}, toCourses: () -> Unit = {}, toLesson:()
 }
 
 @Composable
-fun MenuButton(onClick: () -> Unit, text: String, icon: ImageVector) {
+fun MenuButton(onClick: () -> Unit, text: String, icon: ImageVector, enabled: Boolean =true) {
     val buttonModifier = Modifier
         .width(300.dp)
         .padding(8.dp)
-    Button(onClick = onClick, modifier = buttonModifier) {
+    Button(onClick = onClick, modifier = buttonModifier, enabled = enabled) {
         Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxSize()) {
             Icon(
                 icon,
