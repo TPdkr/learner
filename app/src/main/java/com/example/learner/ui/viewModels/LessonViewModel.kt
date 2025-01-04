@@ -49,7 +49,7 @@ class LessonViewModel(lesson: Lesson) : ViewModel() {
                 currentTrans = currentWord.translation,
                 currentTaskType = newTaskType,
                 isNoun = isNoun(currentWord),
-                taskCount = currentLesson.words.size
+                taskCount = currentLesson.tasks.size
             )
         }
     }

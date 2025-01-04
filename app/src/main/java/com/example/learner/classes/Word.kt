@@ -8,7 +8,8 @@ enum class Status(val code: Int) {
     NEW(0),
     LEARNING(1),
     LONG_TERM(2),
-    MEMORIZED(3)
+    MEMORIZED(3),
+    REVIEW(4)
 }
 
 /**

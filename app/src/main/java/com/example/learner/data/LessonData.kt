@@ -45,8 +45,8 @@ val testWords: List<Word> = listOf(
 val testTasks: List<Pair<Word, TaskType>> =
     testWords.map { Pair(it, TaskType.TYPE_TEXT) }
 val testInfoTasks= testWords.shuffled().take(3).map{Pair(it, TaskType.INFO)}
-val testLesson: Lesson = Lesson(words = testWords.shuffled(), tasks = testTasks)
-val infoTestLesson: Lesson = Lesson(words = testWords.shuffled().take(3), tasks= testInfoTasks)
+val testLesson: Lesson = Lesson(tasks = testTasks)
+val infoTestLesson: Lesson = Lesson(tasks= testInfoTasks)
 val testUnit: CourseUnit = CourseUnit(testWords, "Test", 1, "test description")
 
 val testCourse: Course = Course(List(91, {testUnit}), "test course try")
