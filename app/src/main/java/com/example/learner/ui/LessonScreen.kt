@@ -55,7 +55,6 @@ import com.example.learner.classes.Gender
 import com.example.learner.classes.Plural
 import com.example.learner.classes.TaskType
 import com.example.learner.data.infoTestLesson
-import com.example.learner.data.testInfoTasks
 import com.example.learner.data.testLesson
 import com.example.learner.ui.viewModels.LessonUiState
 import com.example.learner.ui.viewModels.LessonViewModel
@@ -101,7 +100,7 @@ fun LessonScreen(lessonViewModel: LessonViewModel = viewModel(), toPrevious: () 
     }
 
     if (isSubmitted) {
-        FinalDialog(lessonUiState.score, { isSubmitted = false }, toPrevious = toPrevious)
+        FinalDialog(lessonUiState.score, toPrevious = toPrevious)
     }
 }
 
@@ -299,7 +298,7 @@ fun LessonProgressBar(lessonUiState: LessonUiState) {
 }
 
 @Composable
-fun FinalDialog(score: Int, onDismissRequest: () -> Unit, toPrevious: () -> Unit) {
+fun FinalDialog(score: Int, toPrevious: () -> Unit) {
     Dialog(onDismissRequest = {}) {
         Card(
             modifier = Modifier
