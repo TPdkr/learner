@@ -24,6 +24,12 @@ data class Lesson(
         private const val learningWordTaskCount = 3
         private const val reviewWordTaskCount = 2
 
+        //this is a substitute for secondary constructor
+        fun fromWords(words: List<Word>): Lesson {
+            val tasks = generateTasks(words)
+            return Lesson(tasks)
+        }
+
         //repeat the contents of a list of words
         private fun repeatList(words: List<Word>, count: Int): List<Word> {
             val result = mutableListOf<Word>()
@@ -69,7 +75,4 @@ data class Lesson(
             }
         }
     }
-
-    //this is the secondary constructor that creates a list of task based on words
-    constructor(words: List<Word>) : this(tasks = generateTasks(words))
 }
