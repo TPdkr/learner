@@ -134,7 +134,7 @@ fun UnitCard(unit: CourseUnit, onClick: () -> Unit, modifier: Modifier = Modifie
             }
 
             CircularProgressIndicator(
-                progress = { 0.8F },
+                progress = { unit.progress },
                 modifier = Modifier
                     .size(50.dp)
                     .fillMaxSize()

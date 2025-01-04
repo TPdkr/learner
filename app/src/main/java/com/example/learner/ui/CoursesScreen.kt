@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme.typography
@@ -20,6 +19,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -27,11 +28,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.learner.classes.Course
-import com.example.learner.data.testCourse
-import com.example.learner.data.testCourses
+import com.example.learner.ui.viewModels.AppViewModel
+import com.example.learner.ui.viewModels.CoursesViewModel
 
 @Composable
-fun CoursesScreen(chooseCourse: (Course) -> Unit = {}, currentCourse: Course) {
+fun CoursesScreen(chooseCourse: (Course) -> Unit = {}, coursesViewModel: CoursesViewModel) {
+    val uiState by coursesViewModel.uiState.collectAsState()
+
     Surface(
         modifier = Modifier
             .fillMaxSize()
@@ -52,7 +55,7 @@ fun CoursesScreen(chooseCourse: (Course) -> Unit = {}, currentCourse: Course) {
                     .height(30.dp)
             )
             LazyColumn {
-                items(testCourses) { course ->
+                items(uiState.courses) { course ->
                     Row(modifier = Modifier.padding(5.dp)) {
                         Card(
                             modifier = Modifier
@@ -72,10 +75,14 @@ fun CoursesScreen(chooseCourse: (Course) -> Unit = {}, currentCourse: Course) {
                                 }*/
                                 Row(modifier = Modifier.width(90.dp), horizontalArrangement = Arrangement.SpaceBetween){
                                 Switch(
-                                    checked = course == currentCourse,
-                                    onCheckedChange = { chooseCourse(course) })
+                                    checked = course == uiState.currentCourse,
+                                    onCheckedChange = {
+                                        chooseCourse(course)
+                                        coursesViewModel.switchCourse()
+                                    }
+                                )
                                 CircularProgressIndicator(
-                                    progress = { 0.8F },
+                                    progress = { course.progress },
                                     modifier = Modifier.size(30.dp)
                                 )}
                             }
@@ -90,5 +97,5 @@ fun CoursesScreen(chooseCourse: (Course) -> Unit = {}, currentCourse: Course) {
 @Preview
 @Composable
 fun CoursesScreenPreview() {
-    CoursesScreen({}, testCourse)
+    CoursesScreen({}, CoursesViewModel(appViewModel = AppViewModel()))
 }

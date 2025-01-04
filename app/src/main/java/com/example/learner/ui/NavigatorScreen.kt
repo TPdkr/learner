@@ -12,6 +12,7 @@ import com.example.learner.classes.Course
 import com.example.learner.classes.Lesson
 import com.example.learner.ui.viewModels.AppViewModel
 import com.example.learner.ui.viewModels.CourseUnitViewModel
+import com.example.learner.ui.viewModels.CoursesViewModel
 import com.example.learner.ui.viewModels.LessonViewModel
 
 /**
@@ -59,7 +60,7 @@ fun LearnerApp(
                     appViewModel.changeLesson(appViewModel.currentCourse.reviewLesson())
                     navController.navigate(ScreenSate.LessonScreen.name)
                 },
-                canReview = appViewModel.currentCourse.canReaview(),
+                canReview = appViewModel.currentCourse.canReview(),
                 canLearn = appViewModel.currentCourse.canLearn()
 
             )
@@ -75,7 +76,7 @@ fun LearnerApp(
         composable(route = ScreenSate.CoursesScreen.name) {
             CoursesScreen(
                 chooseCourse = { course: Course -> appViewModel.switchCourse(course) },
-                appViewModel.currentCourse
+                coursesViewModel = CoursesViewModel(appViewModel)
             )
         }
         composable(route = ScreenSate.LessonScreen.name) {
