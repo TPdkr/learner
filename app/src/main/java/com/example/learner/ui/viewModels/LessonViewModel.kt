@@ -24,7 +24,8 @@ class LessonViewModel(lesson: Lesson) : ViewModel() {
     private val currentLesson: Lesson = lesson
 
     //this is the current word data
-    private lateinit var currentWord: Word
+    lateinit var currentWord: Word
+        private set
 
     //we start the lesson in default state
     init {
