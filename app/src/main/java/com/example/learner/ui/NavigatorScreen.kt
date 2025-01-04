@@ -8,8 +8,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.learner.classes.Lesson
 import com.example.learner.data.testCourse
-import com.example.learner.data.testLesson
 import com.example.learner.ui.viewModels.AppViewModel
 import com.example.learner.ui.viewModels.CourseUnitViewModel
 import com.example.learner.ui.viewModels.LessonViewModel
@@ -51,17 +51,22 @@ fun LearnerApp(
                 toUnits = { navController.navigate(ScreenSate.UnitsScreen.name) },
                 toCourses = { navController.navigate(ScreenSate.CoursesScreen.name) },
                 toLesson = { navController.navigate(ScreenSate.LessonScreen.name) },
-                toPrevious = {navController.popBackStack()}
+                toPrevious = { navController.popBackStack() }
             )
         }
         composable(route = ScreenSate.UnitsScreen.name) {
-            UnitScreen(CourseUnitViewModel(testCourse))
+            UnitScreen(
+                CourseUnitViewModel(testCourse)
+            ) { lesson: Lesson ->
+                appViewModel.changeLesson(lesson)
+                navController.navigate(ScreenSate.LessonScreen.name)
+            }
         }
         composable(route = ScreenSate.CoursesScreen.name) {
             CoursesScreen()
         }
         composable(route = ScreenSate.LessonScreen.name) {
-            LessonScreen(LessonViewModel(testLesson)) { navController.popBackStack() }
+            LessonScreen(LessonViewModel(appViewModel.currentLesson)) { navController.popBackStack() }
         }
     }
 }

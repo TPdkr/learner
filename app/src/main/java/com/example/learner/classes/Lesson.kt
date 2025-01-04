@@ -11,7 +11,7 @@ enum class TaskType {
     INFO
 }
 
-/** Lesson data class stores lesson information. It has a secondary constructor that allows to
+/** Lesson data class stores lesson information. It has a function [fromWords] that allows to
  * create a lesson from a list of words
  * */
 data class Lesson(

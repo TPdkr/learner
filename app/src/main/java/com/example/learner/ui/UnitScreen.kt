@@ -39,12 +39,13 @@ import androidx.compose.ui.window.Dialog
 import com.example.learner.R
 import com.example.learner.classes.CourseUnit
 import com.example.learner.classes.Gender
+import com.example.learner.classes.Lesson
 import com.example.learner.data.testCourse
 import com.example.learner.data.testUnit
 import com.example.learner.ui.viewModels.CourseUnitViewModel
 
 @Composable
-fun UnitScreen(courseUnitViewModel: CourseUnitViewModel) {
+fun UnitScreen(courseUnitViewModel: CourseUnitViewModel, toLesson: (Lesson) -> Unit) {
     val courseUiState by courseUnitViewModel.uiState.collectAsState()
     val showUnit = remember { mutableStateOf(false) }
     Surface(modifier = Modifier.fillMaxSize()) {
@@ -103,7 +104,11 @@ fun UnitScreen(courseUnitViewModel: CourseUnitViewModel) {
         }
     }
     if (showUnit.value) {
-        UnitDetailedCard(courseUnitViewModel.chosenUnit) { showUnit.value = false }
+        UnitDetailedCard(
+            courseUnitViewModel.chosenUnit,
+            onDismissRequest = { showUnit.value = false },
+            toLesson = toLesson
+        )
     }
 }
 
@@ -130,7 +135,8 @@ fun UnitCard(unit: CourseUnit, onClick: () -> Unit, modifier: Modifier = Modifie
 
             CircularProgressIndicator(
                 progress = { 0.8F },
-                modifier = Modifier.size(50.dp)
+                modifier = Modifier
+                    .size(50.dp)
                     .fillMaxSize()
                     .weight(1f)
             )
@@ -140,7 +146,7 @@ fun UnitCard(unit: CourseUnit, onClick: () -> Unit, modifier: Modifier = Modifie
 }
 
 @Composable
-fun UnitDetailedCard(unit: CourseUnit, onDismissRequest: () -> Unit) {
+fun UnitDetailedCard(unit: CourseUnit, onDismissRequest: () -> Unit, toLesson: (Lesson) -> Unit) {
     Dialog(onDismissRequest = onDismissRequest) {
         Card(modifier = Modifier.fillMaxSize()) {
             Column(
@@ -182,7 +188,7 @@ fun UnitDetailedCard(unit: CourseUnit, onDismissRequest: () -> Unit) {
                             .fillMaxSize()
                             .padding(10.dp)
                     ) {
-                        items(unit.word) { word ->
+                        items(unit.words) { word ->
                             Row(
                                 modifier = Modifier.height(25.dp),
                                 verticalAlignment = Alignment.CenterVertically
@@ -202,10 +208,13 @@ fun UnitDetailedCard(unit: CourseUnit, onDismissRequest: () -> Unit) {
                     }
                 }
                 Row(
-                    horizontalArrangement = Arrangement.SpaceAround, verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth().weight(0.7f)
+                    horizontalArrangement = Arrangement.SpaceAround,
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(0.7f)
                 ) {
-                    Button(onClick = {}, modifier = Modifier.width(130.dp)) {
+                    Button(onClick = {toLesson(unit.learnLesson())}, modifier = Modifier.width(130.dp)) {
                         Text(text = "learn words")
                     }
                     OutlinedButton(onClick = {}, modifier = Modifier.width(130.dp)) {
@@ -221,12 +230,12 @@ fun UnitDetailedCard(unit: CourseUnit, onDismissRequest: () -> Unit) {
 @Composable
 fun CardPreview() {
     Surface {
-        UnitDetailedCard(testUnit) { }
+        UnitDetailedCard(testUnit,{},{})
     }
 }
 
 @Preview
 @Composable
 fun UnitPreview() {
-    UnitScreen(CourseUnitViewModel(testCourse))
+    UnitScreen(CourseUnitViewModel(testCourse), {})
 }

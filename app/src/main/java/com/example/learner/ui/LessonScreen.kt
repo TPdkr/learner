@@ -260,7 +260,7 @@ fun ControlBlock(
             .fillMaxSize()
             .padding(40.dp)
     ) {
-        if (!lessonUiState.isChecked) {
+        if (!lessonUiState.isChecked && lessonUiState.currentTaskType!=TaskType.INFO) {
             Button(
                 onClick = { lessonViewModel.checkAnswer() },
                 modifier = Modifier.width(300.dp)
