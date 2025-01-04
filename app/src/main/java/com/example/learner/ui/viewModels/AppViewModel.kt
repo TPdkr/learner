@@ -1,11 +1,9 @@
 package com.example.learner.ui.viewModels
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.lifecycle.ViewModel
 import com.example.learner.classes.Course
 import com.example.learner.classes.Lesson
+import com.example.learner.data.testCourse
 import com.example.learner.data.testLesson
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -18,12 +16,20 @@ class AppViewModel() : ViewModel() {
     var currentLesson: Lesson
         private set
 
+    var currentCourse: Course
+        private set
+
     init {
         currentLesson = testLesson
+        currentCourse = testCourse
     }
 
     fun changeLesson(lesson: Lesson){
         currentLesson = lesson
+    }
+
+    fun switchCourse(course: Course){
+        currentCourse=course
     }
 
 

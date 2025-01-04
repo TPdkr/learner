@@ -50,7 +50,10 @@ fun LearnerApp(
             MainScreen(
                 toUnits = { navController.navigate(ScreenSate.UnitsScreen.name) },
                 toCourses = { navController.navigate(ScreenSate.CoursesScreen.name) },
-                toLesson = { navController.navigate(ScreenSate.LessonScreen.name) },
+                toLesson = {
+                    appViewModel.changeLesson(appViewModel.currentCourse.learnLesson())
+                    navController.navigate(ScreenSate.LessonScreen.name)
+                },
                 toPrevious = { navController.popBackStack() }
             )
         }
