@@ -1,5 +1,7 @@
 package com.example.learner.classes
 
+import androidx.compose.ui.util.fastJoinToString
+
 /**
 WORD STATUS
 A word can be either new, learning or in long term memory. The final stage is memorized.
@@ -53,4 +55,28 @@ data class Word(
     //noun properties:
     val gender: Gender = Gender.NOT_SET,
     val plural: Plural = Plural.NOT_SET
-)
+) {
+    fun toUiString(): String{
+        val genderStr = when (gender) {
+            Gender.DER -> "Der"
+            Gender.DIE -> "Die"
+            Gender.DAS -> "Das"
+            Gender.NOT_SET -> ""
+        }
+        val endingStr = when (plural) {
+            Plural.NO_CHANGE -> "-"
+            Plural.E -> "-e"
+            Plural.E_UMLAUT -> "-e:"
+            Plural.S -> "-s"
+            Plural.ER_UMLAUT -> "-er:"
+            Plural.EN -> "-en"
+            Plural.N -> "-n"
+            Plural.NOT_SET -> ""
+        }
+        val germanStr = (listOf(genderStr, german, endingStr).fastJoinToString(
+            separator = " "
+        ))
+        val text = listOf(germanStr, translation).fastJoinToString(separator = " = ")
+        return text
+    }
+}

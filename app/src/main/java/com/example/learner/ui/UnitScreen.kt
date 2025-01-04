@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
@@ -152,9 +154,8 @@ fun UnitDetailedCard(unit: CourseUnit, onDismissRequest: () -> Unit, toLesson: (
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(10.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
+                    .padding(10.dp).verticalScroll(rememberScrollState()),
+                horizontalAlignment = Alignment.CenterHorizontally) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier
@@ -190,18 +191,10 @@ fun UnitDetailedCard(unit: CourseUnit, onDismissRequest: () -> Unit, toLesson: (
                     ) {
                         items(unit.words) { word ->
                             Row(
-                                modifier = Modifier.height(25.dp),
+                                modifier = Modifier.padding(5.dp),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                when (word.gender) {
-                                    Gender.DER -> Text("Der ")
-                                    Gender.DAS -> Text("Das ")
-                                    Gender.DIE -> Text("Die ")
-                                    else -> Text("")
-                                }
-                                Text(word.german)
-                                Text(" = ")
-                                Text(word.translation)
+                                Text(text=word.toUiString())
                             }
                             HorizontalDivider(thickness = 2.dp)
                         }
@@ -215,10 +208,10 @@ fun UnitDetailedCard(unit: CourseUnit, onDismissRequest: () -> Unit, toLesson: (
                         .weight(0.7f)
                 ) {
                     Button(onClick = {toLesson(unit.learnLesson())}, modifier = Modifier.width(130.dp)) {
-                        Text(text = "learn words")
+                        Text(text = "learn words", style = typography.bodyMedium)
                     }
                     OutlinedButton(onClick = {}, modifier = Modifier.width(130.dp)) {
-                        Text(text = "add")
+                        Text(text = "add", style = typography.bodyMedium)
                     }
                 }
             }

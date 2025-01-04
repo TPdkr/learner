@@ -2,10 +2,6 @@ package com.example.learner.classes
 
 import android.util.Log
 
-/**
-LESSON DATA CLASS
-This is where information about a lesson is stored
- */
 enum class TaskType {
     TYPE_TEXT,
     INFO

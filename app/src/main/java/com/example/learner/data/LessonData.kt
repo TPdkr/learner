@@ -40,7 +40,8 @@ val testWords: List<Word> = listOf(
     ),
     Word(german = "laut", translation = "loud"),
     Word(german = "langweilig", translation = "boring"),
-    Word(german = "lachen", translation = "to laugh")
+    Word(german = "lachen", translation = "to laugh"),
+    Word(german = "very long word in german", translation = "very long translation")
 )
 val testTasks: List<Pair<Word, TaskType>> =
     testWords.map { Pair(it, TaskType.TYPE_TEXT) }
