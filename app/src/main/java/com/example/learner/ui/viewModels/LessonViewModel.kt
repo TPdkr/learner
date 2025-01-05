@@ -5,9 +5,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import com.example.learner.classes.Gender
 import com.example.learner.classes.Lesson
-import com.example.learner.classes.Plural
 import com.example.learner.classes.TaskType
 import com.example.learner.classes.Word
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -104,6 +102,10 @@ class LessonViewModel(lesson: Lesson) : ViewModel() {
     fun checkAnswer() {
         //is this answer correct?
         val isCorrect = currentWord.isCorrect(userGenderGuess, userGuess, userPluralGuess)
+        if(!isCorrect){
+            currentWord.incMistakes()
+        }
+        currentWord.incRound()
         //update ui state
         val inc = currentWord.countScore(userGenderGuess, userGuess, userPluralGuess)
         _uiState.update { currentState ->
