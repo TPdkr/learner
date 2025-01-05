@@ -35,12 +35,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import com.example.learner.R
 import com.example.learner.ui.theme.LearnerTheme
 
 @Preview(showBackground = true)
@@ -52,7 +54,8 @@ fun MainScreen(
     toPrevious: () -> Unit = {},
     toReview: () -> Unit={},
     canReview: Boolean = false,
-    canLearn: Boolean = false
+    canLearn: Boolean = false,
+    reviewCount: Int =0
 ) {
     val openDialog = remember { mutableStateOf(false) }
     LearnerTheme {
@@ -85,7 +88,8 @@ fun MainScreen(
                     Spacer(modifier = Modifier.height(100.dp))
                     //NAVIGATION:
                     Card {
-                        MenuButton(toReview, "review words", Icons.Default.Refresh, canReview)
+                        MenuButton(toReview,
+                            stringResource(R.string.to_review_button,reviewCount), Icons.Default.Refresh, canReview)
                         //this button starts a lesson test
                         MenuButton(toLesson, "learn words", Icons.Default.PlayArrow, canLearn)
                         //these are the units of current course

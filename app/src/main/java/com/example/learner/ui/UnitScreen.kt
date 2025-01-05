@@ -40,7 +40,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.example.learner.R
 import com.example.learner.classes.CourseUnit
-import com.example.learner.classes.Gender
 import com.example.learner.classes.Lesson
 import com.example.learner.data.testCourse
 import com.example.learner.data.testUnit
@@ -208,7 +207,7 @@ fun UnitDetailedCard(unit: CourseUnit, onDismissRequest: () -> Unit, toLesson: (
                         .weight(0.7f)
                 ) {
                     Button(onClick = {toLesson(unit.learnLesson())}, modifier = Modifier.width(130.dp)) {
-                        Text(text = "learn words", style = typography.bodyMedium)
+                        Text(text = "learn", style = typography.bodyMedium)
                     }
                     OutlinedButton(onClick = {}, modifier = Modifier.width(130.dp)) {
                         Text(text = "add", style = typography.bodyMedium)

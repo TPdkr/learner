@@ -50,13 +50,20 @@ data class Word(
     //common word properties:
     val german: String,
     val translation: String,
+    //properties relevant for lesson contents:
+    /**number of mistakes made during 1 lesson*/
     var mistakes: Int = 0,
+    /**word status says whether it should be learned, reviewed or not*/
     val status: Status = Status.NEW,
+    /**the time a word comes up in a given lesson*/
+    var round: Int = 0,
+    /**the time a word is revised, how many lessons it has been in?*/
+    var revision: Int = 0,
     //noun properties:
     val gender: Gender = Gender.NOT_SET,
     val plural: Plural = Plural.NOT_SET
 ) {
-    fun toUiString(): String{
+    fun toUiString(): String {
         val genderStr = when (gender) {
             Gender.DER -> "Der"
             Gender.DIE -> "Die"
@@ -78,5 +85,11 @@ data class Word(
         ))
         val text = listOf(germanStr, translation).fastJoinToString(separator = " = ")
         return text
+    }
+
+    fun resetLesson(){
+        mistakes=0
+        round=0
+        revision++
     }
 }

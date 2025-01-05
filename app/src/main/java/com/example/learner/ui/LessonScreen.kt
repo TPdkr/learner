@@ -47,12 +47,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.util.fastJoinToString
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.learner.R
-import com.example.learner.classes.Gender
-import com.example.learner.classes.Plural
 import com.example.learner.classes.TaskType
 import com.example.learner.data.infoTestLesson
 import com.example.learner.data.testLesson
@@ -88,7 +85,7 @@ fun LessonScreen(lessonViewModel: LessonViewModel = viewModel(), toPrevious: () 
                 //This is the task card
                 when (lessonUiState.currentTaskType) {
                     TaskType.TYPE_TEXT -> TypeTaskCard(lessonUiState, lessonViewModel)
-                    TaskType.INFO -> InfoCard(lessonUiState,lessonViewModel)
+                    TaskType.INFO -> InfoCard(lessonViewModel)
                     //else -> Text(text = "error in task type info")
                 }
                 //This is the button section that changes depending on context to either check or next
@@ -103,7 +100,7 @@ fun LessonScreen(lessonViewModel: LessonViewModel = viewModel(), toPrevious: () 
         FinalDialog(lessonUiState.score, toPrevious = toPrevious)
     }
 }
-
+/**This is a row that displays xp status of a lesson*/
 @Composable
 fun StatusRow(lessonUiState: LessonUiState) {
     Row(horizontalArrangement = Arrangement.SpaceEvenly, modifier = Modifier.fillMaxWidth()) {
@@ -113,9 +110,10 @@ fun StatusRow(lessonUiState: LessonUiState) {
         )
     }
 }
-
+/**This is a card of a task that only displays the info about a word instead of challenging the
+ * user*/
 @Composable
-fun InfoCard(lessonUiState: LessonUiState, lessonViewModel: LessonViewModel) {
+fun InfoCard(lessonViewModel: LessonViewModel) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -128,36 +126,10 @@ fun InfoCard(lessonUiState: LessonUiState, lessonViewModel: LessonViewModel) {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            val gender = when (lessonViewModel.currentWord.gender) {
-                Gender.DER -> "Der"
-                Gender.DIE -> "Die"
-                Gender.DAS -> "Das"
-                Gender.NOT_SET -> ""
-            }
-            val ending = when (lessonViewModel.currentWord.plural) {
-                Plural.NO_CHANGE -> "-"
-                Plural.E -> "-e"
-                Plural.E_UMLAUT -> "-e:"
-                Plural.S -> "-s"
-                Plural.ER_UMLAUT -> "-er:"
-                Plural.EN -> "-en"
-                Plural.N -> "-n"
-                Plural.NOT_SET -> ""
-            }
-            val text = (listOf(gender, lessonViewModel.currentWord.german, ending).fastJoinToString(
-                separator = " "
-            ))
             Text(
-                text = text,
+                text = lessonViewModel.currentWord.toUiString(),
                 style = typography.titleLarge,
                 fontWeight = FontWeight.Bold,
-                fontSize = 40.sp,
-                lineHeight = 40.sp,
-                textAlign = TextAlign.Center
-            )
-            Text(
-                text = lessonUiState.currentTrans,
-                style = typography.titleMedium,
                 fontSize = 40.sp,
                 lineHeight = 40.sp,
                 textAlign = TextAlign.Center
@@ -165,7 +137,8 @@ fun InfoCard(lessonUiState: LessonUiState, lessonViewModel: LessonViewModel) {
         }
     }
 }
-
+/**This is a card of a typing task in a lesson. Here the user has to type out the word letter by
+ * letter*/
 @Composable
 fun TypeTaskCard(lessonUiState: LessonUiState, lessonViewModel: LessonViewModel) {
     //This is the task card

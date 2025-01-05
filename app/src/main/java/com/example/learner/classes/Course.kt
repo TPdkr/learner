@@ -37,4 +37,6 @@ data class Course(val units: List<CourseUnit>, val name: String) {
 
     fun canReview(): Boolean = wordsToReview().isNotEmpty()
     fun canLearn(): Boolean = wordsToLearn().isNotEmpty()
+
+    fun reviewCount(): Int = wordsToReview().size
 }

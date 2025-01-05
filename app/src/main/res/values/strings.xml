@@ -4,4 +4,5 @@
     <string name="task_number">%d/%d</string>
     <string name="you_earned_xp">You earned %d XP!</string>
     <string name="unit_number">Unit: %d</string>
+    <string name="to_review_button">review %d words</string>
 </resources>

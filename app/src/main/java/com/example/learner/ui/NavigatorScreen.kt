@@ -61,7 +61,8 @@ fun LearnerApp(
                     navController.navigate(ScreenSate.LessonScreen.name)
                 },
                 canReview = appViewModel.currentCourse.canReview(),
-                canLearn = appViewModel.currentCourse.canLearn()
+                canLearn = appViewModel.currentCourse.canLearn(),
+                reviewCount = appViewModel.currentCourse.reviewCount()
 
             )
         }
