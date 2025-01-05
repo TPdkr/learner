@@ -1,6 +1,5 @@
 package com.example.learner.classes
 
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.util.fastJoinToString
 import java.util.Calendar
 import kotlin.math.max
@@ -65,7 +64,7 @@ data class Word(
     val plural: Plural = Plural.NOT_SET
 ) {
     /**calculate the status of the word using its data. Mainly [revisionTime] and [revision]*/
-    /*private fun getWordStatus(): Status {
+    fun getWordStatus(): Status {
         return if (revision == 0) {
             Status.NEW
         } else if (revision == -1) {
@@ -77,7 +76,7 @@ data class Word(
         } else {
             Status.REVIEW
         }
-    }*/
+    }
 
     /**when should a word be revised?*/
     var revisionTime: Calendar //can this cause issues?!!!
@@ -89,7 +88,7 @@ data class Word(
     private val calendar = Calendar.getInstance()
 
     /**word status says whether it should be learned, reviewed or not*/
-    val status = mutableStateOf(
+    /*val status = mutableStateOf(
         if (revision == 0) {
             Status.NEW
         } else if (revision == -1) {
@@ -101,7 +100,7 @@ data class Word(
         } else {
             Status.REVIEW
         }
-    )
+    )*/
     //val status = _status.value
     /**turn key info of a class instance into a readable string containing the [gender], [german]
      * translation and [plural] form as well as the [translation] into users language*/
@@ -149,7 +148,7 @@ data class Word(
     fun saveProgress() {
         val newRevisionTime = Calendar.getInstance()
         newRevisionTime.add(Calendar.HOUR_OF_DAY, 0)
-        newRevisionTime.add(Calendar.MINUTE, 6)
+        newRevisionTime.add(Calendar.MINUTE, 1)
         revisionTime = newRevisionTime
     }
 

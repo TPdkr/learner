@@ -41,16 +41,16 @@ data class Lesson(
         /**this function generates the tasks based on context. Its only input is a list of words*/
         private fun generateTasks(words: List<Word>): List<Pair<Word, TaskType>> {
             //what type of lesson is it?
-            val isReview = words.all { it.status.value == Status.REVIEW }
-            val isLearn = words.all { it.status.value == Status.NEW || it.status.value == Status.LEARNING }
+            val isReview = words.all { it.getWordStatus() == Status.REVIEW }
+            val isLearn = words.all { it.getWordStatus() == Status.NEW || it.getWordStatus() == Status.LEARNING }
             //we take actions based on type:
             if (!isLearn && !isReview || isLearn && isReview) {
                 Log.e("Lesson constructor", "Invalid word set")
                 return listOf()
             } else if (isLearn) {
                 //the list of all new words and learning words
-                val newWords = words.filter { it.status.value == Status.NEW }
-                val learnWords = words.filter { it.status.value == Status.LEARNING }
+                val newWords = words.filter { it.getWordStatus() == Status.NEW }
+                val learnWords = words.filter { it.getWordStatus() == Status.LEARNING }
                 //tasks for each type
                 val newWordsInfo = newWords.map { Pair(it, TaskType.INFO) }// info cards
                 //practice part
@@ -77,10 +77,10 @@ data class Lesson(
         val words = tasks.map{it.first}.toSet()//we get all words in a lesson
         words.forEach {
             //update state of the word
-            Log.d("state check", "Before save: $it, status: ${it.status}, reviewTime: ${it.revisionTime}")
+            Log.d("state check", "Before save: $it, status: ${it.getWordStatus()}, reviewTime: ${it.revisionTime}")
             it.resetLesson()
             it.saveProgress()
-            Log.d("state check", "After save: $it, status: ${it.status}, reviewTime ${it.revisionTime}")
+            Log.d("state check", "After save: $it, status: ${it.getWordStatus()}, reviewTime ${it.revisionTime}")
         }
     }
 }

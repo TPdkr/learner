@@ -29,7 +29,7 @@ data class Course(val units: List<CourseUnit>, val name: String) {
     }
 
     /**value between 0 and 1 that shows how complete is the Course*/
-    val progress: Float =
+    fun getProgress(): Float =
         if (wordsAll().isNotEmpty()) wordsLearned().size.toFloat() / wordsAll().size.toFloat() else 0F
 
     fun learnLesson(): Lesson = Lesson.fromWords(wordsToLearn().take(5))

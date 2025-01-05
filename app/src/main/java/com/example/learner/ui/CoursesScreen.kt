@@ -70,9 +70,6 @@ fun CoursesScreen(chooseCourse: (Course) -> Unit = {}, coursesViewModel: Courses
                                     .padding(10.dp)
                             ) {
                                 Text(text = course.name, fontWeight = FontWeight.Bold)
-                                /*Button(onClick = {}, enabled = course != currentCourse) {
-                                    Text("switch course", style = typography.labelSmall)
-                                }*/
                                 Row(modifier = Modifier.width(90.dp), horizontalArrangement = Arrangement.SpaceBetween){
                                 Switch(
                                     checked = course == uiState.currentCourse,
@@ -82,7 +79,7 @@ fun CoursesScreen(chooseCourse: (Course) -> Unit = {}, coursesViewModel: Courses
                                     }
                                 )
                                 CircularProgressIndicator(
-                                    progress = { course.progress },
+                                    progress = { course.getProgress() },
                                     modifier = Modifier.size(30.dp)
                                 )}
                             }
