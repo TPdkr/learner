@@ -46,14 +46,14 @@ class LessonViewModel(lesson: Lesson) : ViewModel() {
             _uiState.value = LessonUiState(
                 currentTrans = currentWord.translation,
                 currentTaskType = newTaskType,
-                isNoun = isNoun(currentWord),
+                isNoun = isNoun(),
                 taskCount = currentLesson.tasks.size
             )
         }
     }
 
     //is a given word a noun?
-    private fun isNoun(word: Word): Boolean = currentWord.isNoun()
+    private fun isNoun(): Boolean = currentWord.isNoun()
 
     //update user guess after change
     fun updateUserGuess(newGuess: String) {
@@ -84,7 +84,7 @@ class LessonViewModel(lesson: Lesson) : ViewModel() {
                 currentState.copy(
                     isChecked = false,
                     isWrong = false,
-                    isNoun = isNoun(currentWord),
+                    isNoun = isNoun(),
                     taskNumber = nextTaskNumber,
                     currentTrans = currentWord.translation,
                     currentTaskType = newTaskType
