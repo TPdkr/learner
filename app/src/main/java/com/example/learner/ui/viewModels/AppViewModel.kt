@@ -6,7 +6,7 @@ import com.example.learner.classes.Lesson
 import com.example.learner.data.testCourse
 import kotlin.math.max
 
-class AppViewModel() : ViewModel() {
+class AppViewModel : ViewModel() {
     var currentLesson: Lesson
         private set
 
