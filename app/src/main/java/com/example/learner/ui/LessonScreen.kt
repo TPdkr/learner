@@ -30,6 +30,7 @@ import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -50,23 +51,23 @@ import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.learner.R
 import com.example.learner.classes.TaskType
+import com.example.learner.data.infoTestLesson
+import com.example.learner.data.testLesson
 import com.example.learner.ui.viewModels.LessonUiState
 import com.example.learner.ui.viewModels.LessonViewModel
 
 val endings = listOf("-", "e", "e:", "s", "er:", "en", "n")
 val genders = listOf("Der", "Die", "Das")
 
-@Preview
 @Composable
-fun LessonScreen(lessonViewModel: LessonViewModel = viewModel()) {
+fun LessonScreen(lessonViewModel: LessonViewModel = viewModel(), toPrevious: () -> Unit, updateScore: (Int)->Unit) {
     val lessonUiState by lessonViewModel.uiState.collectAsState()
     var isSubmitted by remember { mutableStateOf(false) }
     Surface(
         modifier = Modifier
             .fillMaxSize()
-            .statusBarsPadding()
     ) {
-        Column {
+        Column(modifier = Modifier.statusBarsPadding()) {
             LessonProgressBar(lessonUiState)
             Column(
                 modifier = Modifier
@@ -84,22 +85,25 @@ fun LessonScreen(lessonViewModel: LessonViewModel = viewModel()) {
                 //This is the task card
                 when (lessonUiState.currentTaskType) {
                     TaskType.TYPE_TEXT -> TypeTaskCard(lessonUiState, lessonViewModel)
-                    TaskType.INFO -> Text(text = "info card is being built")
+                    TaskType.INFO -> InfoCard(lessonViewModel)
                     //else -> Text(text = "error in task type info")
                 }
                 //This is the button section that changes depending on context to either check or next
-                ControlBlock(lessonUiState, lessonViewModel) { isSubmitted = true }
-
+                ControlBlock(lessonUiState, lessonViewModel) {
+                    updateScore(lessonUiState.score)
+                    lessonViewModel.saveLesson()
+                    isSubmitted = true
+                }
             }
         }
 
     }
 
     if (isSubmitted) {
-        FinalDialog(lessonUiState.score) { isSubmitted = false }
+        FinalDialog(lessonUiState.score, toPrevious = toPrevious)
     }
 }
-
+/**This is a row that displays xp status of a lesson*/
 @Composable
 fun StatusRow(lessonUiState: LessonUiState) {
     Row(horizontalArrangement = Arrangement.SpaceEvenly, modifier = Modifier.fillMaxWidth()) {
@@ -109,8 +113,35 @@ fun StatusRow(lessonUiState: LessonUiState) {
         )
     }
 }
-
-@OptIn(ExperimentalMaterial3Api::class)
+/**This is a card of a task that only displays the info about a word instead of challenging the
+ * user*/
+@Composable
+fun InfoCard(lessonViewModel: LessonViewModel) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(300.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(20.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = lessonViewModel.currentWord.toUiString(),
+                style = typography.titleLarge,
+                fontWeight = FontWeight.Bold,
+                fontSize = 40.sp,
+                lineHeight = 40.sp,
+                textAlign = TextAlign.Center
+            )
+        }
+    }
+}
+/**This is a card of a typing task in a lesson. Here the user has to type out the word letter by
+ * letter*/
 @Composable
 fun TypeTaskCard(lessonUiState: LessonUiState, lessonViewModel: LessonViewModel) {
     //This is the task card
@@ -180,7 +211,7 @@ fun TypeTaskCard(lessonUiState: LessonUiState, lessonViewModel: LessonViewModel)
 @Composable
 fun AnswerSegmentedButton(options: List<String>, onClick: (Int) -> Unit, choice: Int) {
     SingleChoiceSegmentedButtonRow {
-        options.forEachIndexed() { index, label ->
+        options.forEachIndexed { index, label ->
             SegmentedButton(
                 shape = SegmentedButtonDefaults.itemShape(
                     index = index,
@@ -205,7 +236,7 @@ fun ControlBlock(
             .fillMaxSize()
             .padding(40.dp)
     ) {
-        if (!lessonUiState.isChecked) {
+        if (!lessonUiState.isChecked && lessonUiState.currentTaskType!=TaskType.INFO) {
             Button(
                 onClick = { lessonViewModel.checkAnswer() },
                 modifier = Modifier.width(300.dp)
@@ -243,8 +274,8 @@ fun LessonProgressBar(lessonUiState: LessonUiState) {
 }
 
 @Composable
-fun FinalDialog(score: Int, onDismissRequest: () -> Unit) {
-    Dialog(onDismissRequest = onDismissRequest) {
+fun FinalDialog(score: Int, toPrevious: () -> Unit) {
+    Dialog(onDismissRequest = {}) {
         Card(
             modifier = Modifier
                 .fillMaxWidth()
@@ -263,12 +294,14 @@ fun FinalDialog(score: Int, onDismissRequest: () -> Unit) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .wrapContentSize(Alignment.Center)
+                        .padding(5.dp)
                 )
                 Text(
                     text = "Good boy ;)",
                     modifier = Modifier
                         .fillMaxWidth()
-                        .wrapContentSize(Alignment.Center),
+                        .wrapContentSize(Alignment.Center)
+                        .padding(5.dp),
                     textAlign = TextAlign.Center
                 )
                 Text(
@@ -279,8 +312,24 @@ fun FinalDialog(score: Int, onDismissRequest: () -> Unit) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .wrapContentSize(Alignment.Center)
+                        .padding(10.dp)
                 )
+                TextButton(onClick = toPrevious, modifier = Modifier.fillMaxWidth()) {
+                    Text("return back", textAlign = TextAlign.Center)
+                }
             }
         }
     }
+}
+
+@Preview
+@Composable
+fun LessonPreview() {
+    LessonScreen(LessonViewModel(testLesson),{}) {}
+}
+
+@Preview
+@Composable
+fun LessonInfoPreview() {
+    LessonScreen(LessonViewModel(infoTestLesson),{}) {}
 }

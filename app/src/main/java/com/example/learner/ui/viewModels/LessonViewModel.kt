@@ -5,9 +5,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import com.example.learner.classes.Gender
 import com.example.learner.classes.Lesson
-import com.example.learner.classes.Plural
 import com.example.learner.classes.TaskType
 import com.example.learner.classes.Word
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,7 +22,8 @@ class LessonViewModel(lesson: Lesson) : ViewModel() {
     private val currentLesson: Lesson = lesson
 
     //this is the current word data
-    private lateinit var currentWord: Word
+    lateinit var currentWord: Word
+        private set
 
     //we start the lesson in default state
     init {
@@ -47,15 +46,14 @@ class LessonViewModel(lesson: Lesson) : ViewModel() {
             _uiState.value = LessonUiState(
                 currentTrans = currentWord.translation,
                 currentTaskType = newTaskType,
-                isNoun = isNoun(currentWord),
-                taskCount = currentLesson.words.size
+                isNoun = isNoun(),
+                taskCount = currentLesson.tasks.size
             )
         }
     }
 
     //is a given word a noun?
-    private fun isNoun(word: Word): Boolean =
-        (word.gender != Gender.NOT_SET && word.plural != Plural.NOT_SET)
+    private fun isNoun(): Boolean = currentWord.isNoun()
 
     //update user guess after change
     fun updateUserGuess(newGuess: String) {
@@ -72,6 +70,10 @@ class LessonViewModel(lesson: Lesson) : ViewModel() {
         userPluralGuess = plural
     }
 
+    fun saveLesson(){
+        currentLesson.saveLesson()
+    }
+
     //move to next task if possible
     fun nextTask() {
         if (_uiState.value.taskNumber < _uiState.value.taskCount - 1) {
@@ -82,7 +84,7 @@ class LessonViewModel(lesson: Lesson) : ViewModel() {
                 currentState.copy(
                     isChecked = false,
                     isWrong = false,
-                    isNoun = isNoun(currentWord),
+                    isNoun = isNoun(),
                     taskNumber = nextTaskNumber,
                     currentTrans = currentWord.translation,
                     currentTaskType = newTaskType
@@ -99,12 +101,15 @@ class LessonViewModel(lesson: Lesson) : ViewModel() {
     //check the input
     fun checkAnswer() {
         //is this answer correct?
-        val isCorrect = userGuess.equals(
-            currentWord.german, ignoreCase = true
-        ) && userGenderGuess == (currentWord.gender.code) && (userPluralGuess == (currentWord.plural.code))
+        val isCorrect = currentWord.isCorrect(userGenderGuess, userGuess, userPluralGuess)
+        if(!isCorrect){
+            currentWord.incMistakes()
+        }
+        currentWord.incRound()
         //update ui state
+        val inc = currentWord.countScore(userGenderGuess, userGuess, userPluralGuess)
         _uiState.update { currentState ->
-            val newScore = if (isCorrect) currentState.score.plus(20) else currentState.score
+            val newScore = if (isCorrect) currentState.score.plus(inc) else currentState.score
             currentState.copy(score = newScore, isChecked = true, isWrong = !isCorrect)
         }
         //we want to show the correct answer

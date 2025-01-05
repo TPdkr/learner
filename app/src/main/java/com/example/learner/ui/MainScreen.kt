@@ -1,9 +1,9 @@
 package com.example.learner.ui
 
-import android.content.Intent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,9 +17,11 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
@@ -32,21 +34,31 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import com.example.learner.LessonActivity
+import com.example.learner.R
 import com.example.learner.ui.theme.LearnerTheme
 
 @Preview(showBackground = true)
 @Composable
-fun MainScreen() {
+fun MainScreen(
+    toUnits: () -> Unit = {},
+    toCourses: () -> Unit = {},
+    toLesson: () -> Unit = {},
+    toPrevious: () -> Unit = {},
+    toReview: () -> Unit = {},
+    canReview: Boolean = false,
+    canLearn: Boolean = false,
+    reviewCount: Int = 0,
+    xp: Int = 0
+) {
     val openDialog = remember { mutableStateOf(false) }
-    val context = LocalContext.current
     LearnerTheme {
         Surface(
             modifier = Modifier
@@ -67,38 +79,31 @@ fun MainScreen() {
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     //TITLE:
-                    Text(
-                        text = "Genau",
-                        style = typography.titleLarge,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 40.sp,
-                        textAlign = TextAlign.Center
-                    )
+                    Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(
+                            text = "Genau",
+                            style = typography.titleLarge,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 40.sp,
+                            textAlign = TextAlign.Center
+                        )
+                        Text(stringResource(R.string.xp, xp),textAlign = TextAlign.Center)
+                    }
                     Spacer(modifier = Modifier.height(100.dp))
-                    val buttonModifier = Modifier
-                        .width(300.dp)
-                        .padding(8.dp)
                     //NAVIGATION:
                     Card {
+                        MenuButton(
+                            toReview,
+                            stringResource(R.string.to_review_button, reviewCount),
+                            Icons.Default.Refresh,
+                            canReview
+                        )
                         //this button starts a lesson test
-                        Button(onClick = {
-                            val intent = Intent(context, LessonActivity::class.java)
-                            context.startActivity(intent)
-                        }, modifier = buttonModifier) {
-                            Icon(
-                                Icons.Default.PlayArrow,
-                                contentDescription = null
-                            )
-                            Text(text = "test lesson")
-                        }
-                        //this is a dummy
-                        Button(onClick = { print(3) }, modifier = buttonModifier) {
-                            Icon(
-                                Icons.Default.Menu,
-                                contentDescription = null
-                            )
-                            Text(text = "dummy 2")
-                        }
+                        MenuButton(toLesson, "learn words", Icons.Default.PlayArrow, canLearn)
+                        //these are the units of current course
+                        MenuButton(toUnits, "units", Icons.Default.Menu)
+                        MenuButton(toCourses, "courses catalogue", Icons.Default.Add)
                     }
                     Text(
                         text = "made by TPdkr",
@@ -127,6 +132,22 @@ fun MainScreen() {
                     )
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun MenuButton(onClick: () -> Unit, text: String, icon: ImageVector, enabled: Boolean = true) {
+    val buttonModifier = Modifier
+        .width(300.dp)
+        .padding(8.dp)
+    Button(onClick = onClick, modifier = buttonModifier, enabled = enabled) {
+        Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxSize()) {
+            Icon(
+                icon,
+                contentDescription = null
+            )
+            Text(text = text)
         }
     }
 }
