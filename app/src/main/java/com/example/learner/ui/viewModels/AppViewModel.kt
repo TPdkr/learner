@@ -8,6 +8,7 @@ import com.example.learner.data.testLesson
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlin.math.max
 
 class AppViewModel() : ViewModel() {
     private val _uiState = MutableStateFlow(AppUiState())
@@ -19,9 +20,13 @@ class AppViewModel() : ViewModel() {
     var currentCourse: Course
         private set
 
+    var xp: Int
+        private set
+
     init {
         currentLesson = testLesson
         currentCourse = testCourse
+        xp=0
     }
 
     fun changeLesson(lesson: Lesson){
@@ -30,6 +35,10 @@ class AppViewModel() : ViewModel() {
 
     fun switchCourse(course: Course){
         currentCourse=course
+    }
+
+    fun updateScore(inc: Int){
+        xp+= max(a=0,b=inc)
     }
 
 

@@ -60,7 +60,7 @@ val endings = listOf("-", "e", "e:", "s", "er:", "en", "n")
 val genders = listOf("Der", "Die", "Das")
 
 @Composable
-fun LessonScreen(lessonViewModel: LessonViewModel = viewModel(), toPrevious: () -> Unit) {
+fun LessonScreen(lessonViewModel: LessonViewModel = viewModel(), toPrevious: () -> Unit, updateScore: (Int)->Unit) {
     val lessonUiState by lessonViewModel.uiState.collectAsState()
     var isSubmitted by remember { mutableStateOf(false) }
     Surface(
@@ -89,8 +89,11 @@ fun LessonScreen(lessonViewModel: LessonViewModel = viewModel(), toPrevious: () 
                     //else -> Text(text = "error in task type info")
                 }
                 //This is the button section that changes depending on context to either check or next
-                ControlBlock(lessonUiState, lessonViewModel) { isSubmitted = true }
-
+                ControlBlock(lessonUiState, lessonViewModel) {
+                    updateScore(lessonUiState.score)
+                    lessonViewModel.saveLesson()
+                    isSubmitted = true
+                }
             }
         }
 
@@ -322,11 +325,11 @@ fun FinalDialog(score: Int, toPrevious: () -> Unit) {
 @Preview
 @Composable
 fun LessonPreview() {
-    LessonScreen(LessonViewModel(testLesson)) {}
+    LessonScreen(LessonViewModel(testLesson),{}) {}
 }
 
 @Preview
 @Composable
 fun LessonInfoPreview() {
-    LessonScreen(LessonViewModel(infoTestLesson)) {}
+    LessonScreen(LessonViewModel(infoTestLesson),{}) {}
 }

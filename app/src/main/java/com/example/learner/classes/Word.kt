@@ -1,6 +1,7 @@
 package com.example.learner.classes
 
 import androidx.compose.ui.util.fastJoinToString
+import kotlin.math.max
 
 /**
 WORD STATUS
@@ -59,6 +60,8 @@ data class Word(
     var round: Int = 0,
     /**the time a word is revised, how many lessons it has been in?*/
     var revision: Int = 0,
+    /**when should a word be revised?*/
+    var revisionTime: Int = 0,//time value need to be set
     //noun properties:
     val gender: Gender = Gender.NOT_SET,
     val plural: Plural = Plural.NOT_SET
@@ -87,9 +90,27 @@ data class Word(
         return text
     }
 
-    fun resetLesson(){
-        mistakes=0
-        round=0
+    fun resetLesson() {
+        mistakes = 0
+        round = 0
         revision++
     }
+
+    fun countScore(genderGuess: Int, germanGuess: String, pluralGuess: Int): Int {
+        val isCorrect = isCorrect(genderGuess,germanGuess,pluralGuess)
+        val isGenderCorrect = if (genderGuess == gender.code) 0F else 1F
+        val isGermanCorrect = if (germanGuess == german) 0F else 1F
+        val isPluralCorrect = if (pluralGuess == plural.code) 0F else 1F
+        val guessScore = isPluralCorrect * 0.25 + isGenderCorrect * 0.25 + isGermanCorrect * 0.5
+        val attemptMargin = if (isCorrect) round.toFloat() * 0.5F else 0F
+
+        return max((20 - guessScore * 2 - attemptMargin).toInt(), 0)
+    }
+
+    fun isNoun(): Boolean = gender != Gender.NOT_SET && plural != Plural.NOT_SET
+
+    fun isCorrect(genderGuess: Int, germanGuess: String, pluralGuess: Int): Boolean =
+        germanGuess.equals(german, ignoreCase = true)
+                && genderGuess == (gender.code) && (pluralGuess == (plural.code))
+
 }

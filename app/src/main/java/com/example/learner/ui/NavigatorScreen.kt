@@ -62,7 +62,8 @@ fun LearnerApp(
                 },
                 canReview = appViewModel.currentCourse.canReview(),
                 canLearn = appViewModel.currentCourse.canLearn(),
-                reviewCount = appViewModel.currentCourse.reviewCount()
+                reviewCount = appViewModel.currentCourse.reviewCount(),
+                xp = appViewModel.xp
 
             )
         }
@@ -81,7 +82,8 @@ fun LearnerApp(
             )
         }
         composable(route = ScreenSate.LessonScreen.name) {
-            LessonScreen(LessonViewModel(appViewModel.currentLesson)) { navController.popBackStack() }
+            LessonScreen(LessonViewModel(appViewModel.currentLesson),
+                { navController.popBackStack() }) { inc: Int -> appViewModel.updateScore(inc) }
         }
     }
 }

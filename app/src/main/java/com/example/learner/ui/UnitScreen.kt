@@ -229,5 +229,5 @@ fun CardPreview() {
 @Preview
 @Composable
 fun UnitPreview() {
-    UnitScreen(CourseUnitViewModel(testCourse), {})
+    UnitScreen(CourseUnitViewModel(testCourse)){}
 }

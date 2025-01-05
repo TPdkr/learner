@@ -52,10 +52,11 @@ fun MainScreen(
     toCourses: () -> Unit = {},
     toLesson: () -> Unit = {},
     toPrevious: () -> Unit = {},
-    toReview: () -> Unit={},
+    toReview: () -> Unit = {},
     canReview: Boolean = false,
     canLearn: Boolean = false,
-    reviewCount: Int =0
+    reviewCount: Int = 0,
+    xp: Int = 0
 ) {
     val openDialog = remember { mutableStateOf(false) }
     LearnerTheme {
@@ -78,18 +79,26 @@ fun MainScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     //TITLE:
-                    Text(
-                        text = "Genau",
-                        style = typography.titleLarge,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 40.sp,
-                        textAlign = TextAlign.Center
-                    )
+                    Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(
+                            text = "Genau",
+                            style = typography.titleLarge,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 40.sp,
+                            textAlign = TextAlign.Center
+                        )
+                        Text(stringResource(R.string.xp, xp),textAlign = TextAlign.Center)
+                    }
                     Spacer(modifier = Modifier.height(100.dp))
                     //NAVIGATION:
                     Card {
-                        MenuButton(toReview,
-                            stringResource(R.string.to_review_button,reviewCount), Icons.Default.Refresh, canReview)
+                        MenuButton(
+                            toReview,
+                            stringResource(R.string.to_review_button, reviewCount),
+                            Icons.Default.Refresh,
+                            canReview
+                        )
                         //this button starts a lesson test
                         MenuButton(toLesson, "learn words", Icons.Default.PlayArrow, canLearn)
                         //these are the units of current course
@@ -128,7 +137,7 @@ fun MainScreen(
 }
 
 @Composable
-fun MenuButton(onClick: () -> Unit, text: String, icon: ImageVector, enabled: Boolean =true) {
+fun MenuButton(onClick: () -> Unit, text: String, icon: ImageVector, enabled: Boolean = true) {
     val buttonModifier = Modifier
         .width(300.dp)
         .padding(8.dp)

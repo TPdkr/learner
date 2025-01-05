@@ -71,4 +71,12 @@ data class Lesson(
             }
         }
     }
+
+    fun saveLesson(){
+        val words = tasks.map{it.first}.toSet()
+        words.forEach {
+            it.resetLesson()
+            //update state of the word
+        }
+    }
 }

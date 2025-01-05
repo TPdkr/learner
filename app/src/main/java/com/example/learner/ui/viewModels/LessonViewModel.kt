@@ -55,8 +55,7 @@ class LessonViewModel(lesson: Lesson) : ViewModel() {
     }
 
     //is a given word a noun?
-    private fun isNoun(word: Word): Boolean =
-        (word.gender != Gender.NOT_SET && word.plural != Plural.NOT_SET)
+    private fun isNoun(word: Word): Boolean = currentWord.isNoun()
 
     //update user guess after change
     fun updateUserGuess(newGuess: String) {
@@ -71,6 +70,10 @@ class LessonViewModel(lesson: Lesson) : ViewModel() {
     //update plural guess for the word
     fun updatePluralGuess(plural: Int) {
         userPluralGuess = plural
+    }
+
+    fun saveLesson(){
+        currentLesson.saveLesson()
     }
 
     //move to next task if possible
@@ -100,12 +103,11 @@ class LessonViewModel(lesson: Lesson) : ViewModel() {
     //check the input
     fun checkAnswer() {
         //is this answer correct?
-        val isCorrect = userGuess.equals(
-            currentWord.german, ignoreCase = true
-        ) && userGenderGuess == (currentWord.gender.code) && (userPluralGuess == (currentWord.plural.code))
+        val isCorrect = currentWord.isCorrect(userGenderGuess, userGuess, userPluralGuess)
         //update ui state
+        val inc = currentWord.countScore(userGenderGuess, userGuess, userPluralGuess)
         _uiState.update { currentState ->
-            val newScore = if (isCorrect) currentState.score.plus(20) else currentState.score
+            val newScore = if (isCorrect) currentState.score.plus(inc) else currentState.score
             currentState.copy(score = newScore, isChecked = true, isWrong = !isCorrect)
         }
         //we want to show the correct answer
