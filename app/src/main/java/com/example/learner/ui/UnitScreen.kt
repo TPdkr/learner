@@ -209,7 +209,7 @@ fun UnitDetailedCard(unit: CourseUnit, onDismissRequest: () -> Unit, toLesson: (
                     Button(onClick = {toLesson(unit.learnLesson())}, modifier = Modifier.width(130.dp)) {
                         Text(text = "learn", style = typography.bodyMedium)
                     }
-                    OutlinedButton(onClick = {}, modifier = Modifier.width(130.dp)) {
+                    OutlinedButton(onClick = {}, modifier = Modifier.width(130.dp), enabled = false) {
                         Text(text = "add", style = typography.bodyMedium)
                     }
                 }

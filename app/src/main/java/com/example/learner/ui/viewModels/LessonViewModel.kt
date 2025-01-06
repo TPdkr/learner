@@ -1,5 +1,6 @@
 package com.example.learner.ui.viewModels
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -45,6 +46,7 @@ class LessonViewModel(lesson: Lesson) : ViewModel() {
             val newTaskType = currentLesson.tasks.first().second
             _uiState.value = LessonUiState(
                 currentTrans = currentWord.translation,
+                info = currentWord.toUiString(),
                 currentTaskType = newTaskType,
                 isNoun = isNoun(),
                 taskCount = currentLesson.tasks.size
@@ -70,7 +72,7 @@ class LessonViewModel(lesson: Lesson) : ViewModel() {
         userPluralGuess = plural
     }
 
-    fun saveLesson(){
+    fun saveLesson() {
         currentLesson.saveLesson()
     }
 
@@ -87,12 +89,17 @@ class LessonViewModel(lesson: Lesson) : ViewModel() {
                     isNoun = isNoun(),
                     taskNumber = nextTaskNumber,
                     currentTrans = currentWord.translation,
+                    info = currentWord.toUiString(),
                     currentTaskType = newTaskType
                 )
             }
             updateUserGuess("")
             updatePluralGuess(-1)
             updateGenderGuess(-1)
+            Log.d(
+                "card glitch",
+                "current word now is: ${currentWord.german}, to ui string: ${currentWord.toUiString()}"
+            )
         } else {
             //need to handle the end of the lesson
         }
@@ -102,7 +109,7 @@ class LessonViewModel(lesson: Lesson) : ViewModel() {
     fun checkAnswer() {
         //is this answer correct?
         val isCorrect = currentWord.isCorrect(userGenderGuess, userGuess, userPluralGuess)
-        if(!isCorrect){
+        if (!isCorrect) {
             currentWord.incMistakes()
         }
         currentWord.incRound()
@@ -129,5 +136,6 @@ data class LessonUiState(
     val score: Int = 0,
     val wordCount: Int = 0,
     val currentTrans: String = "",
+    val info: String = "",
     val currentTaskType: TaskType = TaskType.TYPE_TEXT
 )

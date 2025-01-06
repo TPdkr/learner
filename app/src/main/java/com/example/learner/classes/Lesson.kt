@@ -24,6 +24,8 @@ data class Lesson(
          * an error*/
         fun fromWords(words: List<Word>): Lesson {
             val tasks = generateTasks(words)
+            Log.d("lesson bug", tasks.joinToString(" ") { it.first.german })
+            Log.d("lesson bug", tasks.joinToString(" ") { it.second.name })
             return Lesson(tasks)
         }
 

@@ -82,7 +82,7 @@ fun MainScreen(
                     Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally) {
                         Text(
-                            text = "Genau",
+                            text = stringResource(R.string.app_title),
                             style = typography.titleLarge,
                             fontWeight = FontWeight.Bold,
                             fontSize = 40.sp,
@@ -100,10 +100,13 @@ fun MainScreen(
                             canReview
                         )
                         //this button starts a lesson test
-                        MenuButton(toLesson, "learn words", Icons.Default.PlayArrow, canLearn)
+                        MenuButton(toLesson,
+                            stringResource(R.string.learn_words_button), Icons.Default.PlayArrow, canLearn)
                         //these are the units of current course
-                        MenuButton(toUnits, "units", Icons.Default.Menu)
-                        MenuButton(toCourses, "courses catalogue", Icons.Default.Add)
+                        MenuButton(toUnits,
+                            stringResource(R.string.units_button), Icons.Default.Menu)
+                        MenuButton(toCourses,
+                            stringResource(R.string.courses_catalogue_button), Icons.Default.Add)
                     }
                     Text(
                         text = "made by TPdkr",
@@ -170,7 +173,7 @@ fun InfoDialog(onDismissRequest: () -> Unit) {
                 modifier = Modifier.fillMaxSize()
             ) {
                 Text(
-                    text = "Tanks for testing!",
+                    text = stringResource(R.string.tanks_for_testing),
                     textAlign = TextAlign.Center,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
@@ -178,7 +181,7 @@ fun InfoDialog(onDismissRequest: () -> Unit) {
                         .wrapContentSize(Alignment.Center)
                 )
                 Text(
-                    text = "This app is still in early development. Please report errors and bugs. Code is fully open source.",
+                    text = stringResource(R.string.info_app_message),
                     modifier = Modifier
                         .fillMaxWidth()
                         .wrapContentSize(Alignment.Center),

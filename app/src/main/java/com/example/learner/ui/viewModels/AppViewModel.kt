@@ -3,7 +3,7 @@ package com.example.learner.ui.viewModels
 import androidx.lifecycle.ViewModel
 import com.example.learner.classes.Course
 import com.example.learner.classes.Lesson
-import com.example.learner.data.testCourse
+import com.example.learner.data.Catalogue
 import kotlin.math.max
 
 class AppViewModel : ViewModel() {
@@ -17,8 +17,8 @@ class AppViewModel : ViewModel() {
         private set
 
     init {
-        currentLesson = testCourse.learnLesson()
-        currentCourse = testCourse
+        currentCourse = Catalogue.emptyCourse
+        currentLesson = currentCourse.learnLesson()
         xp = 0
     }
 
