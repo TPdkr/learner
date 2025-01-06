@@ -65,16 +65,13 @@ data class Word(
 ) {
     /**calculate the status of the word using its data. Mainly [revisionTime] and [revision]*/
     fun getWordStatus(): Status {
-        return if (revision == 0) {
-            Status.NEW
-        } else if (revision == -1) {
-            Status.LONG_TERM
-        } else if (revision == 1) {
-            Status.LEARNING
-        } else if (revisionTime.timeInMillis > calendar.timeInMillis) {
-            Status.LONG_TERM
-        } else {
-            Status.REVIEW
+        val currentTime = Calendar.getInstance().timeInMillis
+        return when  {
+            (revision == 0) -> Status.NEW
+            (revision == -1) -> Status.MEMORIZED
+            (revision == 1) -> Status.LEARNING
+            (revisionTime.timeInMillis <= currentTime) -> Status.REVIEW
+            else -> Status.LONG_TERM
         }
     }
 
@@ -87,21 +84,6 @@ data class Word(
 
     private val calendar = Calendar.getInstance()
 
-    /**word status says whether it should be learned, reviewed or not*/
-    /*val status = mutableStateOf(
-        if (revision == 0) {
-            Status.NEW
-        } else if (revision == -1) {
-            Status.LONG_TERM
-        } else if (revision == 1) {
-            Status.LEARNING
-        } else if (revisionTime.timeInMillis > calendar.timeInMillis) {
-            Status.LONG_TERM
-        } else {
-            Status.REVIEW
-        }
-    )*/
-    //val status = _status.value
     /**turn key info of a class instance into a readable string containing the [gender], [german]
      * translation and [plural] form as well as the [translation] into users language*/
     fun toUiString(): String {
@@ -148,7 +130,7 @@ data class Word(
     fun saveProgress() {
         val newRevisionTime = Calendar.getInstance()
         newRevisionTime.add(Calendar.HOUR_OF_DAY, 0)
-        newRevisionTime.add(Calendar.MINUTE, 1)
+        newRevisionTime.add(Calendar.MINUTE, 2)
         revisionTime = newRevisionTime
     }
 
