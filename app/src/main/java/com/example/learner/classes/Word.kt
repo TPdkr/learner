@@ -1,8 +1,11 @@
 package com.example.learner.classes
 
 import androidx.compose.ui.util.fastJoinToString
+import java.lang.Math.pow
+import java.lang.Math.random
 import java.util.Calendar
 import kotlin.math.max
+import kotlin.math.pow
 
 /**
 WORD STATUS:
@@ -113,7 +116,6 @@ data class Word(
     fun resetLesson() {
         mistakes = 0
         round = 0
-        revision++
     }
 
     /**is an instance a noun or not?*/
@@ -121,14 +123,17 @@ data class Word(
 
     /**is a guess correct?*/
     fun isCorrect(genderGuess: Int, germanGuess: String, pluralGuess: Int): Boolean =
-        germanGuess.equals(german, ignoreCase = true)
+        germanGuess.trimEnd().equals(german, ignoreCase = true)
                 && genderGuess == (gender.code) && (pluralGuess == (plural.code))
 
     /**save progress and revise the word later*/
     fun saveProgress() {
+        revision++
         val newRevisionTime = Calendar.getInstance()
-        newRevisionTime.add(Calendar.HOUR_OF_DAY, 0)
-        newRevisionTime.add(Calendar.MINUTE, 2)
+        val hours = 8.0+2.0* (revision.toDouble() - 1.0).pow(2.0)-3.0*mistakes
+        val minutes = (hours*60.0*((7..13).random().toDouble()/10.0)).toInt()
+        newRevisionTime.add(Calendar.HOUR_OF_DAY, minutes/60)
+        newRevisionTime.add(Calendar.MINUTE, minutes % 60)
         revisionTime = newRevisionTime
     }
 
@@ -147,7 +152,7 @@ data class Word(
         //we calculate key values:
         val isCorrect = isCorrect(genderGuess, germanGuess, pluralGuess)
         val isGenderCorrect = if (genderGuess == gender.code) 0F else 1F
-        val isGermanCorrect = if (germanGuess == german) 0F else 1F
+        val isGermanCorrect = if (germanGuess.trimEnd().equals(german, ignoreCase = true)) 0F else 1F
         val isPluralCorrect = if (pluralGuess == plural.code) 0F else 1F
         //the value between 0 and 1 telling us how close the guess was
         val guessScore = if (isNoun()) {

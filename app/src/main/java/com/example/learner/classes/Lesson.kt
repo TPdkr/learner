@@ -22,8 +22,8 @@ data class Lesson(
 
         /**this is a substitute for secondary constructor as not to confuse the compiler and cause
          * an error*/
-        fun fromWords(words: List<Word>): Lesson {
-            val tasks = generateTasks(words)
+        fun fromWords(words: List<Word>, isReview: Boolean = false): Lesson {
+            val tasks = generateTasks(words, isReview)
             Log.d("lesson bug", tasks.joinToString(" ") { it.first.german })
             Log.d("lesson bug", tasks.joinToString(" ") { it.second.name })
             return Lesson(tasks)
@@ -41,15 +41,9 @@ data class Lesson(
         }
 
         /**this function generates the tasks based on context. Its only input is a list of words*/
-        private fun generateTasks(words: List<Word>): List<Pair<Word, TaskType>> {
-            //what type of lesson is it?
-            val isReview = words.all { it.getWordStatus() == Status.REVIEW }
-            val isLearn = words.all { it.getWordStatus() == Status.NEW || it.getWordStatus() == Status.LEARNING }
+        private fun generateTasks(words: List<Word>, isReview: Boolean): List<Pair<Word, TaskType>> {
             //we take actions based on type:
-            if (!isLearn && !isReview || isLearn && isReview) {
-                Log.e("Lesson constructor", "Invalid word set")
-                return listOf()
-            } else if (isLearn) {
+            if (!isReview) {
                 //the list of all new words and learning words
                 val newWords = words.filter { it.getWordStatus() == Status.NEW }
                 val learnWords = words.filter { it.getWordStatus() == Status.LEARNING }
@@ -80,8 +74,8 @@ data class Lesson(
         words.forEach {
             //update state of the word
             Log.d("state check", "Before save: $it, status: ${it.getWordStatus()}, reviewTime: ${it.revisionTime}")
-            it.resetLesson()
             it.saveProgress()
+            it.resetLesson()
             Log.d("state check", "After save: $it, status: ${it.getWordStatus()}, reviewTime ${it.revisionTime}")
         }
     }

@@ -20,4 +20,6 @@ data class CourseUnit(val words: List<Word>, val name: String, val number: Int, 
     /**get a lesson to learn unit*/
     fun learnLesson(): Lesson =
         Lesson.fromWords(wordsToLearn().take(5))
+
+    fun canLearn(): Boolean = wordsToLearn().isNotEmpty()
 }

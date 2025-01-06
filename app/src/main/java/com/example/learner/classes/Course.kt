@@ -33,7 +33,7 @@ data class Course(val units: List<CourseUnit>, val name: String) {
         if (wordsAll().isNotEmpty()) wordsLearned().size.toFloat() / wordsAll().size.toFloat() else 0F
 
     fun learnLesson(): Lesson = Lesson.fromWords(wordsToLearn().take(5))
-    fun reviewLesson(): Lesson = Lesson.fromWords(wordsToReview().take(10))
+    fun reviewLesson(): Lesson = Lesson.fromWords(wordsToReview().take(10), isReview = true)
 
     fun canReview(): Boolean = wordsToReview().isNotEmpty()
     fun canLearn(): Boolean = wordsToLearn().isNotEmpty()

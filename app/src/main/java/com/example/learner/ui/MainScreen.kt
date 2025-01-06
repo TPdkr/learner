@@ -170,7 +170,7 @@ fun InfoDialog(onDismissRequest: () -> Unit) {
         ) {
             Column(
                 verticalArrangement = Arrangement.Center,
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize().padding(10.dp)
             ) {
                 Text(
                     text = stringResource(R.string.tanks_for_testing),
