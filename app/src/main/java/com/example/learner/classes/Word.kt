@@ -82,8 +82,6 @@ data class Word(
         revisionTime = Calendar.getInstance()
     }
 
-    private val calendar = Calendar.getInstance()
-
     /**turn key info of a class instance into a readable string containing the [gender], [german]
      * translation and [plural] form as well as the [translation] into users language*/
     fun toUiString(): String {
