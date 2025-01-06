@@ -1,7 +1,9 @@
 package com.example.learner.classes
 
 import android.util.Log
+import com.example.learner.classes.Lesson.Companion.fromWords
 
+/**A task type is stored as a enum class, which allows for future extensions*/
 enum class TaskType {
     TYPE_TEXT,
     INFO
@@ -41,7 +43,10 @@ data class Lesson(
         }
 
         /**this function generates the tasks based on context. Its only input is a list of words*/
-        private fun generateTasks(words: List<Word>, isReview: Boolean): List<Pair<Word, TaskType>> {
+        private fun generateTasks(
+            words: List<Word>,
+            isReview: Boolean
+        ): List<Pair<Word, TaskType>> {
             //we take actions based on type:
             if (!isReview) {
                 //the list of all new words and learning words
@@ -68,15 +73,22 @@ data class Lesson(
             }
         }
     }
+
     /**save the state of words after the lesson, update and reset key values*/
-    fun saveLesson(){
-        val words = tasks.map{it.first}.toSet()//we get all words in a lesson
+    fun saveLesson() {
+        val words = tasks.map { it.first }.toSet()//we get all words in a lesson
         words.forEach {
             //update state of the word
-            Log.d("state check", "Before save: $it, status: ${it.getWordStatus()}, reviewTime: ${it.revisionTime}")
+            Log.d(
+                "state check",
+                "Before save: $it, status: ${it.getWordStatus()}, reviewTime: ${it.revisionTime}"
+            )
             it.saveProgress()
             it.resetLesson()
-            Log.d("state check", "After save: $it, status: ${it.getWordStatus()}, reviewTime ${it.revisionTime}")
+            Log.d(
+                "state check",
+                "After save: $it, status: ${it.getWordStatus()}, reviewTime ${it.revisionTime}"
+            )
         }
     }
 }
