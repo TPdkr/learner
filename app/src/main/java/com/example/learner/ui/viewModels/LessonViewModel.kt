@@ -23,7 +23,6 @@ class LessonViewModel(lesson: Lesson) : ViewModel() {
 
     //this is the current word data
     private lateinit var currentWord: Word
-        private set
 
     //we start the lesson in default state
     init {
@@ -122,6 +121,47 @@ class LessonViewModel(lesson: Lesson) : ViewModel() {
         updateGenderGuess(currentWord.gender.code)
         updatePluralGuess(currentWord.plural.code)
     }
+
+    /**get user overall score on the lesson*/
+    private fun getLessonScore(): Float =
+        uiState.value.score.toFloat() / currentLesson.getMaxScore().toFloat()
+
+    fun getFinalMessage() {
+        val lessonScore = getLessonScore()
+        val excellent = listOf(
+            "good boy!(gender neutral)✨",
+            "Slay!",
+            "Du bist mein Lebkuchen",
+            "I would hug you, but I'm just a text"
+        )
+        val good = listOf(
+            "The subject makes mistakes, but this is expected",
+            "I don't have anything to say. Either do better or do worse as know you are just mediocre",
+            "I think for you it is a decent score"
+        )
+        val ok = listOf(
+            "You could have done better",
+            "And you call this a decent result??",
+            "It's ok for memory to fade with time but not this fast",
+            "Do better",
+        )
+        val murder = listOf(
+            "Pathetic",
+            "Try cocaine, maybe that might help",
+            "Today you will be my dinner. Human bones go crunch crunch",
+            "Can you allow me access to your location? No reason at all",
+            "I would say I'm disappointed, but that would imply I had expectations"
+        )
+        val newInfo = when {
+            lessonScore in 0.8..1.0 -> excellent.random()
+            0.6 <= lessonScore && lessonScore < 0.8 -> good.random()
+            0.45 <= lessonScore && lessonScore < 0.6 -> ok.random()
+            else -> murder.random()
+        }
+        _uiState.update { currentSate ->
+            currentSate.copy(finalMessage = newInfo)
+        }
+    }
 }
 
 /**These variables determine the state of the UI*/
@@ -135,5 +175,6 @@ data class LessonUiState(
     val wordCount: Int = 0,
     val currentTrans: String = "",
     val info: String = "",
+    val finalMessage: String = "",
     val currentTaskType: TaskType = TaskType.TYPE_TEXT
 )

@@ -100,6 +100,7 @@ fun LessonScreen(
                 ControlBlock(lessonUiState, lessonViewModel) {
                     updateScore(lessonUiState.score)
                     lessonViewModel.saveLesson()
+                    lessonViewModel.getFinalMessage()
                     isSubmitted = true
                 }
             }
@@ -107,7 +108,7 @@ fun LessonScreen(
     }
 
     if (isSubmitted) {
-        FinalDialog(lessonUiState.score, toPrevious = toPrevious)
+        FinalDialog(lessonUiState.score, toPrevious = toPrevious, lessonUiState)
     }
 }
 
@@ -288,7 +289,7 @@ fun LessonProgressBar(lessonUiState: LessonUiState) {
 
 @Composable
         /**this is the final dialog that shows the total xp earned during a lesson and a message*/
-fun FinalDialog(score: Int, toPrevious: () -> Unit) {
+fun FinalDialog(score: Int, toPrevious: () -> Unit, lessonUiState: LessonUiState) {
     Dialog(onDismissRequest = {}) {
         Card(
             modifier = Modifier
@@ -311,7 +312,7 @@ fun FinalDialog(score: Int, toPrevious: () -> Unit) {
                         .padding(5.dp)
                 )
                 Text(
-                    text = "Good boy ;)",
+                    text = lessonUiState.finalMessage,
                     modifier = Modifier
                         .fillMaxWidth()
                         .wrapContentSize(Alignment.Center)
