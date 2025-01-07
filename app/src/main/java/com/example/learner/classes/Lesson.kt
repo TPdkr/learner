@@ -69,6 +69,7 @@ data class Lesson(
             } else {
                 val totalTasks =
                     repeatList(words, REVIEW_WORD_TASK_COUNT).map { Pair(it, TaskType.TYPE_TEXT) }
+                        .shuffled()
                 return totalTasks
             }
         }
@@ -93,5 +94,5 @@ data class Lesson(
     }
 
     /**get max score achievable in a lesson*/
-    fun getMaxScore(): Int = tasks.filter{it.second!=TaskType.INFO}.size*20
+    fun getMaxScore(): Int = tasks.filter { it.second != TaskType.INFO }.size * 20
 }

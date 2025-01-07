@@ -130,27 +130,38 @@ class LessonViewModel(lesson: Lesson) : ViewModel() {
         val lessonScore = getLessonScore()
         val excellent = listOf(
             "good boy!(gender neutral)✨",
-            "Slay!",
+            "Slaying so hard, even Beyoncé might be worried. 👑",
             "Du bist mein Lebkuchen",
-            "I would hug you, but I'm just a text"
+            "I would hug you, but I'm just a text. I bet you give great hugs",
+            "Main character energy right there",
+            "You’re the blueprint, darling. Everyone else? Irrelevant. ✨"
         )
         val good = listOf(
-            "The subject makes mistakes, but this is expected",
+            "This? This is the lukewarm tea of results. Sipable, but barely.",
             "I don't have anything to say. Either do better or do worse as know you are just mediocre",
-            "I think for you it is a decent score"
+            "I think for you it is a decent score",
+            "You are giving almost there vibes I like it",
+            "A round of applause! But like the slow slightly sarcastic kind...",
+            "You have potential! Too bad it decided to take a nap"
+
         )
         val ok = listOf(
             "You could have done better",
             "And you call this a decent result??",
             "It's ok for memory to fade with time but not this fast",
             "Do better",
+            "Mediocrity at its finest",
+            "If I could sigh in text, I would"
         )
         val murder = listOf(
             "Pathetic",
             "Try cocaine, maybe that might help",
-            "Today you will be my dinner. Human bones go crunch crunch",
             "Can you allow me access to your location? No reason at all",
-            "I would say I'm disappointed, but that would imply I had expectations"
+            "I would say I'm disappointed, but that would imply I had expectations",
+            "You are making me want to uninstall myself",
+            "Honey, even my error logs are cringing rn",
+            "Are you doing this on purpose? If not, then it's just sad",
+            "You’ve officially hit rock bottom. Congrats, I guess?"
         )
         val newInfo = when {
             lessonScore in 0.8..1.0 -> excellent.random()
