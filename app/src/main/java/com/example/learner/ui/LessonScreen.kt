@@ -18,7 +18,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.typography
@@ -218,7 +217,6 @@ fun TypeTaskCard(lessonUiState: LessonUiState, lessonViewModel: LessonViewModel)
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
         /**a segmented button that takes a  list of [options], what to do [onClick] and current [choice]*/
 fun AnswerSegmentedButton(options: List<String>, onClick: (Int) -> Unit, choice: Int) {
