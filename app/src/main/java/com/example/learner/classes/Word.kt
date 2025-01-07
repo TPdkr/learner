@@ -122,7 +122,7 @@ data class Word(
     /**is a guess correct?*/
     fun isCorrect(genderGuess: Int, germanGuess: String, pluralGuess: Int): Boolean =
         germanGuess.trimEnd().equals(german, ignoreCase = true)
-                && genderGuess == (gender.code) && (pluralGuess == (plural.code))
+                && if (isNoun()) (genderGuess == (gender.code) && (pluralGuess == (plural.code))) else true
 
     /**save progress and revise the word later*/
     fun saveProgress() {
@@ -167,6 +167,6 @@ data class Word(
         //we want to account for the attempt count, the higher the more points are taken off
         val attemptMargin = if (!isCorrect) round.toFloat() * 0.5F else 0F
         //return the final value
-        return max((20 - guessScore * 10 - attemptMargin).toInt(), 0)
+        return max((20 - guessScore * 20 - attemptMargin).toInt(), 0)
     }
 }
