@@ -13,11 +13,16 @@ data class CourseUnit(val words: List<Word>, val name: String, val number: Int, 
 
     /**get words that are in long term or permanent memory*/
     fun wordsLearned(): List<Word> =
-        words.filter {it.getWordStatus()==Status.LONG_TERM || it.getWordStatus()==Status.MEMORIZED}
+        words.filter { it.getWordStatus() == Status.LONG_TERM || it.getWordStatus() == Status.MEMORIZED }
+
     /**value between 0 and 1 that shows how complete is the Unit*/
-    fun getProgress(): Float = if (words.isNotEmpty()) wordsLearned().size.toFloat()/words.size.toFloat() else 0F
+    fun getProgress(): Float =
+        if (words.isNotEmpty()) wordsLearned().size.toFloat() / words.size.toFloat() else 0F
 
     /**get a lesson to learn unit*/
     fun learnLesson(): Lesson =
         Lesson.fromWords(wordsToLearn().take(5))
+
+    /**can i learn in this unit? returns a boolean */
+    fun canLearn(): Boolean = wordsToLearn().isNotEmpty()
 }

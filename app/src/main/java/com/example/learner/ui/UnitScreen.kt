@@ -153,8 +153,10 @@ fun UnitDetailedCard(unit: CourseUnit, onDismissRequest: () -> Unit, toLesson: (
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(10.dp).verticalScroll(rememberScrollState()),
-                horizontalAlignment = Alignment.CenterHorizontally) {
+                    .padding(10.dp)
+                    .verticalScroll(rememberScrollState()),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier
@@ -193,7 +195,7 @@ fun UnitDetailedCard(unit: CourseUnit, onDismissRequest: () -> Unit, toLesson: (
                                 modifier = Modifier.padding(5.dp),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Text(text=word.toUiString())
+                                Text(text = word.toUiString())
                             }
                             HorizontalDivider(thickness = 2.dp)
                         }
@@ -206,10 +208,18 @@ fun UnitDetailedCard(unit: CourseUnit, onDismissRequest: () -> Unit, toLesson: (
                         .fillMaxWidth()
                         .weight(0.7f)
                 ) {
-                    Button(onClick = {toLesson(unit.learnLesson())}, modifier = Modifier.width(130.dp)) {
+                    Button(
+                        onClick = { toLesson(unit.learnLesson()) },
+                        modifier = Modifier.width(130.dp),
+                        enabled = unit.canLearn()
+                    ) {
                         Text(text = "learn", style = typography.bodyMedium)
                     }
-                    OutlinedButton(onClick = {}, modifier = Modifier.width(130.dp)) {
+                    OutlinedButton(
+                        onClick = {},
+                        modifier = Modifier.width(130.dp),
+                        enabled = false
+                    ) {
                         Text(text = "add", style = typography.bodyMedium)
                     }
                 }
@@ -222,12 +232,12 @@ fun UnitDetailedCard(unit: CourseUnit, onDismissRequest: () -> Unit, toLesson: (
 @Composable
 fun CardPreview() {
     Surface {
-        UnitDetailedCard(testUnit,{},{})
+        UnitDetailedCard(testUnit, {}, {})
     }
 }
 
 @Preview
 @Composable
 fun UnitPreview() {
-    UnitScreen(CourseUnitViewModel(testCourse)){}
+    UnitScreen(CourseUnitViewModel(testCourse)) {}
 }

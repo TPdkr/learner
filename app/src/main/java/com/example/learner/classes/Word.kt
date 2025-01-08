@@ -3,17 +3,18 @@ package com.example.learner.classes
 import androidx.compose.ui.util.fastJoinToString
 import java.util.Calendar
 import kotlin.math.max
+import kotlin.math.pow
 
 /**
 WORD STATUS:
 A word can be either new, learning or in long term memory. The final stage is memorized.
  */
-enum class Status(val code: Int) {
-    NEW(0),
-    LEARNING(1),
-    LONG_TERM(2),
-    MEMORIZED(3),
-    REVIEW(4)
+enum class Status {
+    NEW,
+    LEARNING,
+    LONG_TERM,
+    MEMORIZED,
+    REVIEW
 }
 
 /**
@@ -65,16 +66,13 @@ data class Word(
 ) {
     /**calculate the status of the word using its data. Mainly [revisionTime] and [revision]*/
     fun getWordStatus(): Status {
-        return if (revision == 0) {
-            Status.NEW
-        } else if (revision == -1) {
-            Status.LONG_TERM
-        } else if (revision == 1) {
-            Status.LEARNING
-        } else if (revisionTime.timeInMillis > calendar.timeInMillis) {
-            Status.LONG_TERM
-        } else {
-            Status.REVIEW
+        val currentTime = Calendar.getInstance().timeInMillis
+        return when {
+            (revision == 0) -> Status.NEW
+            (revision == -1) -> Status.MEMORIZED
+            (revision == 1) -> Status.LEARNING
+            (revisionTime.timeInMillis <= currentTime) -> Status.REVIEW
+            else -> Status.LONG_TERM
         }
     }
 
@@ -85,23 +83,6 @@ data class Word(
         revisionTime = Calendar.getInstance()
     }
 
-    private val calendar = Calendar.getInstance()
-
-    /**word status says whether it should be learned, reviewed or not*/
-    /*val status = mutableStateOf(
-        if (revision == 0) {
-            Status.NEW
-        } else if (revision == -1) {
-            Status.LONG_TERM
-        } else if (revision == 1) {
-            Status.LEARNING
-        } else if (revisionTime.timeInMillis > calendar.timeInMillis) {
-            Status.LONG_TERM
-        } else {
-            Status.REVIEW
-        }
-    )*/
-    //val status = _status.value
     /**turn key info of a class instance into a readable string containing the [gender], [german]
      * translation and [plural] form as well as the [translation] into users language*/
     fun toUiString(): String {
@@ -133,7 +114,6 @@ data class Word(
     fun resetLesson() {
         mistakes = 0
         round = 0
-        revision++
     }
 
     /**is an instance a noun or not?*/
@@ -141,15 +121,23 @@ data class Word(
 
     /**is a guess correct?*/
     fun isCorrect(genderGuess: Int, germanGuess: String, pluralGuess: Int): Boolean =
-        germanGuess.equals(german, ignoreCase = true)
-                && genderGuess == (gender.code) && (pluralGuess == (plural.code))
+        germanGuess.trimEnd().equals(german, ignoreCase = true)
+                && if (isNoun()) (genderGuess == (gender.code) && (pluralGuess == (plural.code))) else true
 
     /**save progress and revise the word later*/
     fun saveProgress() {
-        val newRevisionTime = Calendar.getInstance()
-        newRevisionTime.add(Calendar.HOUR_OF_DAY, 0)
-        newRevisionTime.add(Calendar.MINUTE, 1)
-        revisionTime = newRevisionTime
+        if (revision != -1) {
+            revision++
+            val newRevisionTime = Calendar.getInstance()//we get current time
+            //how many hours to add is calculated
+            val hours = 8.0 + 2.0 * (revision.toDouble() - 1.0).pow(2.0) - 3.0 * mistakes
+            //i turn it into minutes and randomize a bit in order to not review everything at once
+            val minutes = (hours * 60.0 * ((7..13).random().toDouble() / 10.0)).toInt()
+            //we update revision time
+            newRevisionTime.add(Calendar.HOUR_OF_DAY, minutes / 60)
+            newRevisionTime.add(Calendar.MINUTE, minutes % 60)
+            revisionTime = newRevisionTime
+        }
     }
 
     /**increase round count of a word*/
@@ -167,7 +155,8 @@ data class Word(
         //we calculate key values:
         val isCorrect = isCorrect(genderGuess, germanGuess, pluralGuess)
         val isGenderCorrect = if (genderGuess == gender.code) 0F else 1F
-        val isGermanCorrect = if (germanGuess == german) 0F else 1F
+        val isGermanCorrect =
+            if (germanGuess.trimEnd().equals(german, ignoreCase = true)) 0F else 1F
         val isPluralCorrect = if (pluralGuess == plural.code) 0F else 1F
         //the value between 0 and 1 telling us how close the guess was
         val guessScore = if (isNoun()) {
@@ -178,6 +167,6 @@ data class Word(
         //we want to account for the attempt count, the higher the more points are taken off
         val attemptMargin = if (!isCorrect) round.toFloat() * 0.5F else 0F
         //return the final value
-        return max((20 - guessScore * 10 - attemptMargin).toInt(), 0)
+        return max((20 - guessScore * 20 - attemptMargin).toInt(), 0)
     }
 }
