@@ -17,7 +17,7 @@ interface WordDao {
     @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun insert(wordEntity: WordEntity)
 
-    @Update
+    @Update(onConflict = OnConflictStrategy.ABORT)
     suspend fun update(wordEntity: WordEntity)
 
     @Delete

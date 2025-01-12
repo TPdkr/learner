@@ -12,5 +12,5 @@ class WordEntity(
     val gender: Int = -1,
     val plural: Int = -1,
     val revision: Int = 0,
-    val revisionTime: Long
+    val revisionTime: Long=0
 )

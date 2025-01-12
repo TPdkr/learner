@@ -1,9 +1,8 @@
-package com.example.learner.data
+package com.example.learner.data.word
 
-import com.example.learner.data.word.WordEntity
 import kotlinx.coroutines.flow.Flow
 
-interface LearnerRepository {
+interface WordRepository {
     /**get a word by id*/
     fun getWordStream(id: Int): Flow<WordEntity?>
 
