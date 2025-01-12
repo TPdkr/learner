@@ -1,6 +1,5 @@
 package com.example.learner.data.unit
 
-import com.example.learner.data.word.WordEntity
 import kotlinx.coroutines.flow.Flow
 
 class OfflineUnitRepository(private val unitDao: UnitDao) : UnitRepository {
