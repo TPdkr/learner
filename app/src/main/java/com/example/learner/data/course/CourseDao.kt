@@ -5,8 +5,9 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import androidx.room.Update
-import com.example.learner.data.unit.UnitEntity
+import com.example.learner.data.relations.CourseWithUnits
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -22,4 +23,12 @@ interface CourseDao {
 
     @Delete
     suspend fun delete(courseEntity: CourseEntity)
+
+    @Transaction
+    @Query("SELECT * FROM courses WHERE id=:id")
+    fun getCourseWithUnits(id: Int): Flow<CourseWithUnits>
+
+    @Transaction
+    @Query("SELECT * FROM courses")
+    fun getAllCoursesWithUnits(): Flow<List<CourseWithUnits>>
 }

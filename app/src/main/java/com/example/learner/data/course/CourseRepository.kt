@@ -1,5 +1,6 @@
 package com.example.learner.data.course
 
+import com.example.learner.data.relations.CourseWithUnits
 import kotlinx.coroutines.flow.Flow
 
 interface CourseRepository {
@@ -14,4 +15,8 @@ interface CourseRepository {
 
     /**delete the course in the database*/
     suspend fun delete(courseEntity: CourseEntity)
+
+    fun getCourseWithUnits(id: Int): Flow<CourseWithUnits>
+
+    fun getAllCoursesWithUnits(): Flow<List<CourseWithUnits>>
 }
