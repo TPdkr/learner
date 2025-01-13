@@ -17,7 +17,7 @@ import com.example.learner.data.course.CourseEntity
 )
 class UnitEntity(
     @PrimaryKey(autoGenerate = true)
-    val id: Int,
+    val uid: Int,
     val name: String,
     val desc: String,
     val number: Int,

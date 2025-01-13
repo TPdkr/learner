@@ -1,5 +1,6 @@
 package com.example.learner.data.unit
 
+import com.example.learner.data.relations.unitwithwords.UnitWithWords
 import kotlinx.coroutines.flow.Flow
 
 class OfflineUnitRepository(private val unitDao: UnitDao) : UnitRepository {
@@ -10,4 +11,6 @@ class OfflineUnitRepository(private val unitDao: UnitDao) : UnitRepository {
     override suspend fun update(unitEntity: UnitEntity) = unitDao.update(unitEntity)
 
     override suspend fun delete(unitEntity: UnitEntity) = unitDao.delete(unitEntity)
+
+    override fun getUnitWithWords(id: Int): UnitWithWords = unitDao.getUnitWithWords(id)
 }

@@ -1,5 +1,6 @@
 package com.example.learner.data.unit
 
+import com.example.learner.data.relations.unitwithwords.UnitWithWords
 import kotlinx.coroutines.flow.Flow
 
 interface UnitRepository {
@@ -14,4 +15,7 @@ interface UnitRepository {
 
     /**delete unit in the database*/
     suspend fun delete(unitEntity: UnitEntity)
+
+    /**get a unit with corresponding list of words*/
+    fun getUnitWithWords(id: Int): UnitWithWords
 }

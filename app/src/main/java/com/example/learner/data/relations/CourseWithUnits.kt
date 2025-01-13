@@ -9,7 +9,7 @@ import com.example.learner.data.course.CourseEntity
 data class CourseWithUnits (
     @Embedded val courseEntity: CourseEntity,
     @Relation(
-        parentColumn = "id",//in courses table
+        parentColumn = "cid",//in courses table
         entityColumn = "courseId"//in units table
     )
     val units: List<CourseEntity>

@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.Flow
 /**data access object for word entity and word data class*/
 @Dao
 interface WordDao {
-    @Query("SELECT * FROM words WHERE id=:id")
+    @Query("SELECT * FROM words WHERE wid=:id")
     fun getWord(id: Int): Flow<WordEntity>
 
     @Insert(onConflict = OnConflictStrategy.ABORT)

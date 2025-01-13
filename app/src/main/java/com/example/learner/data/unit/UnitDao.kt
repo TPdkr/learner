@@ -5,12 +5,14 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import androidx.room.Update
+import com.example.learner.data.relations.unitwithwords.UnitWithWords
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface UnitDao {
-    @Query("SELECT * FROM units WHERE id=:id")
+    @Query("SELECT * FROM units WHERE uid=:id")
     fun getUnit(id: Int): Flow<UnitEntity>
 
     @Insert(onConflict = OnConflictStrategy.ABORT)
@@ -21,4 +23,8 @@ interface UnitDao {
 
     @Delete
     suspend fun delete(unitEntity: UnitEntity)
+
+    @Transaction
+    @Query("SELECT * FROM units WHERE uid=:id")
+    fun getUnitWithWords(id: Int): UnitWithWords
 }

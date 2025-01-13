@@ -6,6 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.example.learner.data.course.CourseDao
 import com.example.learner.data.course.CourseEntity
+import com.example.learner.data.relations.unitwithwords.UnitWithWordsDao
 import com.example.learner.data.unit.UnitDao
 import com.example.learner.data.unit.UnitEntity
 import com.example.learner.data.word.WordDao
@@ -24,6 +25,8 @@ abstract class LearnerDatabase : RoomDatabase() {
     abstract fun unitDao(): UnitDao
 
     abstract fun courseDao(): CourseDao
+
+    abstract fun unitWithWordsDao(): UnitWithWordsDao
 
     companion object {
         @Volatile
