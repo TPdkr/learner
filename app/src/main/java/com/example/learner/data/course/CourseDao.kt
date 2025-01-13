@@ -8,6 +8,7 @@ import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
 import com.example.learner.data.relations.CourseWithUnits
+import com.example.learner.data.relations.CourseWithUnitsAndWords
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -31,4 +32,12 @@ interface CourseDao {
     @Transaction
     @Query("SELECT * FROM courses")
     fun getAllCoursesWithUnits(): Flow<List<CourseWithUnits>>
+
+    @Transaction
+    @Query("SELECT * FROM courses WHERE cid = :id")
+    suspend fun getCourseWithUnitsAndWords(id: Int): CourseWithUnitsAndWords
+
+    @Transaction
+    @Query("SELECT * FROM courses")
+    suspend fun getAllCoursesWithUnitsAndWords(): List<CourseWithUnitsAndWords>
 }

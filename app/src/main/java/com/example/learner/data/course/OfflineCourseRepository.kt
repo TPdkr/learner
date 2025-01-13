@@ -1,6 +1,7 @@
 package com.example.learner.data.course
 
 import com.example.learner.data.relations.CourseWithUnits
+import com.example.learner.data.relations.CourseWithUnitsAndWords
 import kotlinx.coroutines.flow.Flow
 
 class OfflineCourseRepository(private val courseDao: CourseDao) : CourseRepository {
@@ -12,7 +13,18 @@ class OfflineCourseRepository(private val courseDao: CourseDao) : CourseReposito
 
     override suspend fun delete(courseEntity: CourseEntity) = courseDao.delete(courseEntity)
 
-    override fun getAllCoursesWithUnits(): Flow<List<CourseWithUnits>> = courseDao.getAllCoursesWithUnits()
+    override fun getAllCoursesWithUnits(): Flow<List<CourseWithUnits>> =
+        courseDao.getAllCoursesWithUnits()
 
-    override fun getCourseWithUnits(id: Int): Flow<CourseWithUnits> = courseDao.getCourseWithUnits(id)
+    override fun getCourseWithUnits(id: Int): Flow<CourseWithUnits> =
+        courseDao.getCourseWithUnits(id)
+
+    override suspend fun getCourseWithUnitsAndWords(id: Int): CourseWithUnitsAndWords {
+        return courseDao.getCourseWithUnitsAndWords(id)
+    }
+
+    override suspend fun getAllCoursesWithUnitsAndWords(): List<CourseWithUnitsAndWords> {
+        return courseDao.getAllCoursesWithUnitsAndWords()
+    }
+
 }
