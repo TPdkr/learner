@@ -25,7 +25,18 @@ enum class Gender(val code: Int) {
     DER(0),
     DIE(1),
     DAS(2),
-    NOT_SET(-1)
+    NOT_SET(-1);
+
+    companion object{
+        fun fromCode(code: Int): Gender{
+            return when(code){
+                0-> DER
+                1->DIE
+                2->DAS
+                else -> NOT_SET
+            }
+        }
+    }
 }
 
 /**
@@ -40,8 +51,22 @@ enum class Plural(val code: Int) {
     ER_UMLAUT(4),
     EN(5),
     N(6),
-    NOT_SET(-1),
+    NOT_SET(-1);
 
+    companion object{
+        fun fromCode(code: Int): Plural{
+            return when(code){
+                0->NO_CHANGE
+                1->E
+                2->E_UMLAUT
+                3->S
+                4->ER_UMLAUT
+                5->EN
+                6->N
+                else->NOT_SET
+            }
+        }
+    }
 }
 
 /**
@@ -50,6 +75,7 @@ This stores the information of a word that can be a noun and not a noun. I decid
 inheritance with data classes in Kotlin is a bit fucked apparently.
  */
 data class Word(
+    val wid: Int = 0,
     //common word properties:
     val german: String,
     val translation: String,
@@ -62,7 +88,8 @@ data class Word(
     var revision: Int = 0,
     //noun properties:
     val gender: Gender = Gender.NOT_SET,
-    val plural: Plural = Plural.NOT_SET
+    val plural: Plural = Plural.NOT_SET,
+    var revisionTime: Calendar  = Calendar.getInstance()
 ) {
     /**calculate the status of the word using its data. Mainly [revisionTime] and [revision]*/
     fun getWordStatus(): Status {
@@ -77,11 +104,11 @@ data class Word(
     }
 
     /**when should a word be revised?*/
-    var revisionTime: Calendar //can this cause issues?!!!
+    //var revisionTime: Calendar //can this cause issues?!!!
 
-    init {
+    /*init {
         revisionTime = Calendar.getInstance()
-    }
+    }*/
 
     /**turn key info of a class instance into a readable string containing the [gender], [german]
      * translation and [plural] form as well as the [translation] into users language*/
