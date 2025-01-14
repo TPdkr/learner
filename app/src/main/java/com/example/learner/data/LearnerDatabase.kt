@@ -12,6 +12,8 @@ import com.example.learner.data.relations.unitwithwords.UnitWithWordsDao
 import com.example.learner.data.relations.unitwithwords.WordUnitCrossRef
 import com.example.learner.data.unit.UnitDao
 import com.example.learner.data.unit.UnitEntity
+import com.example.learner.data.user.UserDao
+import com.example.learner.data.user.UserEntity
 import com.example.learner.data.word.WordDao
 import com.example.learner.data.word.WordEntity
 import kotlinx.coroutines.CoroutineScope
@@ -34,6 +36,8 @@ abstract class LearnerDatabase : RoomDatabase() {
     abstract fun courseDao(): CourseDao
 
     abstract fun unitWithWordsDao(): UnitWithWordsDao
+
+    abstract fun userDao(): UserDao
 
     companion object {
         @Volatile
@@ -67,6 +71,9 @@ abstract class LearnerDatabase : RoomDatabase() {
             val unitDao = database.unitDao()
             val wordDao = database.wordDao()
             val unitToWordsDao = database.unitWithWordsDao()
+            val userDao = database.userDao()
+
+            userDao.insert(UserEntity(0,-1,0))
 
             // Insert Courses
             val courses = listOf(
