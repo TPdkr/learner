@@ -2,7 +2,13 @@ package com.example.learner.classes
 
 /**Course Unit class stores info about a unit in a course. It is defined by [name],[desc]-
  * description and a number [number]. The contents are in [words] list*/
-data class CourseUnit(val words: List<Word>, val name: String, val number: Int, val desc: String) {
+data class CourseUnit(
+    val words: List<Word>,
+    val name: String,
+    val number: Int,
+    val desc: String,
+    val uid: Int = 0
+) {
     /**get all ready to learn words*/
     fun wordsToLearn(): List<Word> =
         words.filter { it.getWordStatus() == Status.NEW || it.getWordStatus() == Status.LEARNING }

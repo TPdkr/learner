@@ -27,12 +27,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.learner.classes.Course
 import com.example.learner.ui.viewModels.AppViewModel
 import com.example.learner.ui.viewModels.CoursesViewModel
 
 @Composable
-fun CoursesScreen(chooseCourse: (Course) -> Unit = {}, coursesViewModel: CoursesViewModel) {
+fun CoursesScreen(
+    chooseCourse: (Course) -> Unit = {},
+    coursesViewModel: CoursesViewModel = viewModel(factory = ViewModelFactory.Factory)
+) {
     val uiState by coursesViewModel.uiState.collectAsState()
 
     Surface(
@@ -70,18 +74,22 @@ fun CoursesScreen(chooseCourse: (Course) -> Unit = {}, coursesViewModel: Courses
                                     .padding(10.dp)
                             ) {
                                 Text(text = course.name, fontWeight = FontWeight.Bold)
-                                Row(modifier = Modifier.width(90.dp), horizontalArrangement = Arrangement.SpaceBetween){
-                                Switch(
-                                    checked = course == uiState.currentCourse,
-                                    onCheckedChange = {
-                                        chooseCourse(course)
-                                        coursesViewModel.switchCourse()
-                                    }
-                                )
-                                CircularProgressIndicator(
-                                    progress = { course.getProgress() },
-                                    modifier = Modifier.size(30.dp)
-                                )}
+                                Row(
+                                    modifier = Modifier.width(90.dp),
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    Switch(
+                                        checked = course == uiState.currentCourse,
+                                        onCheckedChange = {
+                                            chooseCourse(course)
+                                            coursesViewModel.switchCourse()
+                                        }
+                                    )
+                                    CircularProgressIndicator(
+                                        progress = { course.getProgress() },
+                                        modifier = Modifier.size(30.dp)
+                                    )
+                                }
                             }
                         }
                     }
@@ -91,8 +99,8 @@ fun CoursesScreen(chooseCourse: (Course) -> Unit = {}, coursesViewModel: Courses
     }
 }
 
-@Preview
+/*@Preview
 @Composable
 fun CoursesScreenPreview() {
-    CoursesScreen({}, CoursesViewModel(appViewModel = AppViewModel()))
-}
+    CoursesScreen({}, CoursesViewModel())
+}*/

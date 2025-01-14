@@ -68,9 +68,7 @@ fun LearnerApp(
             )
         }
         composable(route = ScreenSate.UnitsScreen.name) {
-            UnitScreen(
-                CourseUnitViewModel(appViewModel.currentCourse)
-            ) { lesson: Lesson ->
+            UnitScreen() { lesson: Lesson ->
                 appViewModel.changeLesson(lesson)
                 navController.navigate(ScreenSate.LessonScreen.name)
             }
