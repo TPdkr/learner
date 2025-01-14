@@ -38,15 +38,18 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.learner.R
 import com.example.learner.classes.CourseUnit
 import com.example.learner.classes.Lesson
-import com.example.learner.data.testCourse
 import com.example.learner.data.testUnit
 import com.example.learner.ui.viewModels.CourseUnitViewModel
 
 @Composable
-fun UnitScreen(courseUnitViewModel: CourseUnitViewModel, toLesson: (Lesson) -> Unit) {
+fun UnitScreen(
+    courseUnitViewModel: CourseUnitViewModel = viewModel(factory = ViewModelFactory.Factory),
+    toLesson: (Lesson) -> Unit
+) {
     val courseUiState by courseUnitViewModel.uiState.collectAsState()
     val showUnit = remember { mutableStateOf(false) }
     Surface(modifier = Modifier.fillMaxSize()) {
@@ -236,8 +239,8 @@ fun CardPreview() {
     }
 }
 
-@Preview
+/*@Preview
 @Composable
 fun UnitPreview() {
     UnitScreen(CourseUnitViewModel(testCourse)) {}
-}
+}*/

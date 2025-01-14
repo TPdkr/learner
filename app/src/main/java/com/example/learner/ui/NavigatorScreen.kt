@@ -31,7 +31,7 @@ enum class ScreenSate {
  */
 @Composable
 fun LearnerApp(
-    appViewModel: AppViewModel = viewModel(),
+    appViewModel: AppViewModel = viewModel(factory = ViewModelFactory.Factory),
     navController: NavHostController = rememberNavController()
 ) {
     //the ui state of the app
@@ -68,20 +68,19 @@ fun LearnerApp(
             )
         }
         composable(route = ScreenSate.UnitsScreen.name) {
-            UnitScreen() { lesson: Lesson ->
+            /*UnitScreen() { lesson: Lesson ->
                 appViewModel.changeLesson(lesson)
                 navController.navigate(ScreenSate.LessonScreen.name)
-            }
+            }*/
         }
         composable(route = ScreenSate.CoursesScreen.name) {
-            CoursesScreen(
+            /*CoursesScreen(
                 chooseCourse = { course: Course -> appViewModel.switchCourse(course) },
-                coursesViewModel = CoursesViewModel(appViewModel)
-            )
+            )*/
         }
         composable(route = ScreenSate.LessonScreen.name) {
-            LessonScreen(LessonViewModel(appViewModel.currentLesson),
-                { navController.popBackStack() }) { inc: Int -> appViewModel.updateScore(inc) }
+            /*LessonScreen(LessonViewModel(appViewModel.currentLesson),
+                { navController.popBackStack() }) { inc: Int -> appViewModel.updateScore(inc) }*/
         }
     }
 }

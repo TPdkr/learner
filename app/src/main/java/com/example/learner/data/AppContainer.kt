@@ -7,6 +7,8 @@ import com.example.learner.data.relations.unitwithwords.OfflineUnitWithWordsRepo
 import com.example.learner.data.relations.unitwithwords.UnitWithWordsRepository
 import com.example.learner.data.unit.OfflineUnitRepository
 import com.example.learner.data.unit.UnitRepository
+import com.example.learner.data.user.OfflineUserRepository
+import com.example.learner.data.user.UserRepository
 import com.example.learner.data.word.OfflineWordRepository
 import com.example.learner.data.word.WordRepository
 
@@ -15,6 +17,7 @@ interface AppContainer {
     val unitRepository: UnitRepository
     val courseRepository: CourseRepository
     val unitWordRepository: UnitWithWordsRepository
+    val userRepository: UserRepository
 }
 
 class AppDataContainer(private val context: Context) : AppContainer {
@@ -32,6 +35,11 @@ class AppDataContainer(private val context: Context) : AppContainer {
     override val unitWordRepository: UnitWithWordsRepository by lazy {
         OfflineUnitWithWordsRepository(
             LearnerDatabase.getDatabase(context).unitWithWordsDao()
+        )
+    }
+    override val userRepository: UserRepository by lazy {
+        OfflineUserRepository(
+            LearnerDatabase.getDatabase(context).userDao()
         )
     }
 }
