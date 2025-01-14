@@ -17,5 +17,5 @@ interface UnitRepository {
     suspend fun delete(unitEntity: UnitEntity)
 
     /**get a unit with corresponding list of words*/
-    fun getUnitWithWords(id: Int): UnitWithWords
+    fun getUnitWithWords(id: Int): Flow<UnitWithWords>
 }

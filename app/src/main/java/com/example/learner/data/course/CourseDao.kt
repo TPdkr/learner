@@ -35,9 +35,9 @@ interface CourseDao {
 
     @Transaction
     @Query("SELECT * FROM courses WHERE cid = :id")
-    suspend fun getCourseWithUnitsAndWords(id: Int): CourseWithUnitsAndWords
+    fun getCourseWithUnitsAndWords(id: Int): Flow<CourseWithUnitsAndWords>
 
     @Transaction
     @Query("SELECT * FROM courses")
-    suspend fun getAllCoursesWithUnitsAndWords(): List<CourseWithUnitsAndWords>
+    fun getAllCoursesWithUnitsAndWords(): Flow<List<CourseWithUnitsAndWords>>
 }

@@ -24,8 +24,8 @@ interface CourseRepository {
     fun getAllCoursesWithUnits(): Flow<List<CourseWithUnits>>
 
     /**get course with its units and words*/
-    suspend fun getCourseWithUnitsAndWords(id: Int): CourseWithUnitsAndWords
+    fun getCourseWithUnitsAndWords(id: Int): Flow<CourseWithUnitsAndWords>
 
     /**get all courses with their units and words*/
-    suspend fun getAllCoursesWithUnitsAndWords(): List<CourseWithUnitsAndWords>
+    fun getAllCoursesWithUnitsAndWords(): Flow<List<CourseWithUnitsAndWords>>
 }

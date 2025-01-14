@@ -26,5 +26,5 @@ interface UnitDao {
 
     @Transaction
     @Query("SELECT * FROM units WHERE uid=:id")
-    fun getUnitWithWords(id: Int): UnitWithWords
+    fun getUnitWithWords(id: Int): Flow<UnitWithWords>
 }

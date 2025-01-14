@@ -24,11 +24,11 @@ class UnitEntity(
     val number: Int,
     val courseId: Int
 ){
-    fun toCourseUnit( unitRepository: UnitRepository, wordsRepository: WordRepository): CourseUnit{
+    /*fun toCourseUnit( unitRepository: UnitRepository, wordsRepository: WordRepository): CourseUnit{
         val unitWithWords = unitRepository.getUnitWithWords(uid)
         val words = unitWithWords.wordEntities.map{
             wordsRepository.getWordStream(it.wid)
         }
         return CourseUnit(words, name, number, desc)
-    }
+    }*/
 }

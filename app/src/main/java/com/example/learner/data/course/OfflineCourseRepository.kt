@@ -19,11 +19,11 @@ class OfflineCourseRepository(private val courseDao: CourseDao) : CourseReposito
     override fun getCourseWithUnits(id: Int): Flow<CourseWithUnits> =
         courseDao.getCourseWithUnits(id)
 
-    override suspend fun getCourseWithUnitsAndWords(id: Int): CourseWithUnitsAndWords {
+    override fun getCourseWithUnitsAndWords(id: Int): Flow<CourseWithUnitsAndWords> {
         return courseDao.getCourseWithUnitsAndWords(id)
     }
 
-    override suspend fun getAllCoursesWithUnitsAndWords(): List<CourseWithUnitsAndWords> {
+    override fun getAllCoursesWithUnitsAndWords(): Flow<List<CourseWithUnitsAndWords>> {
         return courseDao.getAllCoursesWithUnitsAndWords()
     }
 
