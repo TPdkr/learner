@@ -7,7 +7,6 @@ import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.learner.data.course.CourseDao
 import com.example.learner.data.course.CourseEntity
-import com.example.learner.data.relations.unitwithwords.UnitWithWords
 import com.example.learner.data.relations.unitwithwords.UnitWithWordsDao
 import com.example.learner.data.relations.unitwithwords.WordUnitCrossRef
 import com.example.learner.data.unit.UnitDao
@@ -23,7 +22,7 @@ import java.util.concurrent.Executors
 import kotlin.concurrent.Volatile
 
 @Database(
-    entities = [WordEntity::class, UnitEntity::class, CourseEntity::class],
+    entities = [WordEntity::class, UnitEntity::class, CourseEntity::class, UserEntity::class, WordUnitCrossRef::class],
     version = 1,
     exportSchema = false
 )
@@ -46,8 +45,10 @@ abstract class LearnerDatabase : RoomDatabase() {
         fun getDatabase(context: Context): LearnerDatabase {
             return Instance ?: synchronized(this) {
                 Room.databaseBuilder(context, LearnerDatabase::class.java, "learner_database")
+                    .fallbackToDestructiveMigration()
                     .addCallback(DatabaseCallback())
                     .build().also { Instance = it }
+
             }
         }
 
@@ -73,7 +74,7 @@ abstract class LearnerDatabase : RoomDatabase() {
             val unitToWordsDao = database.unitWithWordsDao()
             val userDao = database.userDao()
 
-            userDao.insert(UserEntity(0,-1,0))
+            userDao.insert(UserEntity(0, -1, 0))
 
             // Insert Courses
             val courses = listOf(

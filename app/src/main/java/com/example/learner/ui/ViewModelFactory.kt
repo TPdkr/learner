@@ -21,7 +21,8 @@ object ViewModelFactory {
 
         initializer {
             CoursesViewModel(
-                learnerApp().container.courseRepository
+                learnerApp().container.courseRepository,
+                learnerApp().container.userRepository
             )
         }
 

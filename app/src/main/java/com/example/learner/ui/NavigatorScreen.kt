@@ -1,6 +1,7 @@
 package com.example.learner.ui
 
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -8,12 +9,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.learner.classes.Course
-import com.example.learner.classes.Lesson
 import com.example.learner.ui.viewModels.AppViewModel
-import com.example.learner.ui.viewModels.CourseUnitViewModel
-import com.example.learner.ui.viewModels.CoursesViewModel
-import com.example.learner.ui.viewModels.LessonViewModel
 
 /**
  * ScreenState is a enum class that captures the state of the screen at any time
@@ -34,21 +30,14 @@ fun LearnerApp(
     appViewModel: AppViewModel = viewModel(factory = ViewModelFactory.Factory),
     navController: NavHostController = rememberNavController()
 ) {
-    //the ui state of the app
-    //val appUiState by appViewModel.uiState.collectAsState()
-    // Get current back stack entry
-    //val backStackEntry by navController.currentBackStackEntryAsState()
-    // Get the name of the current screen
-    /*val currentScreen = ScreenSate.valueOf(
-        backStackEntry?.destination?.route ?: ScreenSate.MainScreen.name
-    )*/
     NavHost(
         navController = navController,
-        startDestination = ScreenSate.MainScreen.name,
+        startDestination = ScreenSate.CoursesScreen.name,
         modifier = Modifier.fillMaxSize()
     ) {
         composable(route = ScreenSate.MainScreen.name) {
-            MainScreen(
+            Text("main screen to be readjusted")
+            /*MainScreen(
                 toUnits = { navController.navigate(ScreenSate.UnitsScreen.name) },
                 toCourses = { navController.navigate(ScreenSate.CoursesScreen.name) },
                 toLesson = {
@@ -65,20 +54,23 @@ fun LearnerApp(
                 reviewCount = appViewModel.currentCourse.reviewCount(),
                 xp = appViewModel.xp
 
-            )
+            )*/
         }
         composable(route = ScreenSate.UnitsScreen.name) {
+            Text("unit screen to be readjusted")
             /*UnitScreen() { lesson: Lesson ->
                 appViewModel.changeLesson(lesson)
                 navController.navigate(ScreenSate.LessonScreen.name)
             }*/
         }
         composable(route = ScreenSate.CoursesScreen.name) {
+            Text("courses screen to be readjusted")
             /*CoursesScreen(
                 chooseCourse = { course: Course -> appViewModel.switchCourse(course) },
             )*/
         }
         composable(route = ScreenSate.LessonScreen.name) {
+            Text("lesson screen to be readjusted")
             /*LessonScreen(LessonViewModel(appViewModel.currentLesson),
                 { navController.popBackStack() }) { inc: Int -> appViewModel.updateScore(inc) }*/
         }
