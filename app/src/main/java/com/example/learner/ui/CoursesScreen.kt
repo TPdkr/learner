@@ -21,20 +21,20 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.learner.classes.Course
 import com.example.learner.ui.viewModels.CoursesViewModel
 
 @Composable
 fun CoursesScreen(
-    chooseCourse: (Course) -> Unit = {},
     coursesViewModel: CoursesViewModel = viewModel(factory = ViewModelFactory.Factory)
 ) {
+    rememberCoroutineScope()
     val uiState by coursesViewModel.uiState.collectAsState()
 
     Surface(
@@ -79,8 +79,8 @@ fun CoursesScreen(
                                     Switch(
                                         checked = course == uiState.currentCourse,
                                         onCheckedChange = {
-                                            chooseCourse(course)
-                                            coursesViewModel.switchCourse()
+                                            coursesViewModel.switchCourse(course)
+
                                         }
                                     )
                                     CircularProgressIndicator(
