@@ -5,7 +5,7 @@ import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import com.example.learner.data.LearnerApp
+import com.example.learner.data.LearnerApplication
 import com.example.learner.ui.viewModels.AppViewModel
 import com.example.learner.ui.viewModels.CourseUnitViewModel
 import com.example.learner.ui.viewModels.CoursesViewModel
@@ -35,5 +35,5 @@ object ViewModelFactory {
     }
 }
 
-fun CreationExtras.learnerApp(): LearnerApp =
-    (this[AndroidViewModelFactory.APPLICATION_KEY] as LearnerApp)
+fun CreationExtras.learnerApp(): LearnerApplication =
+    (this[AndroidViewModelFactory.APPLICATION_KEY] as LearnerApplication)

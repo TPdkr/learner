@@ -79,7 +79,7 @@ abstract class LearnerDatabase : RoomDatabase() {
             // Insert Courses
             val courses = listOf(
                 CourseEntity(cid = 0, name = "German Basics"),
-                CourseEntity(cid = 0, name = "Advanced German")
+                CourseEntity(cid = 1, name = "Advanced German")
             )
             courses.forEach { courseDao.insert(it) }
 
@@ -93,7 +93,7 @@ abstract class LearnerDatabase : RoomDatabase() {
                     courseId = 1
                 ),
                 UnitEntity(
-                    uid = 0,
+                    uid = 1,
                     name = "test unit 2",
                     desc = "Learn greetings and introductions",
                     number = 2,
@@ -114,7 +114,7 @@ abstract class LearnerDatabase : RoomDatabase() {
                     translation = "hello"
                 ),
                 WordEntity(
-                    wid = 0,
+                    wid = 1,
                     german = "Guten Morgen",
                     gender = -1,
                     plural = -1,

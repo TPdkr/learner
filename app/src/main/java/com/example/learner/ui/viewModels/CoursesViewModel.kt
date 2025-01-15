@@ -20,8 +20,12 @@ import kotlinx.coroutines.launch
 /**this is the view model that supports the course cataloged screen*/
 class CoursesViewModel(coursesRepository: CourseRepository, userRepository: UserRepository) :
     ViewModel() {
-        private lateinit var  currentCourse: Course
-        private lateinit var allCourses: List<Course>
+    private val _uiState =
+        MutableStateFlow(CoursesUiState(currentCourse = Catalogue.emptyCourse, listOf()))
+    val uiState: StateFlow<CoursesUiState> = _uiState.asStateFlow()
+
+    private var currentCourse: Course? = null
+    private var allCourses: List<Course>? = null
 
     init {
         viewModelScope.launch {
@@ -33,20 +37,25 @@ class CoursesViewModel(coursesRepository: CourseRepository, userRepository: User
             currentCourse =
                 coursesRepository.getCourseWithUnitsAndWords(currentCourseId).filterNotNull()
                     .first().toCourse()
+
+            _uiState.update{ currentState ->
+                currentState.copy(
+                    currentCourse=currentCourse?: Catalogue.emptyCourse,
+                    courses = allCourses?: listOf()
+                )
+            }
         }
     }
 
     //ui state is saved as private and the user can only read
-    private val _uiState =
-        MutableStateFlow(CoursesUiState(currentCourse = currentCourse, allCourses))
-    val uiState: StateFlow<CoursesUiState> = _uiState.asStateFlow()
+
 
     /**we update the ui state to display new course chosen*/
     fun switchCourse() {
         _uiState.update { currentState ->
             currentState.copy(
-                currentCourse = currentCourse,
-                courses = Catalogue.courses
+                currentCourse = currentCourse ?: Catalogue.emptyCourse,
+                courses = allCourses ?: listOf()
             )
         }
     }
