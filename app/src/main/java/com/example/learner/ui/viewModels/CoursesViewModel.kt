@@ -1,5 +1,6 @@
 package com.example.learner.ui.viewModels
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -28,25 +29,37 @@ class CoursesViewModel(coursesRepository: CourseRepository, userRepository: User
     private var allCourses: List<Course>? = null
 
     init {
+        Log.d("CoursesViewModel", "Init block started")
         viewModelScope.launch {
+            Log.d("CoursesViewModel", "Coroutine started")
             val userEntity = userRepository.getUserData().filterNotNull().first()
             val currentCourseId = userEntity.currentCourseId
+            Log.d("CoursesViewModel", "got the user identity")
             allCourses =
                 coursesRepository.getAllCoursesWithUnitsAndWords().filterNotNull().first()
                     .map { it.toCourse() }
-            currentCourse =
-                coursesRepository.getCourseWithUnitsAndWords(currentCourseId).filterNotNull()
-                    .first().toCourse()
 
-            _uiState.update{ currentState ->
+            Log.d("CoursesViewModel", "got the course catalouge")
+            if (currentCourseId != -1) {
+                currentCourse =
+                    coursesRepository.getCourseWithUnitsAndWords(currentCourseId).filterNotNull()
+                        .first().toCourse()
+            } else {
+                currentCourse=Catalogue.emptyCourse
+            }
+            Log.d("CoursesViewModel", "got the user identity")
+            Log.d("CoursesViewModel", "got the user identity")
+            Log.d("dberror", "inside init block")
+            Log.d("dberror", currentCourse.toString())
+
+            _uiState.update { currentState ->
                 currentState.copy(
-                    currentCourse=currentCourse?: Catalogue.emptyCourse,
-                    courses = allCourses?: listOf()
+                    currentCourse = currentCourse ?: Catalogue.emptyCourse,
+                    courses = allCourses ?: listOf()
                 )
             }
         }
     }
-
     //ui state is saved as private and the user can only read
 
 

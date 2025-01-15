@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface UserDao {
-    @Query("SELECT * FROM userdata WHERE id=0")
+    @Query("SELECT * FROM userdata WHERE id=1")
     fun getUserData(): Flow<UserEntity>
 
     @Insert
