@@ -7,7 +7,6 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
-import com.example.learner.data.relations.CourseWithUnits
 import com.example.learner.data.relations.CourseWithUnitsAndWords
 import kotlinx.coroutines.flow.Flow
 
@@ -25,13 +24,13 @@ interface CourseDao {
     @Delete
     suspend fun delete(courseEntity: CourseEntity)
 
-    @Transaction
+    /*@Transaction
     @Query("SELECT * FROM courses WHERE cid=:id")
     fun getCourseWithUnits(id: Int): Flow<CourseWithUnits>
 
     @Transaction
     @Query("SELECT * FROM courses")
-    fun getAllCoursesWithUnits(): Flow<List<CourseWithUnits>>
+    fun getAllCoursesWithUnits(): Flow<List<CourseWithUnits>>*/
 
     @Transaction
     @Query("SELECT * FROM courses WHERE cid = :id")
