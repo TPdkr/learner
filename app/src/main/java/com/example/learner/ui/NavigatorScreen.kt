@@ -9,6 +9,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.learner.classes.Lesson
 import com.example.learner.ui.viewModels.AppViewModel
 
 /**
@@ -32,7 +33,7 @@ fun LearnerApp(
 ) {
     NavHost(
         navController = navController,
-        startDestination = ScreenSate.CoursesScreen.name,
+        startDestination = ScreenSate.UnitsScreen.name,
         modifier = Modifier.fillMaxSize()
     ) {
         composable(route = ScreenSate.MainScreen.name) {
@@ -57,14 +58,12 @@ fun LearnerApp(
             )*/
         }
         composable(route = ScreenSate.UnitsScreen.name) {
-            Text("unit screen to be readjusted")
-            /*UnitScreen() { lesson: Lesson ->
+            UnitScreen { lesson: Lesson ->
                 appViewModel.changeLesson(lesson)
                 navController.navigate(ScreenSate.LessonScreen.name)
-            }*/
+            }
         }
         composable(route = ScreenSate.CoursesScreen.name) {
-            //Text("courses screen to be readjusted")
             CoursesScreen()
         }
         composable(route = ScreenSate.LessonScreen.name) {
