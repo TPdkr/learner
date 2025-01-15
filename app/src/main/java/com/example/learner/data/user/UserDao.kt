@@ -16,4 +16,6 @@ interface UserDao {
 
     @Update
     suspend fun update(userEntity: UserEntity)
+
+    //want to create separate queries for updates of values
 }

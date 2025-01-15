@@ -10,6 +10,6 @@ interface UnitWithWordsDao {
     @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun insert(crossRef: WordUnitCrossRef)
 
-    @Delete()
+    @Delete
     suspend fun delete(crossRef: WordUnitCrossRef)
 }
