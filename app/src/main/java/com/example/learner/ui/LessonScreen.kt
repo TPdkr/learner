@@ -42,15 +42,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.learner.R
 import com.example.learner.classes.TaskType
-import com.example.learner.data.infoTestLesson
-import com.example.learner.data.testLesson
 import com.example.learner.ui.viewModels.LessonUiState
 import com.example.learner.ui.viewModels.LessonViewModel
 
@@ -60,8 +57,7 @@ val genders = listOf("Der", "Die", "Das")
 @Composable
 fun LessonScreen(
     lessonViewModel: LessonViewModel = viewModel(factory = ViewModelFactory.Factory),
-    toPrevious: () -> Unit,
-    updateScore: (Int) -> Unit
+    toPrevious: () -> Unit
 ) {
     val lessonUiState by lessonViewModel.uiState.collectAsState()
     var isSubmitted by remember { mutableStateOf(false) }

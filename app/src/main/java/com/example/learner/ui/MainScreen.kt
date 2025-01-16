@@ -42,6 +42,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.learner.R
 import com.example.learner.classes.Lesson
 import com.example.learner.ui.theme.LearnerTheme
@@ -52,7 +53,7 @@ fun MainScreen(
     toUnits: () -> Unit = {},
     toCourses: () -> Unit = {},
     toLesson: (Lesson) -> Unit = {},
-    mainScreenViewModel: MainScrViewModel
+    mainScreenViewModel: MainScrViewModel = viewModel(factory = ViewModelFactory.Factory)
 ) {
     val mainUiState = mainScreenViewModel.uiState.collectAsState()
     val openDialog = remember { mutableStateOf(false) }
@@ -97,7 +98,7 @@ fun MainScreen(
                     //NAVIGATION:
                     Card {
                         MenuButton(
-                            {toLesson(mainUiState.value.currentCourse.reviewLesson())},
+                            { toLesson(mainUiState.value.currentCourse.reviewLesson()) },
                             stringResource(
                                 R.string.to_review_button,
                                 mainUiState.value.currentCourse.reviewCount()
@@ -107,7 +108,7 @@ fun MainScreen(
                         )
                         //this button starts a lesson test
                         MenuButton(
-                            {toLesson(mainUiState.value.currentCourse.learnLesson())},
+                            { toLesson(mainUiState.value.currentCourse.learnLesson()) },
                             stringResource(R.string.learn_words_button),
                             Icons.Default.PlayArrow,
                             mainUiState.value.currentCourse.canLearn()
