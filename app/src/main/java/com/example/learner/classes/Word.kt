@@ -1,6 +1,8 @@
 package com.example.learner.classes
 
 import androidx.compose.ui.util.fastJoinToString
+import com.example.learner.data.word.WordEntity
+import com.example.learner.data.word.WordRepository
 import java.util.Calendar
 import kotlin.math.max
 import kotlin.math.pow
@@ -27,12 +29,12 @@ enum class Gender(val code: Int) {
     DAS(2),
     NOT_SET(-1);
 
-    companion object{
-        fun fromCode(code: Int): Gender{
-            return when(code){
-                0-> DER
-                1->DIE
-                2->DAS
+    companion object {
+        fun fromCode(code: Int): Gender {
+            return when (code) {
+                0 -> DER
+                1 -> DIE
+                2 -> DAS
                 else -> NOT_SET
             }
         }
@@ -53,17 +55,17 @@ enum class Plural(val code: Int) {
     N(6),
     NOT_SET(-1);
 
-    companion object{
-        fun fromCode(code: Int): Plural{
-            return when(code){
-                0->NO_CHANGE
-                1->E
-                2->E_UMLAUT
-                3->S
-                4->ER_UMLAUT
-                5->EN
-                6->N
-                else->NOT_SET
+    companion object {
+        fun fromCode(code: Int): Plural {
+            return when (code) {
+                0 -> NO_CHANGE
+                1 -> E
+                2 -> E_UMLAUT
+                3 -> S
+                4 -> ER_UMLAUT
+                5 -> EN
+                6 -> N
+                else -> NOT_SET
             }
         }
     }
@@ -89,7 +91,7 @@ data class Word(
     //noun properties:
     val gender: Gender = Gender.NOT_SET,
     val plural: Plural = Plural.NOT_SET,
-    var revisionTime: Calendar  = Calendar.getInstance()
+    var revisionTime: Calendar = Calendar.getInstance()
 ) {
     /**calculate the status of the word using its data. Mainly [revisionTime] and [revision]*/
     fun getWordStatus(): Status {
@@ -151,8 +153,21 @@ data class Word(
         germanGuess.trimEnd().equals(german, ignoreCase = true)
                 && if (isNoun()) (genderGuess == (gender.code) && (pluralGuess == (plural.code))) else true
 
+    /**turn a word into a word entity*/
+    fun toWordEntity(): WordEntity {
+        return WordEntity(
+            wid,
+            german,
+            translation,
+            gender.code,
+            plural.code,
+            revision,
+            revisionTime.timeInMillis
+        )
+    }
+
     /**save progress and revise the word later*/
-    fun saveProgress() {
+    suspend fun saveProgress(wordRepository: WordRepository) {
         if (revision != -1) {
             revision++
             val newRevisionTime = Calendar.getInstance()//we get current time
@@ -164,6 +179,9 @@ data class Word(
             newRevisionTime.add(Calendar.HOUR_OF_DAY, minutes / 60)
             newRevisionTime.add(Calendar.MINUTE, minutes % 60)
             revisionTime = newRevisionTime
+
+            //we save the state of the word
+            wordRepository.updateWord(this.toWordEntity())
         }
     }
 

@@ -8,5 +8,5 @@ class UserEntity (
     @PrimaryKey(autoGenerate = true)
     val id: Int,
     val currentCourseId: Int,
-    val xp: Int
+    var xp: Int
 )

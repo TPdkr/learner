@@ -97,7 +97,6 @@ fun LessonScreen(
                 }
                 //This is the button section that changes depending on context to either check or next
                 ControlBlock(lessonUiState, lessonViewModel) {
-                    updateScore(lessonUiState.score)
                     lessonViewModel.saveLesson()
                     lessonViewModel.getFinalMessage()
                     isSubmitted = true

@@ -1,5 +1,6 @@
 package com.example.learner.ui
 
+import android.util.Log
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -12,6 +13,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.learner.classes.Lesson
+import com.example.learner.ui.viewModels.LessonData
 import com.example.learner.ui.viewModels.MainScrViewModel
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -46,34 +48,30 @@ fun LearnerApp(
                 toUnits = { navController.navigate(ScreenSate.UnitsScreen.name) },
                 toCourses = { navController.navigate(ScreenSate.CoursesScreen.name) },
                 toLesson = { lesson ->
-                    val lessonJson = Json.encodeToString(lesson)
-                    navController.navigate("${ScreenSate.LessonScreen.name}/$lessonJson")
+                    LessonData.lesson = lesson
+                    navController.navigate(ScreenSate.LessonScreen.name)
                 },
                 mainScreenViewModel = appViewModel
             )
         }
         composable(route = ScreenSate.UnitsScreen.name) {
             UnitScreen { lesson: Lesson ->
-                val lessonJson = Json.encodeToString(lesson)
-                navController.navigate("${ScreenSate.LessonScreen.name}/$lessonJson")
+                LessonData.lesson = lesson
+                navController.navigate(ScreenSate.LessonScreen.name)
             }
         }
         composable(route = ScreenSate.CoursesScreen.name) {
             CoursesScreen()
         }
         composable(
-            route = "${ScreenSate.LessonScreen.name}/{lesson}",
-            arguments = listOf(navArgument("lesson") { type = NavType.StringType })
-        ) { backsStackEntry ->
-            val lessonJson = backsStackEntry.arguments?.getString("lesson")
-            val lesson = lessonJson?.let { Json.decodeFromString<Lesson>(it) }
-            if (lesson != null) {
-                LessonScreen(toPrevious = { navController.popBackStack() }) { inc: Int ->
-                    appViewModel.updateScore(inc)
-                }
-            } else {
-                Text("empty lesson passed")
+            route = ScreenSate.LessonScreen.name,
+            //arguments = listOf(navArgument("lesson") { type = NavType.StringType })
+        ) {
+            Log.d("toLesson", "inside the lesson composable thingy")
+            LessonScreen(toPrevious = { navController.popBackStack() }) { inc: Int ->
+                appViewModel.updateScore(inc)
             }
+
         }
     }
 }
