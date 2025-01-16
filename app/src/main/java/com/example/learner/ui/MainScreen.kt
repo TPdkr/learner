@@ -30,6 +30,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -38,26 +39,22 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.example.learner.R
 import com.example.learner.ui.theme.LearnerTheme
+import com.example.learner.ui.viewModels.AppViewModel
 
-@Preview(showBackground = true)
 @Composable
 fun MainScreen(
     toUnits: () -> Unit = {},
     toCourses: () -> Unit = {},
     toLesson: () -> Unit = {},
-    toPrevious: () -> Unit = {},
     toReview: () -> Unit = {},
-    canReview: Boolean = false,
-    canLearn: Boolean = false,
-    reviewCount: Int = 0,
-    xp: Int = 0
+    mainScreenViewModel: AppViewModel
 ) {
+    val mainUiState = mainScreenViewModel.uiState.collectAsState()
     val openDialog = remember { mutableStateOf(false) }
     LearnerTheme {
         Surface(
@@ -79,8 +76,11 @@ fun MainScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     //TITLE:
-                    Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally) {
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
                         Text(
                             text = stringResource(R.string.app_title),
                             style = typography.titleLarge,
@@ -88,25 +88,39 @@ fun MainScreen(
                             fontSize = 40.sp,
                             textAlign = TextAlign.Center
                         )
-                        Text(stringResource(R.string.xp, xp),textAlign = TextAlign.Center)
+                        Text(
+                            stringResource(R.string.xp, mainUiState.value.xp),
+                            textAlign = TextAlign.Center
+                        )
                     }
                     Spacer(modifier = Modifier.height(100.dp))
                     //NAVIGATION:
                     Card {
                         MenuButton(
                             toReview,
-                            stringResource(R.string.to_review_button, reviewCount),
+                            stringResource(
+                                R.string.to_review_button,
+                                mainUiState.value.currentCourse.reviewCount()
+                            ),
                             Icons.Default.Refresh,
-                            canReview
+                            mainUiState.value.currentCourse.canReview()
                         )
                         //this button starts a lesson test
-                        MenuButton(toLesson,
-                            stringResource(R.string.learn_words_button), Icons.Default.PlayArrow, canLearn)
+                        MenuButton(
+                            toLesson,
+                            stringResource(R.string.learn_words_button),
+                            Icons.Default.PlayArrow,
+                            mainUiState.value.currentCourse.canLearn()
+                        )
                         //these are the units of current course
-                        MenuButton(toUnits,
-                            stringResource(R.string.units_button), Icons.Default.Menu)
-                        MenuButton(toCourses,
-                            stringResource(R.string.courses_catalogue_button), Icons.Default.Add)
+                        MenuButton(
+                            toUnits,
+                            stringResource(R.string.units_button), Icons.Default.Menu
+                        )
+                        MenuButton(
+                            toCourses,
+                            stringResource(R.string.courses_catalogue_button), Icons.Default.Add
+                        )
                     }
                     Text(
                         text = "made by TPdkr",
@@ -170,7 +184,9 @@ fun InfoDialog(onDismissRequest: () -> Unit) {
         ) {
             Column(
                 verticalArrangement = Arrangement.Center,
-                modifier = Modifier.fillMaxSize().padding(10.dp)
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(10.dp)
             ) {
                 Text(
                     text = stringResource(R.string.tanks_for_testing),

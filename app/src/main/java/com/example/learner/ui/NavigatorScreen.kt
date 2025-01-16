@@ -45,15 +45,11 @@ fun LearnerApp(
                     appViewModel.changeLesson(appViewModel.currentCourse.learnLesson())
                     navController.navigate(ScreenSate.LessonScreen.name)
                 },
-                toPrevious = { navController.popBackStack() },
                 toReview = {
                     appViewModel.changeLesson(appViewModel.currentCourse.reviewLesson())
                     navController.navigate(ScreenSate.LessonScreen.name)
                 },
-                canReview = appViewModel.currentCourse.canReview(),
-                canLearn = appViewModel.currentCourse.canLearn(),
-                reviewCount = appViewModel.currentCourse.reviewCount(),
-                xp = appViewModel.xp
+                mainScreenViewModel=appViewModel
             )
         }
         composable(route = ScreenSate.UnitsScreen.name) {
