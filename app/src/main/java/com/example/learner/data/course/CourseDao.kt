@@ -39,4 +39,14 @@ interface CourseDao {
     @Transaction
     @Query("SELECT * FROM courses")
     fun getAllCoursesWithUnitsAndWords(): Flow<List<CourseWithUnitsAndWords>>
+
+    @Transaction
+    @Query(
+        """
+    SELECT * FROM courses 
+    WHERE cid = (SELECT currentCourseId FROM userdata LIMIT 1)
+"""
+    )
+    fun getCurrentCourseWithUnitsAndWords(): Flow<CourseWithUnitsAndWords>
+
 }

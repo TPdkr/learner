@@ -27,14 +27,8 @@ class CourseUnitViewModel(courseRepository: CourseRepository, userRepository: Us
     init {
         viewModelScope.launch {
             try {
-                val userEntity = userRepository.getUserData().filterNotNull().first()
-                val currentCourseId = userEntity.currentCourseId
-                val currentCourse = if (currentCourseId != -1) {
-                    courseRepository.getCourseWithUnitsAndWords(currentCourseId).filterNotNull()
-                        .first().toCourse()
-                } else {
-                    Catalogue.emptyCourse
-                }
+                val currentCourse =
+                    courseRepository.getCurrentCourse().filterNotNull().first().toCourse()
                 resetView(currentCourse)
             } catch (e: Exception) {
                 Log.e(LOG_TAG, e.message ?: "no message given")

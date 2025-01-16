@@ -33,20 +33,13 @@ class CoursesViewModel(
     init {
         viewModelScope.launch {
             try {
-                //we get the user data
-                val userEntity = userRepository.getUserData().filterNotNull().first()
-                val currentCourseId = userEntity.currentCourseId
                 //course catalogue is loaded in
                 allCourses =
                     coursesRepository.getAllCoursesWithUnitsAndWords().filterNotNull().first()
                         .map { it.toCourse() }
                 //we try to load the current course
-                currentCourse = if (currentCourseId != -1) {
-                    coursesRepository.getCourseWithUnitsAndWords(currentCourseId).filterNotNull()
-                        .first().toCourse()
-                } else {
-                    Catalogue.emptyCourse
-                }
+                currentCourse = coursesRepository.getCurrentCourse().filterNotNull()
+                    .first().toCourse()
                 //ui state is updated
                 _uiState.update { currentState ->
                     currentState.copy(
@@ -74,7 +67,6 @@ class CoursesViewModel(
                 Log.e("CourseViewModel", e.message ?: "no message given")
             }
         }
-
     }
 }
 

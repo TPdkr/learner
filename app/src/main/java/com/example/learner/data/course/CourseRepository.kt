@@ -27,4 +27,7 @@ interface CourseRepository {
 
     /**get all courses with their units and words*/
     fun getAllCoursesWithUnitsAndWords(): Flow<List<CourseWithUnitsAndWords>>
+
+    /**get the current course studied by the user*/
+    fun getCurrentCourse(): Flow<CourseWithUnitsAndWords>
 }

@@ -26,4 +26,8 @@ class OfflineCourseRepository(private val courseDao: CourseDao) : CourseReposito
         return courseDao.getAllCoursesWithUnitsAndWords()
     }
 
+    override fun getCurrentCourse(): Flow<CourseWithUnitsAndWords> {
+        return courseDao.getCurrentCourseWithUnitsAndWords()
+    }
+
 }

@@ -74,12 +74,13 @@ abstract class LearnerDatabase : RoomDatabase() {
             val unitToWordsDao = database.unitWithWordsDao()
             val userDao = database.userDao()
 
-            userDao.insert(UserEntity(0, -1, 0))
+            userDao.insert(UserEntity(0, 1, 0))
 
             // Insert Courses
             val courses = listOf(
+                CourseEntity(cid=0, name="no course chosen yet"),
                 CourseEntity(cid = 0, name = "German Basics"),
-                CourseEntity(cid = 1, name = "Advanced German")
+                CourseEntity(cid = 0, name = "Advanced German")
             )
             courses.forEach { courseDao.insert(it) }
 
