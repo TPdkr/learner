@@ -1,5 +1,6 @@
 package com.example.learner.ui.viewModels
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.learner.classes.Course
@@ -16,40 +17,39 @@ import kotlin.math.max
 class AppViewModel(userRepository: UserRepository, courseRepository: CourseRepository) :
     ViewModel() {
     /**lesson chosen*/
-    lateinit var currentLesson: Lesson
+    var currentLesson: Lesson = Lesson(listOf())
         private set
 
     /**chosen course*/
-    lateinit var currentCourse: Course
+    var currentCourse: Course = Catalogue.emptyCourse
         private set
 
     /**xp gained*/
-    var xp: Int=0
+    var xp: Int = 0
         private set
 
     init {
         viewModelScope.launch {
-            val userData = userRepository.getUserData().filterNotNull().first()
-            xp = userData.xp
-            val courseId: Int = userData.currentCourseId
-            currentCourse = if (courseId == -1) {
-                Catalogue.emptyCourse
-            } else {
-                courseRepository.getCourseWithUnitsAndWords(courseId).filterNotNull().first()
-                    .toCourse()
+            try {
+                val userData = userRepository.getUserData().filterNotNull().first()
+                xp = userData.xp
+                val courseId: Int = userData.currentCourseId
+                currentCourse = if (courseId == -1) {
+                    Catalogue.emptyCourse
+                } else {
+                    courseRepository.getCourseWithUnitsAndWords(courseId).filterNotNull().first()
+                        .toCourse()
+                }
+                currentLesson = currentCourse.learnLesson()
+            } catch(e: Exception){
+                Log.e("AppViewModel", e.message?:"no message given")
             }
-            currentLesson = currentCourse.learnLesson()
         }
     }
 
     /**change the current lesson to a new value*/
     fun changeLesson(lesson: Lesson) {
         currentLesson = lesson
-    }
-
-    /**switch to a different course*/
-    fun switchCourse(course: Course) {
-        currentCourse = course
     }
 
     /**increment xp score of the user*/

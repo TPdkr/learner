@@ -33,12 +33,12 @@ fun LearnerApp(
 ) {
     NavHost(
         navController = navController,
-        startDestination = ScreenSate.UnitsScreen.name,
+        startDestination = ScreenSate.MainScreen.name,
         modifier = Modifier.fillMaxSize()
     ) {
         composable(route = ScreenSate.MainScreen.name) {
             Text("main screen to be readjusted")
-            /*MainScreen(
+            MainScreen(
                 toUnits = { navController.navigate(ScreenSate.UnitsScreen.name) },
                 toCourses = { navController.navigate(ScreenSate.CoursesScreen.name) },
                 toLesson = {
@@ -54,8 +54,7 @@ fun LearnerApp(
                 canLearn = appViewModel.currentCourse.canLearn(),
                 reviewCount = appViewModel.currentCourse.reviewCount(),
                 xp = appViewModel.xp
-
-            )*/
+            )
         }
         composable(route = ScreenSate.UnitsScreen.name) {
             UnitScreen { lesson: Lesson ->
