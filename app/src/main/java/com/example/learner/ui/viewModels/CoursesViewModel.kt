@@ -57,9 +57,11 @@ class CoursesViewModel(
     fun switchCourse(course: Course) {
         viewModelScope.launch {
             try {
+                //we switch the course in user data repo
                 val userEntity = userRepository.getUserData().filterNotNull().first()
                 val newUserEntity = UserEntity(userEntity.id, course.cid, userEntity.xp)
                 userRepository.update(newUserEntity)
+                //we need to make sure the ui state updates as well
                 _uiState.update { currentState ->
                     currentState.copy(currentCourse = course)
                 }

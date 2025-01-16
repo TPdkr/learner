@@ -31,18 +31,19 @@ class AppViewModel(userRepository: UserRepository, courseRepository: CourseRepos
     init {
         viewModelScope.launch {
             try {
-                val userData = userRepository.getUserData().filterNotNull().first()
-                xp = userData.xp
-                val courseId: Int = userData.currentCourseId
-                currentCourse = if (courseId == -1) {
-                    Catalogue.emptyCourse
-                } else {
-                    courseRepository.getCourseWithUnitsAndWords(courseId).filterNotNull().first()
-                        .toCourse()
+                //we collect the xp state of the user
+                launch {
+                    userRepository.getUserData().filterNotNull().collect { userState ->
+                        xp = userState.xp
+                    }
                 }
-                currentLesson = currentCourse.learnLesson()
-            } catch(e: Exception){
-                Log.e("AppViewModel", e.message?:"no message given")
+                //we collect the current course state
+                courseRepository.getCurrentCourse().filterNotNull().collect { courseWithUW ->
+                    currentCourse = courseWithUW.toCourse()
+                    currentLesson = currentCourse.learnLesson()
+                }
+            } catch (e: Exception) {
+                Log.e("AppViewModel", e.message ?: "no message given")
             }
         }
     }

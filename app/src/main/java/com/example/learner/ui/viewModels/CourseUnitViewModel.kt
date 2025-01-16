@@ -27,9 +27,10 @@ class CourseUnitViewModel(courseRepository: CourseRepository, userRepository: Us
     init {
         viewModelScope.launch {
             try {
-                val currentCourse =
-                    courseRepository.getCurrentCourse().filterNotNull().first().toCourse()
-                resetView(currentCourse)
+                courseRepository.getCurrentCourse().filterNotNull().collect { courseWithUnitsAndWords->
+                    val course = courseWithUnitsAndWords.toCourse()
+                    resetView(course)
+                }
             } catch (e: Exception) {
                 Log.e(LOG_TAG, e.message ?: "no message given")
             }
