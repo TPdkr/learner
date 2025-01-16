@@ -1,6 +1,7 @@
 package com.example.learner.data
 
 import android.content.Context
+import android.util.Log
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
@@ -74,63 +75,80 @@ abstract class LearnerDatabase : RoomDatabase() {
             val unitToWordsDao = database.unitWithWordsDao()
             val userDao = database.userDao()
 
-            userDao.insert(UserEntity(0, 1, 0))
+            val tag = "pre-population"
+            try {
+                userDao.insert(UserEntity(0, 1, 0))
 
-            // Insert Courses
-            val courses = listOf(
-                CourseEntity(cid=0, name="no course chosen yet"),
-                CourseEntity(cid = 0, name = "German Basics"),
-                CourseEntity(cid = 0, name = "Advanced German")
-            )
-            courses.forEach { courseDao.insert(it) }
-
-            // Insert Units
-            val units = listOf(
-                UnitEntity(
-                    uid = 0,
-                    name = "test unit",
-                    desc = "Learn the alphabet",
-                    number = 1,
-                    courseId = 1
-                ),
-                UnitEntity(
-                    uid = 1,
-                    name = "test unit 2",
-                    desc = "Learn greetings and introductions",
-                    number = 2,
-                    courseId = 1
+                // Insert Courses
+                val courses = listOf(
+                    CourseEntity(cid = 0, name = "no course chosen yet"),
+                    CourseEntity(cid = 0, name = "German Basics"),
+                    CourseEntity(cid = 0, name = "Advanced German")
                 )
-            )
-            units.forEach { unitDao.insert(it) }
-
-            // Insert Words
-            val words = listOf(
-                WordEntity(
-                    wid = 0,
-                    german = "Hallo",
-                    gender = -1,
-                    plural = -1,
-                    revision = 0,
-                    revisionTime = 0,
-                    translation = "hello"
-                ),
-                WordEntity(
-                    wid = 1,
-                    german = "Guten Morgen",
-                    gender = -1,
-                    plural = -1,
-                    revision = 0,
-                    revisionTime = 0,
-                    translation = "good morning"
+                courses.forEach {
+                    courseDao.insert(it)
+                    Log.d(tag, "inserted course: " + it.name)
+                }
+                Log.d(tag, "inserted courses")
+                // Insert Units
+                val units = listOf(
+                    UnitEntity(
+                        uid = 0,
+                        name = "test unit",
+                        desc = "Learn the alphabet",
+                        number = 1,
+                        courseId = 2
+                    ),
+                    UnitEntity(
+                        uid = 0,
+                        name = "test unit 2",
+                        desc = "Learn greetings and introductions",
+                        number = 2,
+                        courseId = 2
+                    )
                 )
-            )
-            words.forEach { wordDao.insert(it) }
+                units.forEach {
+                    unitDao.insert(it)
+                    Log.d(tag, "inserted unit: " + it.name)
+                }
+                Log.d(tag, "inserted units")
 
-            val wordsToUnits = listOf(
-                WordUnitCrossRef(0, 1),
-                WordUnitCrossRef(1, 1)
-            )
-            wordsToUnits.forEach { unitToWordsDao.insert(it) }
+                // Insert Words
+                val words = listOf(
+                    WordEntity(
+                        wid = 0,
+                        german = "Hallo",
+                        gender = -1,
+                        plural = -1,
+                        revision = 0,
+                        revisionTime = 0,
+                        translation = "hello"
+                    ),
+                    WordEntity(
+                        wid=0,
+                        german = "Guten Morgen",
+                        gender = -1,
+                        plural = -1,
+                        revision = 0,
+                        revisionTime = 0,
+                        translation = "good morning",
+                    )
+                )
+                words.forEach {
+                    wordDao.insert(it)
+                    Log.d(tag, "inserted word: " + it.german)
+                }
+                Log.d(tag, "inserted words")
+
+                val wordsToUnits = listOf(
+                    WordUnitCrossRef(1, 2),
+                    WordUnitCrossRef(2, 2)
+                )
+                wordsToUnits.forEach { unitToWordsDao.insert(it) }
+                Log.d(tag, "inserted cross ref")
+            } catch(e: Exception){
+                Log.e(tag, ("the insertion failed:" + e.message))
+            }
 
         }
     }

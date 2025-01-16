@@ -58,7 +58,7 @@ fun CoursesScreen(
                     .height(30.dp)
             )
             LazyColumn {
-                items(uiState.courses) { course ->
+                items(uiState.courses.filter{it.cid!=1}) { course ->
                     Row(modifier = Modifier.padding(5.dp)) {
                         Card(
                             modifier = Modifier
