@@ -31,22 +31,23 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.learner.R
 import com.example.learner.classes.Lesson
+import com.example.learner.data.testCourse
 import com.example.learner.ui.theme.LearnerTheme
 import com.example.learner.ui.viewModels.MainScrViewModel
+import com.example.learner.ui.viewModels.MainScreenUiState
 
 @Composable
 fun MainScreen(
@@ -55,8 +56,19 @@ fun MainScreen(
     toLesson: (Lesson) -> Unit = {},
     mainScreenViewModel: MainScrViewModel = viewModel(factory = ViewModelFactory.Factory)
 ) {
-    val mainUiState = mainScreenViewModel.uiState.collectAsState()
-    val openDialog = remember { mutableStateOf(false) }
+    val mainUiState = mainScreenViewModel.uiState.collectAsState().value
+
+    MainScreenBody(toUnits,toCourses,toLesson, mainUiState)
+}
+
+/**Main screen body function assembles the UI based on UI state*/
+@Composable
+fun MainScreenBody(
+    toUnits: () -> Unit = {},
+    toCourses: () -> Unit = {},
+    toLesson: (Lesson) -> Unit = {},
+    mainUiState: MainScreenUiState
+) {
     LearnerTheme {
         Surface(
             modifier = Modifier
@@ -90,7 +102,7 @@ fun MainScreen(
                             textAlign = TextAlign.Center
                         )
                         Text(
-                            stringResource(R.string.xp, mainUiState.value.xp),
+                            stringResource(R.string.xp, mainUiState.xp),
                             textAlign = TextAlign.Center
                         )
                     }
@@ -98,20 +110,20 @@ fun MainScreen(
                     //NAVIGATION:
                     Card {
                         MenuButton(
-                            { toLesson(mainUiState.value.currentCourse.reviewLesson()) },
+                            { toLesson(mainUiState.currentCourse.reviewLesson()) },
                             stringResource(
                                 R.string.to_review_button,
-                                mainUiState.value.currentCourse.reviewCount()
+                                mainUiState.currentCourse.reviewCount()
                             ),
                             Icons.Default.Refresh,
-                            mainUiState.value.currentCourse.canReview()
+                            mainUiState.currentCourse.canReview()
                         )
                         //this button starts a lesson test
                         MenuButton(
-                            { toLesson(mainUiState.value.currentCourse.learnLesson()) },
+                            { toLesson(mainUiState.currentCourse.learnLesson()) },
                             stringResource(R.string.learn_words_button),
                             Icons.Default.PlayArrow,
-                            mainUiState.value.currentCourse.canLearn()
+                            mainUiState.currentCourse.canLearn()
                         )
                         //these are the units of current course
                         MenuButton(
@@ -123,6 +135,7 @@ fun MainScreen(
                             stringResource(R.string.courses_catalogue_button), Icons.Default.Add
                         )
                     }
+                    //this references my Github profile
                     Text(
                         text = "made by TPdkr",
                         textAlign = TextAlign.Center,
@@ -132,12 +145,13 @@ fun MainScreen(
                             .padding(10.dp)
                     )
                 }
-                if (openDialog.value) {
-                    InfoDialog(onDismissRequest = { openDialog.value = false })
+                //this checks if the dialog should be visible or not
+                if (mainUiState.openDialog) {
+                    InfoDialog(onDismissRequest = { mainUiState.openDialog = false })
                 }
                 //INFO DIALOG BUTTON
                 TextButton(
-                    onClick = { openDialog.value = true },
+                    onClick = { mainUiState.openDialog = true },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(40.dp)
@@ -146,7 +160,6 @@ fun MainScreen(
                     Icon(
                         Icons.Default.Info,
                         contentDescription = null,
-                        //tint = MaterialTheme.colorScheme.onSurface
                     )
                 }
             }
@@ -154,6 +167,7 @@ fun MainScreen(
     }
 }
 
+/**A generic menu button composable that is used in the main screen*/
 @Composable
 fun MenuButton(onClick: () -> Unit, text: String, icon: ImageVector, enabled: Boolean = true) {
     val buttonModifier = Modifier
@@ -183,6 +197,7 @@ fun InfoDialog(onDismissRequest: () -> Unit) {
                 .padding(5.dp),
             shape = RoundedCornerShape(16.dp),
         ) {
+            //The info message about the app is displayed
             Column(
                 verticalArrangement = Arrangement.Center,
                 modifier = Modifier
@@ -209,4 +224,9 @@ fun InfoDialog(onDismissRequest: () -> Unit) {
     }
 }
 
+@Preview
+@Composable
+fun MainScreenPreview(){
+    MainScreenBody({},{},{}, MainScreenUiState(testCourse, 45, false))
+}
 

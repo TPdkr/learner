@@ -50,6 +50,7 @@ fun CoursesScreen(
     CourseScreenBody(uiState) { course -> coursesViewModel.switchCourse(course) }
 }
 
+/**this function assembles ui from given ui state*/
 @Composable
 fun CourseScreenBody(uiState: CoursesUiState, onCheck: (Course) -> Unit) {
     Surface(

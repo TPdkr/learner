@@ -16,7 +16,8 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-/**this is the view model that supports the course cataloged screen*/
+/**this is the view model that supports the course cataloged screen it receives [coursesRepository]
+ *  and [userRepository] as input and interfaces with the database*/
 class CoursesViewModel(
     private val coursesRepository: CourseRepository,
     private val userRepository: UserRepository
@@ -30,6 +31,7 @@ class CoursesViewModel(
     private var currentCourse: Course? = null
     private var allCourses: List<Course>? = null
 
+    //INIT BLOCK - collects the state from the database in a coroutine
     init {
         viewModelScope.launch {
             try {
@@ -37,9 +39,11 @@ class CoursesViewModel(
                 allCourses =
                     coursesRepository.getAllCoursesWithUnitsAndWords().filterNotNull().first()
                         .map { it.toCourse() }
-                //we try to load the current course
+
+                //we load the current course
                 currentCourse = coursesRepository.getCurrentCourse().filterNotNull()
                     .first().toCourse()
+
                 //ui state is updated
                 _uiState.update { currentState ->
                     currentState.copy(
