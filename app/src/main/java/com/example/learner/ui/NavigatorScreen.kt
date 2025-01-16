@@ -10,7 +10,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.learner.classes.Lesson
-import com.example.learner.ui.viewModels.AppViewModel
+import com.example.learner.ui.viewModels.MainScrViewModel
 
 /**
  * ScreenState is a enum class that captures the state of the screen at any time
@@ -28,7 +28,7 @@ enum class ScreenSate {
  */
 @Composable
 fun LearnerApp(
-    appViewModel: AppViewModel = viewModel(factory = ViewModelFactory.Factory),
+    appViewModel: MainScrViewModel = viewModel(factory = ViewModelFactory.Factory),
     navController: NavHostController = rememberNavController()
 ) {
     NavHost(

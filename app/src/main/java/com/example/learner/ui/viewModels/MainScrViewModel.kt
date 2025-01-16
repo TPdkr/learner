@@ -12,13 +12,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlin.math.max
 
 /**app view model determines the main screen and transitions from one screen to the next*/
-class AppViewModel(userRepository: UserRepository, courseRepository: CourseRepository) :
+class MainScrViewModel(userRepository: UserRepository, courseRepository: CourseRepository) :
     ViewModel() {
     private val _uiState = MutableStateFlow(MainScreenUiState())
     val uiState: StateFlow<MainScreenUiState> = _uiState.asStateFlow()
@@ -32,8 +31,7 @@ class AppViewModel(userRepository: UserRepository, courseRepository: CourseRepos
         private set
 
     /**xp gained*/
-    var xp: Int = 0
-        private set
+    private var xp: Int = 0
 
     init {
         viewModelScope.launch {
@@ -57,7 +55,7 @@ class AppViewModel(userRepository: UserRepository, courseRepository: CourseRepos
         }
     }
 
-    fun updateUi(){
+    private fun updateUi(){
         _uiState.update { currentState->
             currentState.copy(xp=xp, currentCourse = currentCourse)
         }

@@ -59,7 +59,7 @@ val genders = listOf("Der", "Die", "Das")
 
 @Composable
 fun LessonScreen(
-    lessonViewModel: LessonViewModel = viewModel(),
+    lessonViewModel: LessonViewModel = viewModel(factory = ViewModelFactory.Factory),
     toPrevious: () -> Unit,
     updateScore: (Int) -> Unit
 ) {
@@ -335,7 +335,7 @@ fun FinalDialog(score: Int, toPrevious: () -> Unit, lessonUiState: LessonUiState
     }
 }
 
-@Preview
+/*@Preview
 @Composable
 fun LessonPreview() {
     LessonScreen(LessonViewModel(testLesson), {}) {}
@@ -345,4 +345,4 @@ fun LessonPreview() {
 @Composable
 fun LessonInfoPreview() {
     LessonScreen(LessonViewModel(infoTestLesson), {}) {}
-}
+}*/

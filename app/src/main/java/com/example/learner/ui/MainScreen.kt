@@ -44,7 +44,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.example.learner.R
 import com.example.learner.ui.theme.LearnerTheme
-import com.example.learner.ui.viewModels.AppViewModel
+import com.example.learner.ui.viewModels.MainScrViewModel
 
 @Composable
 fun MainScreen(
@@ -52,7 +52,7 @@ fun MainScreen(
     toCourses: () -> Unit = {},
     toLesson: () -> Unit = {},
     toReview: () -> Unit = {},
-    mainScreenViewModel: AppViewModel
+    mainScreenViewModel: MainScrViewModel
 ) {
     val mainUiState = mainScreenViewModel.uiState.collectAsState()
     val openDialog = remember { mutableStateOf(false) }

@@ -4,22 +4,29 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.example.learner.classes.Lesson
 import com.example.learner.classes.TaskType
 import com.example.learner.classes.Word
+import com.example.learner.data.user.UserRepository
+import com.example.learner.data.word.WordRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-class LessonViewModel(lesson: Lesson) : ViewModel() {
+class LessonViewModel(
+    savedStateHandle: SavedStateHandle,
+    wordRepository: WordRepository,
+    userRepository: UserRepository
+) : ViewModel() {
     //game ui state as state flow
     private val _uiState = MutableStateFlow(LessonUiState())
     val uiState: StateFlow<LessonUiState> = _uiState.asStateFlow()
 
     //this is the lesson data passed to the function
-    private val currentLesson: Lesson = lesson
+    private val currentLesson: Lesson = Lesson(listOf())
 
     //this is the current word data
     private lateinit var currentWord: Word

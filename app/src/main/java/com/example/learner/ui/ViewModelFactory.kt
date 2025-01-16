@@ -1,18 +1,20 @@
 package com.example.learner.ui
 
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory
+import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.learner.data.LearnerApplication
-import com.example.learner.ui.viewModels.AppViewModel
+import com.example.learner.ui.viewModels.MainScrViewModel
 import com.example.learner.ui.viewModels.CourseUnitViewModel
 import com.example.learner.ui.viewModels.CoursesViewModel
+import com.example.learner.ui.viewModels.LessonViewModel
 
 object ViewModelFactory {
     val Factory = viewModelFactory {
         initializer {
-            AppViewModel(
+            MainScrViewModel(
                 learnerApp().container.userRepository,
                 learnerApp().container.courseRepository
             )
@@ -28,6 +30,14 @@ object ViewModelFactory {
         initializer {
             CourseUnitViewModel(
                 learnerApp().container.courseRepository,
+                learnerApp().container.userRepository
+            )
+        }
+
+        initializer {
+            LessonViewModel(
+                this.createSavedStateHandle(),
+                learnerApp().container.wordRepository,
                 learnerApp().container.userRepository
             )
         }
