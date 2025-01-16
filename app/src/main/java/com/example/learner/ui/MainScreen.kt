@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.example.learner.R
+import com.example.learner.classes.Lesson
 import com.example.learner.ui.theme.LearnerTheme
 import com.example.learner.ui.viewModels.MainScrViewModel
 
@@ -50,8 +51,7 @@ import com.example.learner.ui.viewModels.MainScrViewModel
 fun MainScreen(
     toUnits: () -> Unit = {},
     toCourses: () -> Unit = {},
-    toLesson: () -> Unit = {},
-    toReview: () -> Unit = {},
+    toLesson: (Lesson) -> Unit = {},
     mainScreenViewModel: MainScrViewModel
 ) {
     val mainUiState = mainScreenViewModel.uiState.collectAsState()
@@ -97,7 +97,7 @@ fun MainScreen(
                     //NAVIGATION:
                     Card {
                         MenuButton(
-                            toReview,
+                            {toLesson(mainUiState.value.currentCourse.reviewLesson())},
                             stringResource(
                                 R.string.to_review_button,
                                 mainUiState.value.currentCourse.reviewCount()
@@ -107,7 +107,7 @@ fun MainScreen(
                         )
                         //this button starts a lesson test
                         MenuButton(
-                            toLesson,
+                            {toLesson(mainUiState.value.currentCourse.learnLesson())},
                             stringResource(R.string.learn_words_button),
                             Icons.Default.PlayArrow,
                             mainUiState.value.currentCourse.canLearn()

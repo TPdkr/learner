@@ -4,7 +4,6 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.learner.classes.Course
-import com.example.learner.classes.Lesson
 import com.example.learner.data.Catalogue
 import com.example.learner.data.course.CourseRepository
 import com.example.learner.data.user.UserRepository
@@ -22,12 +21,8 @@ class MainScrViewModel(userRepository: UserRepository, courseRepository: CourseR
     private val _uiState = MutableStateFlow(MainScreenUiState())
     val uiState: StateFlow<MainScreenUiState> = _uiState.asStateFlow()
 
-    /**lesson chosen*/
-    var currentLesson: Lesson = Lesson(listOf())
-        private set
-
     /**chosen course*/
-    var currentCourse: Course = Catalogue.emptyCourse
+    private var currentCourse: Course = Catalogue.emptyCourse
         private set
 
     /**xp gained*/
@@ -46,7 +41,6 @@ class MainScrViewModel(userRepository: UserRepository, courseRepository: CourseR
                 //we collect the current course state
                 courseRepository.getCurrentCourse().filterNotNull().collect { courseWithUW ->
                     currentCourse = courseWithUW.toCourse()
-                    currentLesson = currentCourse.learnLesson()
                     updateUi()
                 }
             } catch (e: Exception) {
@@ -59,11 +53,6 @@ class MainScrViewModel(userRepository: UserRepository, courseRepository: CourseR
         _uiState.update { currentState->
             currentState.copy(xp=xp, currentCourse = currentCourse)
         }
-    }
-
-    /**change the current lesson to a new value*/
-    fun changeLesson(lesson: Lesson) {
-        currentLesson = lesson
     }
 
     /**increment xp score of the user*/
