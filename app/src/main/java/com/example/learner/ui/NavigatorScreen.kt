@@ -18,6 +18,7 @@ enum class ScreenSate {
     UnitCatScreen,
     CoursesScreen,
     UnitScreen,
+    AddCourseScreen
 }
 
 /**
@@ -60,7 +61,7 @@ fun LearnerApp(
         }
         //COURSE CATALOGUE SCREEN==============================================
         composable(route = ScreenSate.CoursesScreen.name) {
-            CoursesScreen()
+            CoursesScreen({navController.navigate(ScreenSate.AddCourseScreen.name)})
         }
         //LESSON SCREEN========================================================
         composable(
@@ -68,5 +69,11 @@ fun LearnerApp(
         ) {
             LessonScreen(toPrevious = { navController.popBackStack() })
         }
+        //ADD COURSE SCREEN====================================================
+        composable(route= ScreenSate.AddCourseScreen.name){
+            AddCourseScreen()
+        }
+        //ADD UNIT SCREEN======================================================
+        //ADD WORD SCREEN======================================================
     }
 }

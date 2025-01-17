@@ -41,18 +41,19 @@ import com.example.learner.ui.viewModels.CoursesViewModel
 
 @Composable
 fun CoursesScreen(
+    toAddCourse: ()->Unit,
     coursesViewModel: CoursesViewModel = viewModel(factory = ViewModelFactory.Factory)
 ) {
     //we get the ui state
     val uiState by coursesViewModel.uiState.collectAsState()
 
     //we encapsulate the body of the screen in order to preview it
-    CourseScreenBody(uiState) { course -> coursesViewModel.switchCourse(course) }
+    CourseScreenBody(uiState, toAddCourse) { course -> coursesViewModel.switchCourse(course) }
 }
 
 /**this function assembles ui from given ui state*/
 @Composable
-fun CourseScreenBody(uiState: CoursesUiState, onCheck: (Course) -> Unit) {
+fun CourseScreenBody(uiState: CoursesUiState, toAddCourse: () -> Unit, onCheck: (Course) -> Unit) {
     Surface(
         modifier = Modifier
             .fillMaxSize()
@@ -119,7 +120,7 @@ fun CourseScreenBody(uiState: CoursesUiState, onCheck: (Course) -> Unit) {
             .fillMaxSize()
             .padding(25.dp)
     ) {
-        FloatingActionButton(onClick = {}, modifier = Modifier.align(Alignment.BottomEnd)) {
+        FloatingActionButton(onClick = toAddCourse, modifier = Modifier.align(Alignment.BottomEnd)) {
             Icon(Icons.Filled.Add, "")
         }
     }
@@ -128,5 +129,5 @@ fun CourseScreenBody(uiState: CoursesUiState, onCheck: (Course) -> Unit) {
 @Preview
 @Composable
 fun CoursesScreenPreview() {
-    CourseScreenBody(CoursesUiState(testCourse, testCourses)) { }
+    CourseScreenBody(CoursesUiState(testCourse, testCourses),{}) { }
 }
