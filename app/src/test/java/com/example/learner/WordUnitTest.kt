@@ -15,8 +15,8 @@ import org.junit.Test
 
 /**Test the basic functionality of the word data class*/
 class WordUnitTest {
-    private val testNoun = Word("Auto", "Car", gender = Gender.DAS, plural = Plural.S)
-    private val testWord2 = Word("laut", "loud")
+    private val testNoun = Word(0,"Auto", "Car", gender = Gender.DAS, plural = Plural.S)
+    private val testWord2 = Word(0,"laut", "loud")
 
     @Test
     fun isNounTest() {
