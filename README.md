@@ -1,5 +1,5 @@
 # Description
-Working name genau(subject to change). This hopefully will be a basic app for memorization of German vocabulary.
+Working name genau(subject to change). This is a basic app for memorization of German vocabulary. You can create your own course and add units and words.
 
 Currently the basic functionality is mostly working. Hopefully it will be fully functional soon enough. But in the future it will be updated with more features and perks.
 
@@ -22,6 +22,6 @@ Adding and editing your own courses, units and words
 ## Bugs:
 A lot. It's in a very early stage. Please report them here.
 ## Currently working on:
-Writing more test to easier extend the functionality of the app. Design and implementation of the database that will store user progress abd course contents.
+Writing more test to easier extend the functionality of the app.
 ## Already working:
-App logic and ui on all present pages which includes: main screen, lesson screen, course and unit catalogue screens. Word and course Unit tests.
+Adding and going through courses already present in the app.
