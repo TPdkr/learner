@@ -6,6 +6,7 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.learner.data.LearnerApplication
 import com.example.learner.ui.viewModels.AddCourseViewModel
+import com.example.learner.ui.viewModels.AddUnitViewModel
 import com.example.learner.ui.viewModels.MainScrViewModel
 import com.example.learner.ui.viewModels.UnitCatViewModel
 import com.example.learner.ui.viewModels.CoursesViewModel
@@ -49,6 +50,13 @@ object ViewModelFactory {
 
         initializer {
             AddCourseViewModel(learnerApp().container.courseRepository)
+        }
+
+        initializer {
+            AddUnitViewModel(
+                learnerApp().container.unitRepository,
+                learnerApp().container.userRepository
+            )
         }
     }
 }
