@@ -17,6 +17,7 @@ class AddCourseViewModel(private val courseRepository: CourseRepository) : ViewM
 
     //the list of names that are not available anymore
     private lateinit var usedNames: List<String>
+
     //desired name of the course
     private var userInput: String = ""
 
@@ -31,12 +32,14 @@ class AddCourseViewModel(private val courseRepository: CourseRepository) : ViewM
 
     /**change the ui with the user input*/
     fun onValueChange(newValue: String) {
-        userInput = newValue
-        _uiState.update { currentState ->
-            currentState.copy(
-                courseName = userInput,
-                canAdd = userInput.isNotEmpty() && !usedNames.contains(userInput)
-            )
+        if (newValue.length <= 30) {
+            userInput = newValue
+            _uiState.update { currentState ->
+                currentState.copy(
+                    courseName = userInput,
+                    canAdd = userInput.isNotEmpty() && !usedNames.contains(userInput)
+                )
+            }
         }
     }
 
