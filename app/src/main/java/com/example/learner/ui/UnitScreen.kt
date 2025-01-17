@@ -22,6 +22,8 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -29,16 +31,21 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.learner.R
 import com.example.learner.classes.CourseUnit
 import com.example.learner.classes.Lesson
 import com.example.learner.data.testUnit
 import com.example.learner.ui.theme.LearnerTheme
-import com.example.learner.ui.viewModels.LessonData
+import com.example.learner.ui.viewModels.UnitViewModel
 
 @Composable
-fun UnitScreen(toLesson: (Lesson) -> Unit) {
-    val unit = LessonData.unit
+fun UnitScreen(
+    unitViewModel: UnitViewModel = viewModel(factory = ViewModelFactory.Factory),
+    toLesson: (Lesson) -> Unit
+) {
+    val uiSate by unitViewModel.uiState.collectAsState()
+    val unit = uiSate.unit
     UnitScreenBody(unit, toLesson)
 }
 

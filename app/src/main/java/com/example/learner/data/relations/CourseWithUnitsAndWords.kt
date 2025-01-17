@@ -6,7 +6,7 @@ import com.example.learner.classes.Course
 import com.example.learner.data.course.CourseEntity
 import com.example.learner.data.relations.unitwithwords.UnitWithWords
 import com.example.learner.data.unit.UnitEntity
-import com.example.learner.ui.viewModels.CourseUiState
+import com.example.learner.ui.viewModels.UnitCatUiState
 
 data class CourseWithUnitsAndWords(
     @Embedded val courseEntity: CourseEntity,
@@ -24,8 +24,8 @@ data class CourseWithUnitsAndWords(
             cid = courseEntity.cid
         )
     }
-    fun toCourseUnitUi(): CourseUiState{
+    fun toCourseUnitUi(): UnitCatUiState{
         val course = toCourse()
-        return CourseUiState(units = course.units, courseName = course.name)
+        return UnitCatUiState(units = course.units, courseName = course.name)
     }
 }

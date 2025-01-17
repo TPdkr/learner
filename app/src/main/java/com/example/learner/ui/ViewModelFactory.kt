@@ -9,6 +9,7 @@ import com.example.learner.ui.viewModels.MainScrViewModel
 import com.example.learner.ui.viewModels.UnitCatViewModel
 import com.example.learner.ui.viewModels.CoursesViewModel
 import com.example.learner.ui.viewModels.LessonViewModel
+import com.example.learner.ui.viewModels.UnitViewModel
 
 object ViewModelFactory {
     val Factory = viewModelFactory {
@@ -36,6 +37,12 @@ object ViewModelFactory {
             LessonViewModel(
                 learnerApp().container.wordRepository,
                 learnerApp().container.userRepository
+            )
+        }
+
+        initializer {
+            UnitViewModel(
+                learnerApp().container.unitRepository
             )
         }
     }

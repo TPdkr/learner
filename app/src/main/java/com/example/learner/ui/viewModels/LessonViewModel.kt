@@ -23,6 +23,7 @@ import kotlinx.coroutines.launch
 object LessonData {
     var lesson: Lesson = Lesson(listOf())
     var unit: CourseUnit = CourseUnit(listOf(), "",0,"")
+    var unitUid: Int = 1
 }
 
 class LessonViewModel(

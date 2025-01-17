@@ -34,8 +34,8 @@ class UnitCatViewModel(courseRepository: CourseRepository) :
     }
 
     //the ui state is only readable to the user
-    private val _uiState = MutableStateFlow(CourseUiState())
-    val uiState: StateFlow<CourseUiState> = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow(UnitCatUiState())
+    val uiState: StateFlow<UnitCatUiState> = _uiState.asStateFlow()
 
 
     /**set the state of the view model to the one we got from the database*/
@@ -50,7 +50,7 @@ class UnitCatViewModel(courseRepository: CourseRepository) :
 }
 
 /**stores the ui information about the state of the units screen*/
-data class CourseUiState(
+data class UnitCatUiState(
     val units: List<CourseUnit> = listOf(),
     val courseName: String = "",
 )

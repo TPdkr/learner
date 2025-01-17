@@ -35,7 +35,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.learner.R
 import com.example.learner.classes.CourseUnit
 import com.example.learner.data.testCourse
-import com.example.learner.ui.viewModels.CourseUiState
+import com.example.learner.ui.viewModels.UnitCatUiState
 import com.example.learner.ui.viewModels.UnitCatViewModel
 
 @Composable
@@ -55,7 +55,7 @@ fun UnitCatScreen(
 /**The body of the screen that shows unit catalogue*/
 @Composable
 fun UnitCatScreenBody(
-    courseUiState: CourseUiState,
+    unitCatUiState: UnitCatUiState,
     toUnit: (CourseUnit) -> Unit
 ) {
     Surface(modifier = Modifier.fillMaxSize()) {
@@ -66,7 +66,7 @@ fun UnitCatScreenBody(
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
-                    text = courseUiState.courseName,
+                    text = unitCatUiState.courseName,
                     style = typography.titleLarge,
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Center,
@@ -76,7 +76,7 @@ fun UnitCatScreenBody(
                 )
             }
             LazyColumn(Modifier.fillMaxSize()) {
-                items(courseUiState.units.chunked(2)) { pair ->
+                items(unitCatUiState.units.chunked(2)) { pair ->
                     Row {
                         UnitCard(
                             pair[0],
@@ -158,5 +158,5 @@ fun UnitCard(unit: CourseUnit, onClick: () -> Unit, modifier: Modifier = Modifie
 @Preview
 @Composable
 fun UnitCatPreview() {
-    UnitCatScreenBody(courseUiState = CourseUiState(testCourse.units, testCourse.name)) {}
+    UnitCatScreenBody(unitCatUiState = UnitCatUiState(testCourse.units, testCourse.name)) {}
 }

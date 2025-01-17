@@ -54,7 +54,7 @@ fun LearnerApp(
         //UNITS CATALOGUE SCREEN===============================================
         composable(route = ScreenSate.UnitCatScreen.name) {
             UnitCatScreen { unit ->
-                LessonData.unit=unit
+                LessonData.unitUid=unit.uid
                 navController.navigate(ScreenSate.UnitScreen.name)
             }
         }
