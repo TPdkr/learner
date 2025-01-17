@@ -28,8 +28,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -42,16 +40,25 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.learner.R
 import com.example.learner.classes.CourseUnit
 import com.example.learner.classes.Lesson
+import com.example.learner.data.testCourse
 import com.example.learner.data.testUnit
-import com.example.learner.ui.viewModels.CourseUnitViewModel
+import com.example.learner.ui.viewModels.CourseUiState
+import com.example.learner.ui.viewModels.UnitCatViewModel
 
 @Composable
-fun UnitScreen(
-    courseUnitViewModel: CourseUnitViewModel = viewModel(factory = ViewModelFactory.Factory),
+fun UnitCatScreen(
+    unitCatViewModel: UnitCatViewModel = viewModel(factory = ViewModelFactory.Factory),
     toLesson: (Lesson) -> Unit
 ) {
-    val courseUiState by courseUnitViewModel.uiState.collectAsState()
-    val showUnit = remember { mutableStateOf(false) }
+    val courseUiState by unitCatViewModel.uiState.collectAsState()
+
+    //we call the body of the screen
+    UnitCatScreenBody(courseUiState,{ courseUnit->unitCatViewModel.chooseUnit(courseUnit)}, {unitCatViewModel.hideUnit()}, toLesson)
+}
+
+/**The body of the screen that shows unit catalogue*/
+@Composable
+fun UnitCatScreenBody(courseUiState: CourseUiState, chooseUnit: (CourseUnit)->Unit, hideUnit: ()->Unit, toLesson: (Lesson) -> Unit){
     Surface(modifier = Modifier.fillMaxSize()) {
         Surface(
             modifier = Modifier
@@ -76,8 +83,7 @@ fun UnitScreen(
                             UnitCard(
                                 pair[0],
                                 {
-                                    showUnit.value = true
-                                    courseUnitViewModel.chooseUnit(pair[0])
+                                    chooseUnit(pair[0])
                                 },
                                 modifier = Modifier
                                     .weight(1f)
@@ -87,8 +93,7 @@ fun UnitScreen(
                                 UnitCard(
                                     pair[1],
                                     {
-                                        showUnit.value = true
-                                        courseUnitViewModel.chooseUnit(pair[1])
+                                        chooseUnit(pair[1])
                                     },
                                     modifier = Modifier
                                         .weight(1f)
@@ -107,15 +112,16 @@ fun UnitScreen(
             }
         }
     }
-    if (showUnit.value) {
+    if (courseUiState.showUnit) {
         UnitDetailedCard(
-            courseUnitViewModel.chosenUnit,
-            onDismissRequest = { showUnit.value = false },
+            courseUiState.chosenUnit,
+            onDismissRequest = { hideUnit()},
             toLesson = toLesson
         )
     }
 }
 
+/**A single unit card that displays key unit info*/
 @Composable
 fun UnitCard(unit: CourseUnit, onClick: () -> Unit, modifier: Modifier = Modifier) {
     Card(modifier = modifier.height(70.dp), onClick = onClick) {
@@ -124,6 +130,7 @@ fun UnitCard(unit: CourseUnit, onClick: () -> Unit, modifier: Modifier = Modifie
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.padding(10.dp)
         ) {
+            //Main course info
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -136,7 +143,7 @@ fun UnitCard(unit: CourseUnit, onClick: () -> Unit, modifier: Modifier = Modifie
                 )
                 Text(text = unit.name)
             }
-
+            //how many words are in long term or memorized?
             CircularProgressIndicator(
                 progress = { unit.getProgress() },
                 modifier = Modifier
@@ -146,9 +153,8 @@ fun UnitCard(unit: CourseUnit, onClick: () -> Unit, modifier: Modifier = Modifie
             )
         }
     }
-
 }
-
+/**A Full screen unit info dialog*/
 @Composable
 fun UnitDetailedCard(unit: CourseUnit, onDismissRequest: () -> Unit, toLesson: (Lesson) -> Unit) {
     Dialog(onDismissRequest = onDismissRequest) {
@@ -239,8 +245,8 @@ fun CardPreview() {
     }
 }
 
-/*@Preview
+@Preview
 @Composable
 fun UnitPreview() {
-    UnitScreen(CourseUnitViewModel(testCourse)) {}
-}*/
+    UnitCatScreenBody(courseUiState = CourseUiState(testCourse.units, testCourse.name), {},{},{})
+}

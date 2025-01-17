@@ -8,29 +8,29 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.learner.classes.Course
 import com.example.learner.classes.CourseUnit
-import com.example.learner.data.Catalogue
 import com.example.learner.data.course.CourseRepository
 import com.example.learner.data.testUnit
-import com.example.learner.data.user.UserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 const val LOG_TAG = "unit screen view model"
 
 /**this view model supports the units page of the course. it takes a course as input*/
-class CourseUnitViewModel(courseRepository: CourseRepository, userRepository: UserRepository) :
+class UnitCatViewModel(courseRepository: CourseRepository) :
     ViewModel() {
+    //INIT BLOCK - we collect database state and transfer it to the ui State
     init {
         viewModelScope.launch {
             try {
-                courseRepository.getCurrentCourse().filterNotNull().collect { courseWithUnitsAndWords->
-                    val course = courseWithUnitsAndWords.toCourse()
-                    resetView(course)
-                }
+                courseRepository.getCurrentCourse().filterNotNull()
+                    .collect { courseWithUnitsAndWords ->
+                        val course = courseWithUnitsAndWords.toCourse()
+                        updateView(course)
+                    }
             } catch (e: Exception) {
                 Log.e(LOG_TAG, e.message ?: "no message given")
             }
@@ -42,18 +42,32 @@ class CourseUnitViewModel(courseRepository: CourseRepository, userRepository: Us
     val uiState: StateFlow<CourseUiState> = _uiState.asStateFlow()
 
     //the chosen unit to display
-    var chosenUnit by mutableStateOf(testUnit)
-        private set
+    private var chosenUnit by mutableStateOf(testUnit)
 
 
     /**choose a different unit do display*/
     fun chooseUnit(unit: CourseUnit) {
         chosenUnit = unit
+        _uiState.update { currentState ->
+            currentState.copy(showUnit = true, chosenUnit = chosenUnit)
+        }
     }
 
-    /**set the state of the view model to the one we got from input*/
-    private fun resetView(course: Course) {
-        _uiState.value = CourseUiState(units = course.units, courseName = course.name)
+    /**hide unit*/
+    fun hideUnit() {
+        _uiState.update { currentState ->
+            currentState.copy(showUnit = false)
+        }
+    }
+
+    /**set the state of the view model to the one we got from the database*/
+    private fun updateView(course: Course) {
+        _uiState.update { currentState ->
+            currentState.copy(
+                units = course.units,
+                courseName = course.name
+            )
+        }
     }
 }
 
@@ -61,4 +75,6 @@ class CourseUnitViewModel(courseRepository: CourseRepository, userRepository: Us
 data class CourseUiState(
     val units: List<CourseUnit> = listOf(),
     val courseName: String = "",
+    val showUnit: Boolean = false,
+    val chosenUnit: CourseUnit = CourseUnit(listOf(), "", 1, "")
 )

@@ -16,8 +16,9 @@ import com.example.learner.ui.viewModels.LessonData
 enum class ScreenSate {
     MainScreen,
     LessonScreen,
-    UnitsScreen,
-    CoursesScreen
+    UnitCatScreen,
+    CoursesScreen,
+    UnitScreen,
 }
 
 /**
@@ -36,7 +37,7 @@ fun LearnerApp(
         //MAIN SCREEN==========================================================
         composable(route = ScreenSate.MainScreen.name) {
             MainScreen(
-                toUnits = { navController.navigate(ScreenSate.UnitsScreen.name) },
+                toUnits = { navController.navigate(ScreenSate.UnitCatScreen.name) },
                 toCourses = { navController.navigate(ScreenSate.CoursesScreen.name) },
                 toLesson = { lesson ->
                     LessonData.lesson = lesson
@@ -44,9 +45,13 @@ fun LearnerApp(
                 }
             )
         }
-        //UNITS COURSE SCREEN==================================================
-        composable(route = ScreenSate.UnitsScreen.name) {
-            UnitScreen { lesson: Lesson ->
+        //UNIT INFO SCREEN=====================================================
+        composable(route=ScreenSate.UnitScreen.name){
+
+        }
+        //UNITS CATALOGUE SCREEN===============================================
+        composable(route = ScreenSate.UnitCatScreen.name) {
+            UnitCatScreen { lesson: Lesson ->
                 LessonData.lesson = lesson
                 navController.navigate(ScreenSate.LessonScreen.name)
             }
