@@ -7,7 +7,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.learner.classes.Lesson
 import com.example.learner.ui.viewModels.LessonData
 
 /**
@@ -46,14 +45,17 @@ fun LearnerApp(
             )
         }
         //UNIT INFO SCREEN=====================================================
-        composable(route=ScreenSate.UnitScreen.name){
-
+        composable(route = ScreenSate.UnitScreen.name) {
+            UnitScreen { lesson ->
+                LessonData.lesson = lesson
+                navController.navigate(ScreenSate.LessonScreen.name)
+            }
         }
         //UNITS CATALOGUE SCREEN===============================================
         composable(route = ScreenSate.UnitCatScreen.name) {
-            UnitCatScreen { lesson: Lesson ->
-                LessonData.lesson = lesson
-                navController.navigate(ScreenSate.LessonScreen.name)
+            UnitCatScreen { unit ->
+                LessonData.unit=unit
+                navController.navigate(ScreenSate.UnitScreen.name)
             }
         }
         //COURSE CATALOGUE SCREEN==============================================

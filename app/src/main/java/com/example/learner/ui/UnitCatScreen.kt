@@ -10,19 +10,15 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardColors
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme.typography
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -35,89 +31,93 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.learner.R
 import com.example.learner.classes.CourseUnit
-import com.example.learner.classes.Lesson
 import com.example.learner.data.testCourse
-import com.example.learner.data.testUnit
 import com.example.learner.ui.viewModels.CourseUiState
 import com.example.learner.ui.viewModels.UnitCatViewModel
 
 @Composable
 fun UnitCatScreen(
     unitCatViewModel: UnitCatViewModel = viewModel(factory = ViewModelFactory.Factory),
-    toLesson: (Lesson) -> Unit
+    toUnit: (CourseUnit) -> Unit
 ) {
     val courseUiState by unitCatViewModel.uiState.collectAsState()
 
     //we call the body of the screen
-    UnitCatScreenBody(courseUiState,{ courseUnit->unitCatViewModel.chooseUnit(courseUnit)}, {unitCatViewModel.hideUnit()}, toLesson)
+    UnitCatScreenBody(
+        courseUiState,
+        toUnit
+    )
 }
 
 /**The body of the screen that shows unit catalogue*/
 @Composable
-fun UnitCatScreenBody(courseUiState: CourseUiState, chooseUnit: (CourseUnit)->Unit, hideUnit: ()->Unit, toLesson: (Lesson) -> Unit){
+fun UnitCatScreenBody(
+    courseUiState: CourseUiState,
+    toUnit: (CourseUnit) -> Unit
+) {
     Surface(modifier = Modifier.fillMaxSize()) {
-        Surface(
+        Column(
             modifier = Modifier
                 .fillMaxSize()
                 .statusBarsPadding()
         ) {
-            Column(modifier = Modifier.fillMaxSize()) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(
-                        text = courseUiState.courseName,
-                        style = typography.titleLarge,
-                        fontWeight = FontWeight.Bold,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(30.dp)
-                    )
-                }
-                LazyColumn(Modifier.fillMaxSize()) {
-                    items(courseUiState.units.chunked(2)) { pair ->
-                        Row {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = courseUiState.courseName,
+                    style = typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(30.dp)
+                )
+            }
+            LazyColumn(Modifier.fillMaxSize()) {
+                items(courseUiState.units.chunked(2)) { pair ->
+                    Row {
+                        UnitCard(
+                            pair[0],
+                            {
+                                toUnit(pair[0])
+                            },
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(top = 8.dp, end = 8.dp, start = 8.dp)
+                        )
+                        if (pair.size == 2) {
                             UnitCard(
-                                pair[0],
+                                pair[1],
                                 {
-                                    chooseUnit(pair[0])
+                                    toUnit(pair[1])
                                 },
                                 modifier = Modifier
                                     .weight(1f)
-                                    .padding(top = 8.dp, end = 8.dp, start = 8.dp)
+                                    .padding(top = 8.dp, end = 8.dp)
                             )
-                            if (pair.size == 2) {
-                                UnitCard(
-                                    pair[1],
-                                    {
-                                        chooseUnit(pair[1])
-                                    },
-                                    modifier = Modifier
-                                        .weight(1f)
-                                        .padding(top = 8.dp, end = 8.dp)
-                                )
-                            } else {
-                                Box(
-                                    modifier = Modifier
-                                        .weight(1f)
-                                        .padding(top = 8.dp, end = 8.dp)
-                                )
-                            }
+                        } else {
+                            Box(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .padding(top = 8.dp, end = 8.dp)
+                            )
                         }
                     }
                 }
             }
         }
-    }
-    if (courseUiState.showUnit) {
-        UnitDetailedCard(
-            courseUiState.chosenUnit,
-            onDismissRequest = { hideUnit()},
-            toLesson = toLesson
-        )
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .statusBarsPadding()
+                .padding(25.dp)
+        ) {
+            FloatingActionButton(onClick = {}, modifier = Modifier.align(Alignment.BottomEnd)) {
+                Icon(Icons.Filled.Add, "")
+            }
+        }
     }
 }
 
@@ -154,99 +154,9 @@ fun UnitCard(unit: CourseUnit, onClick: () -> Unit, modifier: Modifier = Modifie
         }
     }
 }
-/**A Full screen unit info dialog*/
-@Composable
-fun UnitDetailedCard(unit: CourseUnit, onDismissRequest: () -> Unit, toLesson: (Lesson) -> Unit) {
-    Dialog(onDismissRequest = onDismissRequest) {
-        Card(modifier = Modifier.fillMaxSize()) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(10.dp)
-                    .verticalScroll(rememberScrollState()),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .weight(1f)
-                ) {
-                    Text(
-                        text = stringResource(R.string.unit_number, unit.number),
-                        style = typography.titleLarge,
-                        fontWeight = FontWeight.Bold,
-                        textAlign = TextAlign.Center,
-                    )
-                    Text(text = unit.name, style = typography.titleMedium)
-                    Text(text = unit.desc)
-
-                }
-                Text(text = "Words in this unit:", fontWeight = FontWeight.Bold)
-                Card(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .weight(8f),
-                    colors = CardColors(
-                        containerColor = MaterialTheme.colorScheme.background,
-                        contentColor = MaterialTheme.colorScheme.onBackground,
-                        disabledContentColor = MaterialTheme.colorScheme.onBackground,
-                        disabledContainerColor = MaterialTheme.colorScheme.background
-                    )
-                ) {
-                    LazyColumn(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(10.dp)
-                    ) {
-                        items(unit.words) { word ->
-                            Row(
-                                modifier = Modifier.padding(5.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Text(text = word.toUiString())
-                            }
-                            HorizontalDivider(thickness = 2.dp)
-                        }
-                    }
-                }
-                Row(
-                    horizontalArrangement = Arrangement.SpaceAround,
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(0.7f)
-                ) {
-                    Button(
-                        onClick = { toLesson(unit.learnLesson()) },
-                        modifier = Modifier.width(130.dp),
-                        enabled = unit.canLearn()
-                    ) {
-                        Text(text = "learn", style = typography.bodyMedium)
-                    }
-                    OutlinedButton(
-                        onClick = {},
-                        modifier = Modifier.width(130.dp),
-                        enabled = false
-                    ) {
-                        Text(text = "add", style = typography.bodyMedium)
-                    }
-                }
-            }
-        }
-    }
-}
 
 @Preview
 @Composable
-fun CardPreview() {
-    Surface {
-        UnitDetailedCard(testUnit, {}, {})
-    }
-}
-
-@Preview
-@Composable
-fun UnitPreview() {
-    UnitCatScreenBody(courseUiState = CourseUiState(testCourse.units, testCourse.name), {},{},{})
+fun UnitCatPreview() {
+    UnitCatScreenBody(courseUiState = CourseUiState(testCourse.units, testCourse.name)) {}
 }

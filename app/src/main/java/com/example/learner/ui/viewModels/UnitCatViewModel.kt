@@ -1,15 +1,11 @@
 package com.example.learner.ui.viewModels
 
 import android.util.Log
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.learner.classes.Course
 import com.example.learner.classes.CourseUnit
 import com.example.learner.data.course.CourseRepository
-import com.example.learner.data.testUnit
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -41,24 +37,6 @@ class UnitCatViewModel(courseRepository: CourseRepository) :
     private val _uiState = MutableStateFlow(CourseUiState())
     val uiState: StateFlow<CourseUiState> = _uiState.asStateFlow()
 
-    //the chosen unit to display
-    private var chosenUnit by mutableStateOf(testUnit)
-
-
-    /**choose a different unit do display*/
-    fun chooseUnit(unit: CourseUnit) {
-        chosenUnit = unit
-        _uiState.update { currentState ->
-            currentState.copy(showUnit = true, chosenUnit = chosenUnit)
-        }
-    }
-
-    /**hide unit*/
-    fun hideUnit() {
-        _uiState.update { currentState ->
-            currentState.copy(showUnit = false)
-        }
-    }
 
     /**set the state of the view model to the one we got from the database*/
     private fun updateView(course: Course) {
@@ -75,6 +53,4 @@ class UnitCatViewModel(courseRepository: CourseRepository) :
 data class CourseUiState(
     val units: List<CourseUnit> = listOf(),
     val courseName: String = "",
-    val showUnit: Boolean = false,
-    val chosenUnit: CourseUnit = CourseUnit(listOf(), "", 1, "")
 )

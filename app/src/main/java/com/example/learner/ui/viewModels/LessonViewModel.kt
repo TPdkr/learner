@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.learner.classes.CourseUnit
 import com.example.learner.classes.Lesson
 import com.example.learner.classes.TaskType
 import com.example.learner.classes.Word
@@ -21,6 +22,7 @@ import kotlinx.coroutines.launch
 
 object LessonData {
     var lesson: Lesson = Lesson(listOf())
+    var unit: CourseUnit = CourseUnit(listOf(), "",0,"")
 }
 
 class LessonViewModel(
