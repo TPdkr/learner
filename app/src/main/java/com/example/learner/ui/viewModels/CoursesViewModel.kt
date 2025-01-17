@@ -35,25 +35,37 @@ class CoursesViewModel(
     init {
         viewModelScope.launch {
             try {
-                //course catalogue is loaded in
-                allCourses =
-                    coursesRepository.getAllCoursesWithUnitsAndWords().filterNotNull().first()
-                        .map { it.toCourse() }
-
-                //we load the current course
-                currentCourse = coursesRepository.getCurrentCourse().filterNotNull()
-                    .first().toCourse()
-
-                //ui state is updated
-                _uiState.update { currentState ->
-                    currentState.copy(
-                        currentCourse = currentCourse ?: Catalogue.emptyCourse,
-                        courses = allCourses ?: listOf()
-                    )
-                }
+                //course catalogue is loaded in and updates with the database
+                coursesRepository.getAllCoursesWithUnitsAndWords().filterNotNull()
+                    .collect { courses ->
+                        allCourses = courses.map { it.toCourse() }
+                        //we load the current course and update UI
+                        getCurrentCourse()
+                        updateUI()
+                    }
             } catch (e: Exception) {
                 Log.e("CourseViewModel", e.message ?: "no message given")
             }
+        }
+    }
+
+    /**get the current course*/
+    private suspend fun getCurrentCourse() {
+        try {
+            currentCourse = coursesRepository.getCurrentCourse().filterNotNull()
+                .first().toCourse()
+        } catch (e: Exception) {
+            Log.e("CourseViewModel", e.message ?: "no message given")
+        }
+    }
+
+    /**this function updates the state of the Ui*/
+    private fun updateUI() {
+        _uiState.update { currentState ->
+            currentState.copy(
+                currentCourse = currentCourse ?: Catalogue.emptyCourse,
+                courses = allCourses ?: listOf()
+            )
         }
     }
 

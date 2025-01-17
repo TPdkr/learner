@@ -17,6 +17,8 @@ class AddCourseViewModel(private val courseRepository: CourseRepository) : ViewM
 
     private lateinit var usedNames: List<String>
 
+    private var userInput: String = ""
+
     init {
         viewModelScope.launch {
             courseRepository.getAllCourses().filterNotNull().collect { courses ->
@@ -26,22 +28,23 @@ class AddCourseViewModel(private val courseRepository: CourseRepository) : ViewM
     }
 
     fun onValueChange(newValue: String) {
+        userInput = newValue
         _uiState.update { currentState ->
             currentState.copy(
-                courseName = newValue,
-                canAdd = newValue.isNotEmpty() && !usedNames.contains(newValue)
+                courseName = userInput,
+                canAdd = userInput.isNotEmpty() && !usedNames.contains(userInput)
             )
         }
     }
 
-    fun addCourse(){
+    fun addCourse() {
         viewModelScope.launch {
-            courseRepository.insert(CourseEntity(0, uiState.value.courseName))
+            courseRepository.insert(CourseEntity(0, userInput))
         }
     }
 
     fun canAdd(): Boolean =
-        uiState.value.courseName.isNotEmpty() && !usedNames.contains(uiState.value.courseName)
+        userInput.isNotEmpty() && !usedNames.contains(userInput)
 }
 
 data class AddCourseUiState(
