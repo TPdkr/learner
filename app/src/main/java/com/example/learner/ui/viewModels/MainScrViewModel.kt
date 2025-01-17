@@ -55,6 +55,13 @@ class MainScrViewModel(userRepository: UserRepository, courseRepository: CourseR
             currentState.copy(xp = xp, currentCourse = currentCourse)
         }
     }
+
+    fun infoDialogSwitch() {
+        val initOpenDialog = uiState.value.openDialog
+        _uiState.update { currentState ->
+            currentState.copy(openDialog = !initOpenDialog)
+        }
+    }
 }
 
 /**this class stores all data needed for the ui of the main screen*/

@@ -58,7 +58,13 @@ fun MainScreen(
 ) {
     val mainUiState = mainScreenViewModel.uiState.collectAsState().value
 
-    MainScreenBody(toUnits,toCourses,toLesson, mainUiState)
+    MainScreenBody(
+        toUnits,
+        toCourses,
+        toLesson,
+        { mainScreenViewModel.infoDialogSwitch() },
+        mainUiState
+    )
 }
 
 /**Main screen body function assembles the UI based on UI state*/
@@ -67,6 +73,7 @@ fun MainScreenBody(
     toUnits: () -> Unit = {},
     toCourses: () -> Unit = {},
     toLesson: (Lesson) -> Unit = {},
+    infoDialogSwitch: () -> Unit = {},
     mainUiState: MainScreenUiState
 ) {
     LearnerTheme {
@@ -147,11 +154,11 @@ fun MainScreenBody(
                 }
                 //this checks if the dialog should be visible or not
                 if (mainUiState.openDialog) {
-                    InfoDialog(onDismissRequest = { mainUiState.openDialog = false })
+                    InfoDialog(onDismissRequest = infoDialogSwitch)
                 }
                 //INFO DIALOG BUTTON
                 TextButton(
-                    onClick = { mainUiState.openDialog = true },
+                    onClick = infoDialogSwitch,
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(40.dp)
@@ -226,7 +233,7 @@ fun InfoDialog(onDismissRequest: () -> Unit) {
 
 @Preview
 @Composable
-fun MainScreenPreview(){
-    MainScreenBody({},{},{}, MainScreenUiState(testCourse, 45, false))
+fun MainScreenPreview() {
+    MainScreenBody({}, {}, {}, {}, MainScreenUiState(testCourse, 45, false))
 }
 
