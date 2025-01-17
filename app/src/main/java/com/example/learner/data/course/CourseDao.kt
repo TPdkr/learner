@@ -15,6 +15,9 @@ interface CourseDao {
     @Query("SELECT * FROM courses WHERE cid=:id")
     fun getCourse(id: Int): Flow<CourseEntity>
 
+    @Query("SELECT * FROM courses")
+    fun getAllCourses(): Flow<List<CourseEntity>>
+
     @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun insert(courseEntity: CourseEntity)
 
@@ -23,14 +26,6 @@ interface CourseDao {
 
     @Delete
     suspend fun delete(courseEntity: CourseEntity)
-
-    /*@Transaction
-    @Query("SELECT * FROM courses WHERE cid=:id")
-    fun getCourseWithUnits(id: Int): Flow<CourseWithUnits>
-
-    @Transaction
-    @Query("SELECT * FROM courses")
-    fun getAllCoursesWithUnits(): Flow<List<CourseWithUnits>>*/
 
     @Transaction
     @Query("SELECT * FROM courses WHERE cid = :id")

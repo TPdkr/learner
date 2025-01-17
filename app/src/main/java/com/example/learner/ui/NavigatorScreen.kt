@@ -71,7 +71,7 @@ fun LearnerApp(
         }
         //ADD COURSE SCREEN====================================================
         composable(route= ScreenSate.AddCourseScreen.name){
-            AddCourseScreen()
+            AddCourseScreen({navController.popBackStack()})
         }
         //ADD UNIT SCREEN======================================================
         //ADD WORD SCREEN======================================================

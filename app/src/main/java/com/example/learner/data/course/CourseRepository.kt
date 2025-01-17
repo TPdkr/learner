@@ -7,6 +7,9 @@ interface CourseRepository {
     /**get the course by id*/
     fun getCourseStream(id: Int): Flow<CourseEntity>
 
+    /**get all courses in the db*/
+    fun getAllCourses(): Flow<List<CourseEntity>>
+
     /**insert the course into the database*/
     suspend fun insert(courseEntity: CourseEntity)
 
@@ -15,12 +18,6 @@ interface CourseRepository {
 
     /**delete the course in the database*/
     suspend fun delete(courseEntity: CourseEntity)
-
-    /*/**get course with its units*/
-    fun getCourseWithUnits(id: Int): Flow<CourseWithUnits>
-
-    /**get all courses with units*/
-    fun getAllCoursesWithUnits(): Flow<List<CourseWithUnits>>*/
 
     /**get course with its units and words*/
     fun getCourseWithUnitsAndWords(id: Int): Flow<CourseWithUnitsAndWords>
