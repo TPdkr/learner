@@ -17,6 +17,7 @@ object ViewModelFactory {
     val Factory = viewModelFactory {
         initializer {
             MainScrViewModel(
+                {learnerApp().container.reset()},
                 learnerApp().container.userRepository,
                 learnerApp().container.courseRepository
             )

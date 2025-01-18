@@ -15,7 +15,11 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 /**app view model determines the main screen and transitions from one screen to the next*/
-class MainScrViewModel(userRepository: UserRepository, courseRepository: CourseRepository) :
+class MainScrViewModel(
+    private val selfDestruct: suspend () -> Unit,
+    userRepository: UserRepository,
+    courseRepository: CourseRepository
+) :
     ViewModel() {
     //ui state is stored privately the user can only read the public value
     private val _uiState = MutableStateFlow(MainScreenUiState())
@@ -62,6 +66,8 @@ class MainScrViewModel(userRepository: UserRepository, courseRepository: CourseR
             currentState.copy(openDialog = !initOpenDialog)
         }
     }
+
+    fun selfDestruct() = viewModelScope.launch { selfDestruct }
 }
 
 /**this class stores all data needed for the ui of the main screen*/

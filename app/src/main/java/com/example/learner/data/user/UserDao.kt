@@ -17,5 +17,6 @@ interface UserDao {
     @Update
     suspend fun update(userEntity: UserEntity)
 
-    //want to create separate queries for updates of values
+    @Query("UPDATE userdata SET currentCourseId=1, xp=0 WHERE id=1")
+    suspend fun reset()
 }

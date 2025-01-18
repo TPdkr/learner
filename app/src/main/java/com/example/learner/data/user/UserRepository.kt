@@ -11,4 +11,7 @@ interface UserRepository {
 
     /**update the state of the user*/
     suspend fun update(userEntity: UserEntity)
+
+    /**reset user state*/
+    suspend fun reset()
 }

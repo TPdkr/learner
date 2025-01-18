@@ -1,6 +1,7 @@
 package com.example.learner.data
 
 import android.content.Context
+import com.example.learner.data.course.CourseEntity
 import com.example.learner.data.course.CourseRepository
 import com.example.learner.data.course.OfflineCourseRepository
 import com.example.learner.data.relations.unitwithwords.OfflineUnitWithWordsRepository
@@ -18,6 +19,8 @@ interface AppContainer {
     val courseRepository: CourseRepository
     val unitWordRepository: UnitWithWordsRepository
     val userRepository: UserRepository
+
+    suspend fun reset()
 }
 
 class AppDataContainer(private val context: Context) : AppContainer {
@@ -41,5 +44,14 @@ class AppDataContainer(private val context: Context) : AppContainer {
         OfflineUserRepository(
             LearnerDatabase.getDatabase(context).userDao()
         )
+    }
+
+    override suspend fun reset() {
+        wordRepository.clear()
+        unitRepository.clear()
+        courseRepository.clear()
+        unitWordRepository.clear()
+        courseRepository.insert(CourseEntity(0, "no course chosen yet"))
+        userRepository.reset()
     }
 }

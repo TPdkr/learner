@@ -14,4 +14,6 @@ class OfflineUserRepository(private val userDao: UserDao): UserRepository {
     override suspend fun update(userEntity: UserEntity) {
         userDao.update(userEntity)
     }
+
+    override suspend fun reset() = userDao.reset()
 }
