@@ -67,12 +67,22 @@ class MainScrViewModel(
         }
     }
 
-    fun selfDestruct() = viewModelScope.launch { selfDestruct }
+    fun buttonDialogSwitch() {
+        val initOpenDialog = uiState.value.openSelfDestruct
+        _uiState.update { currentState ->
+            currentState.copy(openSelfDestruct = !initOpenDialog)
+        }
+    }
+
+    fun reset() {
+        viewModelScope.launch { selfDestruct() }
+    }
 }
 
 /**this class stores all data needed for the ui of the main screen*/
 data class MainScreenUiState(
     val currentCourse: Course = Catalogue.emptyCourse,
     val xp: Int = 0,
-    var openDialog: Boolean = false
+    var openDialog: Boolean = false,
+    var openSelfDestruct: Boolean = false
 )

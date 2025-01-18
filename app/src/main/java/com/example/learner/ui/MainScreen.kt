@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
@@ -23,8 +24,11 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Card
+import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -63,6 +67,8 @@ fun MainScreen(
         toCourses,
         toLesson,
         { mainScreenViewModel.infoDialogSwitch() },
+        { mainScreenViewModel.buttonDialogSwitch() },
+        { mainScreenViewModel.reset() },
         mainUiState
     )
 }
@@ -74,6 +80,8 @@ fun MainScreenBody(
     toCourses: () -> Unit = {},
     toLesson: (Lesson) -> Unit = {},
     infoDialogSwitch: () -> Unit = {},
+    buttonDialogSwitch: () -> Unit = {},
+    selfDestruct: () -> Unit = {},
     mainUiState: MainScreenUiState
 ) {
     LearnerTheme {
@@ -156,6 +164,9 @@ fun MainScreenBody(
                 if (mainUiState.openDialog) {
                     InfoDialog(onDismissRequest = infoDialogSwitch)
                 }
+                if (mainUiState.openSelfDestruct) {
+                    SelfDestructDialog(buttonDialogSwitch, selfDestruct)
+                }
                 //INFO DIALOG BUTTON
                 TextButton(
                     onClick = infoDialogSwitch,
@@ -168,6 +179,15 @@ fun MainScreenBody(
                         Icons.Default.Info,
                         contentDescription = null,
                     )
+                }
+                //HIDDEN BUTTON
+                TextButton(
+                    onClick = buttonDialogSwitch,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .wrapContentSize(Alignment.BottomStart)
+                ) {
+                    Text("  ")
                 }
             }
         }
@@ -194,8 +214,9 @@ fun MenuButton(onClick: () -> Unit, text: String, icon: ImageVector, enabled: Bo
 /**
  * This is a little info dialog that stores some information about the app.
  *  */
+@Preview
 @Composable
-fun InfoDialog(onDismissRequest: () -> Unit) {
+fun InfoDialog(onDismissRequest: () -> Unit = {}) {
     Dialog(onDismissRequest = onDismissRequest) {
         Card(
             modifier = Modifier
@@ -231,9 +252,54 @@ fun InfoDialog(onDismissRequest: () -> Unit) {
     }
 }
 
+/**This is a self destruct button for the app data*/
+@Preview
+@Composable
+fun SelfDestructDialog(onDismissRequest: () -> Unit = {}, onClick: () -> Unit = {}) {
+    Dialog(onDismissRequest = onDismissRequest) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(300.dp)
+                .padding(5.dp),
+            shape = RoundedCornerShape(16.dp),
+        ) {
+            //The info message about the app is displayed
+            Column(
+                verticalArrangement = Arrangement.SpaceAround,
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(10.dp)
+            ) {
+                Text(
+                    text = "OH NO! PERRY! you have found my self destruct button! It resets all user progress!",
+                    textAlign = TextAlign.Center,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentSize(Alignment.Center)
+                )
+                ElevatedButton(
+                    onClick = onClick,
+                    modifier = Modifier.size(150.dp),
+                    colors = ButtonColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary,
+                        disabledContentColor = MaterialTheme.colorScheme.primary,
+                        disabledContainerColor = MaterialTheme.colorScheme.onPrimary
+                    )
+                ) {
+                    Text(text = "Self Destruct")
+                }
+            }
+        }
+    }
+}
+
 @Preview
 @Composable
 fun MainScreenPreview() {
-    MainScreenBody({}, {}, {}, {}, MainScreenUiState(testCourse, 45, false))
+    MainScreenBody({}, {}, {}, {}, {}, {}, MainScreenUiState(testCourse, 45, false))
 }
 
