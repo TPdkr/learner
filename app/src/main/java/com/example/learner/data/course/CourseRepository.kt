@@ -27,4 +27,7 @@ interface CourseRepository {
 
     /**get the current course studied by the user*/
     fun getCurrentCourse(): Flow<CourseWithUnitsAndWords>
+
+    /**delete all entries*/
+    suspend fun clear()
 }

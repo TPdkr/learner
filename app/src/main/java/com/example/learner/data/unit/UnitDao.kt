@@ -30,4 +30,7 @@ interface UnitDao {
 
     @Query("SELECT COUNT(*) AS unitCount FROM units WHERE courseId=:id LIMIT 1")
     fun getUnitCount(id: Int): Flow<Int>
+
+    @Query("DELETE FROM units")
+    suspend fun clear()
 }

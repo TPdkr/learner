@@ -15,4 +15,6 @@ class OfflineUnitRepository(private val unitDao: UnitDao) : UnitRepository {
     override fun getUnitWithWords(id: Int): Flow<UnitWithWords> = unitDao.getUnitWithWords(id)
 
     override fun getUnitCount(id: Int): Flow<Int> = unitDao.getUnitCount(id)
+
+    override suspend fun clear() = unitDao.clear()
 }

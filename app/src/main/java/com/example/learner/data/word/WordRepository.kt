@@ -14,4 +14,7 @@ interface WordRepository {
 
     /**delete a word in a database*/
     suspend fun deleteWord(word: WordEntity)
+
+    /**delete all entries*/
+    suspend fun clear()
 }

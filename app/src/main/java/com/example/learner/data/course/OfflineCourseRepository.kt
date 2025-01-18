@@ -26,4 +26,5 @@ class OfflineCourseRepository(private val courseDao: CourseDao) : CourseReposito
         return courseDao.getCurrentCourseWithUnitsAndWords()
     }
 
+    override suspend fun clear() = courseDao.clear()
 }

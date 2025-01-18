@@ -22,4 +22,7 @@ interface WordDao {
 
     @Delete
     suspend fun delete(wordEntity: WordEntity)
+
+    @Query("DELETE FROM words")
+    suspend fun clear()
 }

@@ -22,4 +22,6 @@ class OfflineWordRepository(private val wordDao: WordDao) : WordRepository {
     /**is a given word satisfying the integrity constrain?*/
     private fun isValid(word: WordEntity): Boolean =
         (word.gender == -1 && word.plural == -1) || (word.gender != -1 && word.plural != -1)
+
+    override suspend fun clear() = wordDao.clear()
 }

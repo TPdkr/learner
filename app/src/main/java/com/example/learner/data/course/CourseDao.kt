@@ -44,4 +44,7 @@ interface CourseDao {
     )
     fun getCurrentCourseWithUnitsAndWords(): Flow<CourseWithUnitsAndWords>
 
+    @Query("DELETE FROM courses")
+    suspend fun clear()
+
 }

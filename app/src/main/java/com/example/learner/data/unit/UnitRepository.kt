@@ -21,4 +21,7 @@ interface UnitRepository {
 
     /**get the number of units in a course*/
     fun getUnitCount(id: Int): Flow<Int>
+
+    /**delete all entries*/
+    suspend fun clear()
 }
