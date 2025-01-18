@@ -51,7 +51,7 @@ class AppDataContainer(private val context: Context) : AppContainer {
         unitRepository.clear()
         courseRepository.clear()
         unitWordRepository.clear()
-        courseRepository.insert(CourseEntity(0, "no course chosen yet"))
+        courseRepository.insert(CourseEntity(1, "no course chosen yet"))
         userRepository.reset()
     }
 }
