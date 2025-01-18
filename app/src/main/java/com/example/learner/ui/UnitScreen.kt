@@ -105,7 +105,7 @@ fun UnitScreenBody(unit: CourseUnit, toLesson: (Lesson) -> Unit) {
                 }
             }
             Row(
-                horizontalArrangement = Arrangement.SpaceAround,
+                horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
                     .fillMaxWidth()
