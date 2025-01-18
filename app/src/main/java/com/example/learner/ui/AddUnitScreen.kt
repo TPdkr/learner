@@ -30,13 +30,26 @@ import com.example.learner.ui.viewModels.AddUnitUiState
 import com.example.learner.ui.viewModels.AddUnitViewModel
 
 @Composable
-fun AddUnitScreen(addUnitViewModel: AddUnitViewModel = viewModel(factory = ViewModelFactory.Factory)) {
+fun AddUnitScreen(
+    addUnitViewModel: AddUnitViewModel = viewModel(factory = ViewModelFactory.Factory),
+    toPrevious: () -> Unit
+) {
     val uiState by addUnitViewModel.uiState.collectAsState()
-    AddUnitBody(uiState,{}) { }
+    AddUnitBody(uiState, {
+        if (addUnitViewModel.canAdd()) {
+            addUnitViewModel.addUnit()
+            toPrevious()
+        }
+    }, { addUnitViewModel.onNameChange(it) }) { addUnitViewModel.onDescChange(it) }
 }
 
 @Composable
-fun AddUnitBody(uiState: AddUnitUiState, onClick: () -> Unit, onValueChange: (String) -> Unit) {
+fun AddUnitBody(
+    uiState: AddUnitUiState,
+    onClick: () -> Unit,
+    onNameChange: (String) -> Unit,
+    onDescChange: (String) -> Unit
+) {
     Surface(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
@@ -65,14 +78,14 @@ fun AddUnitBody(uiState: AddUnitUiState, onClick: () -> Unit, onValueChange: (St
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = "each course has a name and a description",
+                        text = "each unit has a name and a description",
                         Modifier.padding(bottom = 5.dp)
                     )
                     TextField(
                         value = uiState.unitName,
-                        onValueChange = { onValueChange(it) },
+                        onValueChange = { onNameChange(it) },
                         singleLine = true,
-                        label = {Text("unit name")},
+                        label = { Text("unit name") },
                         keyboardActions = KeyboardActions(onDone = { onClick() }),
                         colors = TextFieldDefaults.colors(
                             focusedContainerColor = colorScheme.surface,
@@ -82,9 +95,10 @@ fun AddUnitBody(uiState: AddUnitUiState, onClick: () -> Unit, onValueChange: (St
                     )
                     Spacer(Modifier.height(20.dp))
                     TextField(
-                        value = uiState.unitName,
-                        onValueChange = { onValueChange(it) },
-                        label = {Text("unit description")},
+                        value = uiState.unitDesc,
+                        onValueChange = { onDescChange(it) },
+                        singleLine = true,
+                        label = { Text("unit description") },
                         keyboardActions = KeyboardActions(onDone = { onClick() }),
                         colors = TextFieldDefaults.colors(
                             focusedContainerColor = colorScheme.surface,
@@ -105,5 +119,5 @@ fun AddUnitBody(uiState: AddUnitUiState, onClick: () -> Unit, onValueChange: (St
 @Composable
 @Preview
 fun AddUnitPreview() {
-    AddUnitBody(AddUnitUiState("test unit", "test description", true), {}, {})
+    AddUnitBody(AddUnitUiState("test unit", "test description", true), {}, {}, {})
 }

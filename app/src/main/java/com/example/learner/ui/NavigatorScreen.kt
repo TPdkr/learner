@@ -55,7 +55,9 @@ fun LearnerApp(
         }
         //UNITS CATALOGUE SCREEN===============================================
         composable(route = ScreenSate.UnitCatScreen.name) {
-            UnitCatScreen { unit ->
+            UnitCatScreen(toAddUnit = {
+                navController.navigate((ScreenSate.AddUnitScreen.name))
+            }) { unit ->
                 LessonData.unitUid = unit.uid
                 navController.navigate(ScreenSate.UnitScreen.name)
             }
@@ -76,7 +78,7 @@ fun LearnerApp(
         }
         //ADD UNIT SCREEN======================================================
         composable(route = ScreenSate.AddUnitScreen.name) {
-            AddUnitScreen()
+            AddUnitScreen(toPrevious = { navController.popBackStack() })
         }
         //ADD WORD SCREEN======================================================
     }

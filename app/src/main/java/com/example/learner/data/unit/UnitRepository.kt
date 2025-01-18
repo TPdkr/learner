@@ -18,4 +18,7 @@ interface UnitRepository {
 
     /**get a unit with corresponding list of words*/
     fun getUnitWithWords(id: Int): Flow<UnitWithWords>
+
+    /**get the number of units in a course*/
+    fun getUnitCount(id: Int): Flow<Int>
 }

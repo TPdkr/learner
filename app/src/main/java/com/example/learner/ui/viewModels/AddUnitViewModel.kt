@@ -1,61 +1,76 @@
 package com.example.learner.ui.viewModels
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.learner.data.unit.UnitEntity
 import com.example.learner.data.unit.UnitRepository
 import com.example.learner.data.user.UserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class AddUnitViewModel(unitRepository: UnitRepository, userRepository: UserRepository) :
+class AddUnitViewModel(val unitRepository: UnitRepository, val userRepository: UserRepository) :
     ViewModel() {
     private val _uiState = MutableStateFlow(AddUnitUiState())
     val uiState = _uiState.asStateFlow()
 
-    //the list of names that are not available anymore
-    private lateinit var usedNames: List<String>
-
     //desired name of the course
-    private var userInput: String = ""
+    private var userInputName: String = ""
 
-    //INIT BLOCK
-    init {
-        /*viewModelScope.launch {
-            courseRepository.getAllCourses().filterNotNull().collect { courses ->
-                usedNames = courses.map { it.name.lowercase(Locale.getDefault()) }
-            }
-        }*/
-    }
+    private var userInputDesc: String = ""
 
-    /**change the ui with the user input*/
-    fun onValueChange(newValue: String) {
+    /**change the name with the user input*/
+    fun onNameChange(newValue: String) {
         if (newValue.length <= 30) {
-            userInput = newValue
+            userInputName = newValue
             _uiState.update { currentState ->
                 currentState.copy(
-                    //courseName = userInput,
-                    canAdd = userInput.isNotEmpty() && !usedNames.contains(userInput)
+                    unitName = userInputName,
+                    canAdd = userInputName.isNotEmpty()
+                )
+            }
+        }
+    }
+
+    /**change the description*/
+    fun onDescChange(newValue: String) {
+        if (newValue.length <= 100) {
+            userInputDesc = newValue
+            _uiState.update { currentState ->
+                currentState.copy(
+                    unitDesc = userInputDesc,
+                    canAdd = userInputName.isNotEmpty()
                 )
             }
         }
     }
 
     /**insert the entered course into the database*/
-    fun addCourse() {
+    fun addUnit() {
         viewModelScope.launch {
-            //courseRepository.insert(CourseEntity(0, userInput))
+            try {
+                val currentCourse =
+                    userRepository.getUserData().filterNotNull().first().currentCourseId
+                val unitCount = unitRepository.getUnitCount(currentCourse).filterNotNull().first()
+                val newUnit = UnitEntity(0, userInputName, userInputDesc, unitCount+1, currentCourse)
+                unitRepository.insert(newUnit)
+            } catch(e: Exception){
+                Log.e("AddUnitViewModel", e.message?:"no message given")
+            }
         }
     }
 
     /**can we add a course?*/
     fun canAdd(): Boolean =
-        userInput.isNotEmpty() && !usedNames.contains(userInput)
+        userInputName.isNotEmpty()
 }
 
 data class AddUnitUiState(
     val unitName: String = "",
-    val utiDesc: String ="",
+    val unitDesc: String = "",
     val canAdd: Boolean = false
 )
