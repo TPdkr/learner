@@ -19,7 +19,8 @@ enum class ScreenSate {
     CoursesScreen,
     UnitScreen,
     AddCourseScreen,
-    AddUnitScreen
+    AddUnitScreen,
+    AddWordScreen
 }
 
 /**
@@ -46,12 +47,9 @@ fun LearnerApp(
                 }
             )
         }
-        //UNIT INFO SCREEN=====================================================
-        composable(route = ScreenSate.UnitScreen.name) {
-            UnitScreen { lesson ->
-                LessonData.lesson = lesson
-                navController.navigate(ScreenSate.LessonScreen.name)
-            }
+        //COURSE CATALOGUE SCREEN==============================================
+        composable(route = ScreenSate.CoursesScreen.name) {
+            CoursesScreen({ navController.navigate(ScreenSate.AddCourseScreen.name) })
         }
         //UNITS CATALOGUE SCREEN===============================================
         composable(route = ScreenSate.UnitCatScreen.name) {
@@ -62,9 +60,13 @@ fun LearnerApp(
                 navController.navigate(ScreenSate.UnitScreen.name)
             }
         }
-        //COURSE CATALOGUE SCREEN==============================================
-        composable(route = ScreenSate.CoursesScreen.name) {
-            CoursesScreen({ navController.navigate(ScreenSate.AddCourseScreen.name) })
+        //UNIT INFO SCREEN=====================================================
+        composable(route = ScreenSate.UnitScreen.name) {
+            UnitScreen(toAddUnit = { navController.navigate(ScreenSate.AddWordScreen.name) })
+            { lesson ->
+                LessonData.lesson = lesson
+                navController.navigate(ScreenSate.LessonScreen.name)
+            }
         }
         //LESSON SCREEN========================================================
         composable(
@@ -81,5 +83,8 @@ fun LearnerApp(
             AddUnitScreen(toPrevious = { navController.popBackStack() })
         }
         //ADD WORD SCREEN======================================================
+        composable(route = ScreenSate.AddWordScreen.name) {
+            AddWordScreen(toPrevious = { navController.popBackStack() })
+        }
     }
 }

@@ -42,15 +42,16 @@ import com.example.learner.ui.viewModels.UnitViewModel
 @Composable
 fun UnitScreen(
     unitViewModel: UnitViewModel = viewModel(factory = ViewModelFactory.Factory),
+    toAddUnit: () -> Unit,
     toLesson: (Lesson) -> Unit
 ) {
     val uiSate by unitViewModel.uiState.collectAsState()
     val unit = uiSate.unit
-    UnitScreenBody(unit, toLesson)
+    UnitScreenBody(unit, toAddUnit, toLesson)
 }
 
 @Composable
-fun UnitScreenBody(unit: CourseUnit, toLesson: (Lesson) -> Unit) {
+fun UnitScreenBody(unit: CourseUnit, toAddUnit: () -> Unit, toLesson: (Lesson) -> Unit) {
     Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.surfaceContainer) {
         Column(
             modifier = Modifier
@@ -119,9 +120,8 @@ fun UnitScreenBody(unit: CourseUnit, toLesson: (Lesson) -> Unit) {
                     Text(text = "learn", style = typography.bodyMedium)
                 }
                 OutlinedButton(
-                    onClick = {},
+                    onClick = toAddUnit,
                     modifier = Modifier.width(130.dp),
-                    enabled = false
                 ) {
                     Text(text = "add", style = typography.bodyMedium)
                 }
@@ -134,6 +134,6 @@ fun UnitScreenBody(unit: CourseUnit, toLesson: (Lesson) -> Unit) {
 @Composable
 fun UnitScreenPreview() {
     LearnerTheme {
-        UnitScreenBody(testUnit) { }
+        UnitScreenBody(testUnit,{}) { }
     }
 }
