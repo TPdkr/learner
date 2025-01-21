@@ -45,6 +45,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.PopupProperties
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.learner.classes.Word
 import com.example.learner.ui.viewModels.AddWordUiState
 import com.example.learner.ui.viewModels.AddWordViewModel
 
@@ -60,6 +61,7 @@ fun AddWordScreen(
         { addWordViewModel.onGendChange(it) },
         { addWordViewModel.onTransChange(it) },
         { addWordViewModel.onGermChange(it) },
+        { addWordViewModel.chooseWord(it) },
         { addWordViewModel.isNounSwitch() },
         {
             if (addWordViewModel.canAdd()) {
@@ -70,6 +72,7 @@ fun AddWordScreen(
 
 }
 
+/**the body od add word screen*/
 @Composable
 fun AddWordBody(
     uiState: AddWordUiState,
@@ -77,6 +80,7 @@ fun AddWordBody(
     onGndCh: (Int) -> Unit,
     onTrCh: (String) -> Unit,
     onGermCh: (String) -> Unit,
+    onChoice: (Word) -> Unit,
     isNounSwitch: () -> Unit,
     submit: () -> Unit,
 ) {
@@ -85,39 +89,45 @@ fun AddWordBody(
             modifier = Modifier
                 .fillMaxSize()
                 .statusBarsPadding()
+                .padding(20.dp)
                 .verticalScroll(
                     rememberScrollState()
                 ),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            Card(modifier = Modifier.height(400.dp)) {
-                Box {
+            Card(modifier = Modifier.height(380.dp)) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(20.dp)
+                ) {
                     Column(
                         modifier = Modifier
-                            .fillMaxSize()
-                            .padding(20.dp),
-                        verticalArrangement = Arrangement.Center,
+                            .fillMaxSize(),
+                        verticalArrangement = Arrangement.SpaceBetween,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-
+                        //the title
                         Text(
-                            text = "",
+                            text = "Add word:",
                             style = typography.titleLarge,
                             fontWeight = FontWeight.Bold,
                             fontSize = 40.sp,
                             lineHeight = 40.sp,
                             textAlign = TextAlign.Center
                         )
-                        //the gender choice
-                        if (uiState.isNoun) {//here we allow the user to choose the gender of the word
+                        //the gender choice for nouns
+                        if (uiState.isNoun) {
                             AnswerSegmentedButton(
                                 genders,
                                 { index -> onGndCh(index) },
                                 uiState.inpGend
                             )
                         }
-                        DropDownTextField(uiState, onGermCh)
+                        //this is the german language text field
+                        DropDownTextField(uiState, onGermCh, onChoice)
+                        //this is the translation text field
                         TextField(
                             value = uiState.inpTrans,
                             singleLine = true,
@@ -136,37 +146,51 @@ fun AddWordBody(
                             ),
                             label = { Text("translation") }
                         )
-                        if (uiState.isNoun) {//here the user chooses the plural form
+                        //here the user chooses the plural form for nouns
+                        if (uiState.isNoun) {
                             AnswerSegmentedButton(
                                 endings,
                                 { index -> onPlCh(index) },
                                 uiState.inpPl
                             )
                         }
+                        //this is the input button
+                        Button(onClick = submit, enabled = uiState.canInsert) {
+                            Text(text = "add a new word")
+                        }
                     }
-                    Switch(checked = uiState.isNoun, { isNounSwitch() })
+                    //this is the noun state switch
+                    Switch(
+                        checked = uiState.isNoun, { isNounSwitch() }, modifier = Modifier.align(
+                            Alignment.TopEnd
+                        )
+                    )
                 }
             }
-            Button(onClick = submit, enabled = uiState.canInsert) {
-                Text(text = "add a new word")
-            }
+
         }
     }
 }
 
+/**The drop down field in the word add screen*/
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DropDownTextField(uiState: AddWordUiState, onValueChange: (String) -> Unit) {
-
+fun DropDownTextField(
+    uiState: AddWordUiState,
+    onValueChange: (String) -> Unit,
+    onChoice: (Word) -> Unit
+) {
+    /**list of all words matching the input]*/
     val filteredList = uiState.wordList.filter {
         it.german.contains(uiState.inpGerm, ignoreCase = true)
     }
 
+    /**is the drop down expanded?*/
     var expanded by rememberSaveable { mutableStateOf(false) }
 
-    val focusRequester = androidx.compose.ui.focus.FocusRequester()
     ExposedDropdownMenuBox(expanded = expanded,
         onExpandedChange = { expanded = !expanded }) {
+        //the text field associated with the drop down
         TextField(
             value = uiState.inpGerm,
             singleLine = true,
@@ -183,22 +207,19 @@ fun DropDownTextField(uiState: AddWordUiState, onValueChange: (String) -> Unit) 
                 disabledContainerColor = colorScheme.surface,
             ),
             modifier = Modifier
-
                 .menuAnchor(type = MenuAnchorType.PrimaryEditable, enabled = true)
                 .fillMaxWidth()
                 .heightIn(max = 60.dp),
             keyboardOptions = KeyboardOptions(
                 imeAction = ImeAction.Next
             ),
-            //
-            //keyboardActions = KeyboardActions(onDone = KeyboardActions.Default.)
         )
+        //the drop down list for the tet field
         if (filteredList.isNotEmpty()) {
             DropdownMenu(
                 expanded = expanded,
                 onDismissRequest = {
                     expanded = false
-                    Log.d("add word screen", "dismiss request received")
                 },
                 modifier = Modifier
                     .exposedDropdownSize(true)
@@ -206,13 +227,14 @@ fun DropDownTextField(uiState: AddWordUiState, onValueChange: (String) -> Unit) 
                     .heightIn(max = 200.dp),
                 properties = PopupProperties(focusable = false),
             ) {
+                //this is the list of all word the user can choose from
                 (filteredList.take(5)).forEach { word ->
+                    //each word is displayed similar how it is displayed in unit screen
                     DropdownMenuItem(
                         onClick = {
                             Log.d("add word screen", "choice made")
                             expanded = false
-                            focusRequester.requestFocus()
-                            onValueChange(word.german)
+                            onChoice(word)
                         },
                         text = { Text(word.toUiString()) }
                     )
@@ -226,11 +248,5 @@ fun DropDownTextField(uiState: AddWordUiState, onValueChange: (String) -> Unit) 
 @Preview
 @Composable
 fun AddWordPreview() {
-    AddWordBody(AddWordUiState(), {}, {}, {}, {}, {}, {})
-}
-
-@Preview
-@Composable
-fun DropDowPreview() {
-    DropDownTextField(AddWordUiState()) {}
+    AddWordBody(AddWordUiState(), {}, {}, {}, {}, {}, {}, {})
 }

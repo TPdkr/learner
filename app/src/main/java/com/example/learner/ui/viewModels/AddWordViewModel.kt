@@ -56,6 +56,7 @@ class AddWordViewModel(
         }
     }
 
+    /**switch the is noun state*/
     fun isNounSwitch() {
         if (uiState.value.isNoun) {
             inpGend = -1
@@ -75,6 +76,24 @@ class AddWordViewModel(
         }
     }
 
+    /**choose the word from list and set input fields*/
+    fun chooseWord(word: Word) {
+        inpGerm = word.german
+        inpTrans = word.translation
+        inpGend = word.gender.code
+        inpPl = word.plural.code
+        val isNoun = word.isNoun()
+        _uiState.update { currentState ->
+            currentState.copy(
+                inpPl = inpPl,
+                inpGend = inpGend,
+                inpGerm = inpGerm,
+                inpTrans = inpTrans,
+                isNoun = isNoun
+            )
+        }
+    }
+
     init {
         viewModelScope.launch {
             try {
@@ -88,6 +107,7 @@ class AddWordViewModel(
         }
     }
 
+    /**insert the word into the database*/
     fun insert() {
         viewModelScope.launch {
             try {
@@ -105,6 +125,7 @@ class AddWordViewModel(
         }
     }
 
+    /**can we add the word into the database?*/
     fun canAdd(): Boolean {
         return if (uiState.value.isNoun) {
             inpGend != -1 && inpPl != -1 && inpGerm.isNotEmpty() && inpTrans.isNotEmpty()
