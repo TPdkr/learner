@@ -99,7 +99,8 @@ fun UnitScreenBody(unit: CourseUnit, toAddUnit: () -> Unit, toLesson: (Lesson) -
                             modifier = Modifier.padding(5.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Text(text = word.toUiString())
+                            Text(text = word.toUiString(), modifier = Modifier.weight(5f))
+                            Text(text=word.getRevisionTime(), modifier = Modifier.weight(1f))
                         }
                         HorizontalDivider(thickness = 2.dp)
                     }

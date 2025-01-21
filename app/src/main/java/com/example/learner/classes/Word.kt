@@ -172,16 +172,34 @@ data class Word(
             revision++
             val newRevisionTime = Calendar.getInstance()//we get current time
             //how many hours to add is calculated
-            val hours = 8.0 + 2.0 * (revision.toDouble() - 1.0).pow(2.0) - 3.0 * mistakes
+            val hours =
+                12.0 + 2.0 * (revision.toDouble() - 1.0).pow(2.0) -
+                        5.0 * (mistakes.toDouble()).pow(2.0)
             //i turn it into minutes and randomize a bit in order to not review everything at once
             val minutes = (hours * 60.0 * ((7..13).random().toDouble() / 10.0)).toInt()
             //we update revision time
             newRevisionTime.add(Calendar.HOUR_OF_DAY, minutes / 60)
             newRevisionTime.add(Calendar.MINUTE, minutes % 60)
+            //we change the word state to memorized
             revisionTime = newRevisionTime
-
+            if (hours / 24 > 100) {
+                revision = -1
+            }
             //we save the state of the word
             wordRepository.updateWord(this.toWordEntity())
+        }
+    }
+
+    /**get revision time of the word*/
+    fun getRevisionTime(): String{
+        var dif = revisionTime.timeInMillis-Calendar.getInstance().timeInMillis
+        dif /=1000
+        dif/=60
+        return when{
+            revision<2->"-"
+            (dif<60)->"in $dif min"
+            (dif/60<24)->"in ${dif/60} h"
+            else -> "in ${dif/60/24} d"
         }
     }
 
