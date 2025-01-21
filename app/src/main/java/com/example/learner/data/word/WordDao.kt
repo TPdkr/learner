@@ -14,6 +14,9 @@ interface WordDao {
     @Query("SELECT * FROM words WHERE wid=:id")
     fun getWord(id: Int): Flow<WordEntity>
 
+    @Query("SELECT * FROM words")
+    fun getAllWords(): Flow<List<WordEntity>>
+
     @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun insert(wordEntity: WordEntity): Long
 

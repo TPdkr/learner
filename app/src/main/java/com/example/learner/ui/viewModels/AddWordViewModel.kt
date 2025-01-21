@@ -9,6 +9,8 @@ import com.example.learner.data.word.WordEntity
 import com.example.learner.data.word.WordRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -69,6 +71,19 @@ class AddWordViewModel(
         } else {
             _uiState.update { currentState ->
                 currentState.copy(isNoun = true, canInsert = canAdd())
+            }
+        }
+    }
+
+    init {
+        viewModelScope.launch {
+            try {
+                val words = wordRepository.getAllWords().filterNotNull().firstOrNull()
+                    ?.map { it.toWord() }
+                    ?: emptyList()
+                _uiState.value = AddWordUiState(wordList = words)
+            } catch (e: Exception) {
+                Log.e("AddWordViewModel", e.message ?: "no message given")
             }
         }
     }

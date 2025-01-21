@@ -9,8 +9,9 @@ class OfflineWordRepository(private val wordDao: WordDao) : WordRepository {
         if (isValid(word)) {
             wordDao.update(word)
         }
-
     }
+
+    override fun getAllWords(): Flow<List<WordEntity>> = wordDao.getAllWords()
 
     override suspend fun deleteWord(word: WordEntity) = wordDao.delete(word)
 
@@ -21,6 +22,7 @@ class OfflineWordRepository(private val wordDao: WordDao) : WordRepository {
             -1L
         }
     }
+
     /**is a given word satisfying the integrity constrain?*/
     private fun isValid(word: WordEntity): Boolean =
         (word.gender == -1 && word.plural == -1) || (word.gender != -1 && word.plural != -1)
