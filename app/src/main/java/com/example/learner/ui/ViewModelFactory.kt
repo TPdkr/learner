@@ -1,6 +1,5 @@
 package com.example.learner.ui
 
-import androidx.compose.ui.unit.lerp
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory
 import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
@@ -9,10 +8,10 @@ import com.example.learner.data.LearnerApplication
 import com.example.learner.ui.viewModels.AddCourseViewModel
 import com.example.learner.ui.viewModels.AddUnitViewModel
 import com.example.learner.ui.viewModels.AddWordViewModel
-import com.example.learner.ui.viewModels.MainScrViewModel
-import com.example.learner.ui.viewModels.UnitCatViewModel
 import com.example.learner.ui.viewModels.CoursesViewModel
 import com.example.learner.ui.viewModels.LessonViewModel
+import com.example.learner.ui.viewModels.MainScrViewModel
+import com.example.learner.ui.viewModels.UnitCatViewModel
 import com.example.learner.ui.viewModels.UnitViewModel
 
 object ViewModelFactory {

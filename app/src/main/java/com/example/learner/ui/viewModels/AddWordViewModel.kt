@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class AddWordViewModel(
-    val wordRepository: WordRepository,
+    private val wordRepository: WordRepository,
     val repository: UnitWithWordsRepository
 ) :
     ViewModel() {
@@ -22,8 +22,8 @@ class AddWordViewModel(
 
     private var inpGerm = ""
     private var inpTrans: String = ""
-    var inpGend: Int = -1
-    var inpPl: Int = -1
+    private var inpGend: Int = -1
+    private var inpPl: Int = -1
 
     fun onGermChange(germ: String) {
         inpGerm = germ
