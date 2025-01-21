@@ -14,9 +14,11 @@ class OfflineWordRepository(private val wordDao: WordDao) : WordRepository {
 
     override suspend fun deleteWord(word: WordEntity) = wordDao.delete(word)
 
-    override suspend fun insertWord(word: WordEntity) {
-        if (isValid(word)) {
+    override suspend fun insertWord(word: WordEntity): Long {
+        return if (isValid(word)) {
             wordDao.insert(word)
+        } else {
+            -1L
         }
     }
     /**is a given word satisfying the integrity constrain?*/

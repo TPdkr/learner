@@ -7,7 +7,7 @@ interface WordRepository {
     fun getWordStream(id: Int): Flow<WordEntity?>
 
     /**insert a word into the database*/
-    suspend fun insertWord(word: WordEntity)
+    suspend fun insertWord(word: WordEntity): Long
 
     /**update a word in a database*/
     suspend fun updateWord(word: WordEntity)

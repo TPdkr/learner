@@ -15,7 +15,7 @@ interface WordDao {
     fun getWord(id: Int): Flow<WordEntity>
 
     @Insert(onConflict = OnConflictStrategy.ABORT)
-    suspend fun insert(wordEntity: WordEntity)
+    suspend fun insert(wordEntity: WordEntity): Long
 
     @Update(onConflict = OnConflictStrategy.ABORT)
     suspend fun update(wordEntity: WordEntity)

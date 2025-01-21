@@ -1,5 +1,6 @@
 package com.example.learner.ui.viewModels
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.learner.classes.Word
@@ -13,7 +14,7 @@ import kotlinx.coroutines.launch
 
 class AddWordViewModel(
     private val wordRepository: WordRepository,
-    val repository: UnitWithWordsRepository
+    private val unitWordRepository: UnitWithWordsRepository
 ) :
     ViewModel() {
     //the user can only read the ui state
@@ -74,7 +75,18 @@ class AddWordViewModel(
 
     fun insert() {
         viewModelScope.launch {
-            wordRepository.insertWord(WordEntity(0, inpGerm, inpTrans, inpGend, inpPl))
+            try {
+                val wid: Int =
+                    wordRepository.insertWord(WordEntity(0, inpGerm, inpTrans, inpGend, inpPl))
+                        .toInt()
+                val currentUnit = LessonData.unitUid
+                if (wid != -1) {
+                    unitWordRepository.addWordToUnit(wid, currentUnit)
+                }
+            } catch (e: Exception) {
+                Log.e("AddWordViewModel", e.message ?: "no message given")
+            }
+
         }
     }
 
