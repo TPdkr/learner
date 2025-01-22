@@ -46,12 +46,9 @@ class LessonViewModel(
     }
 
     //user guess variables for inputs
-    var userGuess by mutableStateOf("")
-        private set
-    var userGenderGuess by mutableIntStateOf(-1)
-        private set
-    var userPluralGuess by mutableIntStateOf(-1)
-        private set
+    private var userGuess by mutableStateOf("")
+    private var userGenderGuess by mutableIntStateOf(-1)
+    private var userPluralGuess by mutableIntStateOf(-1)
 
     /**start the lesson and set the default values*/
     private fun startLesson() {
