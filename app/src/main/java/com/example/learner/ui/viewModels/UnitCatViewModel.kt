@@ -43,7 +43,8 @@ class UnitCatViewModel(courseRepository: CourseRepository) :
         _uiState.update { currentState ->
             currentState.copy(
                 units = course.units,
-                courseName = course.name
+                courseName = course.name,
+                cid = course.cid
             )
         }
     }
@@ -53,4 +54,5 @@ class UnitCatViewModel(courseRepository: CourseRepository) :
 data class UnitCatUiState(
     val units: List<CourseUnit> = listOf(),
     val courseName: String = "",
+    val cid: Int = 0,
 )

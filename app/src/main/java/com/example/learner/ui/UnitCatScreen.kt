@@ -41,7 +41,7 @@ import com.example.learner.ui.viewModels.UnitCatViewModel
 @Composable
 fun UnitCatScreen(
     unitCatViewModel: UnitCatViewModel = viewModel(factory = ViewModelFactory.Factory),
-    toAddUnit: ()-> Unit,
+    toAddUnit: () -> Unit,
     toUnit: (CourseUnit) -> Unit
 ) {
     val courseUiState by unitCatViewModel.uiState.collectAsState()
@@ -117,7 +117,14 @@ fun UnitCatScreenBody(
                 .statusBarsPadding()
                 .padding(25.dp)
         ) {
-            FloatingActionButton(onClick = toAddUnit, modifier = Modifier.align(Alignment.BottomEnd)) {
+            FloatingActionButton(
+                onClick = {
+                    if (unitCatUiState.cid != 1) {
+                        toAddUnit()
+                    }
+                },
+                modifier = Modifier.align(Alignment.BottomEnd)
+            ) {
                 Icon(Icons.Filled.Add, "")
             }
         }
@@ -161,5 +168,5 @@ fun UnitCard(unit: CourseUnit, onClick: () -> Unit, modifier: Modifier = Modifie
 @Preview
 @Composable
 fun UnitCatPreview() {
-    UnitCatScreenBody(unitCatUiState = UnitCatUiState(testCourse.units, testCourse.name),{}) {}
+    UnitCatScreenBody(unitCatUiState = UnitCatUiState(testCourse.units, testCourse.name), {}) {}
 }
