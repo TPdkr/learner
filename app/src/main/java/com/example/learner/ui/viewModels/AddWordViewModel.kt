@@ -96,6 +96,9 @@ class AddWordViewModel(
                 isNoun = isNoun
             )
         }
+        _uiState.update { currentState ->
+            currentState.copy(canInsert = canAdd())
+        }
     }
 
     init {
