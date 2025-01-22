@@ -2,7 +2,6 @@ package com.example.learner.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -13,9 +12,9 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.typography
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -23,8 +22,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.learner.ui.viewModels.AddCourseUiState
 import com.example.learner.ui.viewModels.AddCourseViewModel
@@ -63,20 +64,18 @@ fun AddCourseBody(uiState: AddCourseUiState, onClick: () -> Unit, onValueChange:
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(10.dp),
-                    verticalArrangement = Arrangement.Center,
+                    verticalArrangement = Arrangement.SpaceBetween,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "enter course name",
-                        Modifier.padding(top = 5.dp),
-                        style = typography.bodyLarge,
-                        fontWeight = FontWeight.Bold
+                        text = "Add course",
+                        style = typography.titleLarge,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 40.sp,
+                        lineHeight = 40.sp,
+                        textAlign = TextAlign.Center
                     )
-                    Text(
-                        text = "the course name has to be not used yet",
-                        Modifier.padding(bottom = 5.dp)
-                    )
-                    OutlinedTextField(
+                    TextField(
                         value = uiState.courseName,
                         onValueChange = { onValueChange(it) },
                         singleLine = true,
@@ -85,13 +84,13 @@ fun AddCourseBody(uiState: AddCourseUiState, onClick: () -> Unit, onValueChange:
                             focusedContainerColor = colorScheme.surface,
                             unfocusedContainerColor = colorScheme.surface,
                             disabledContainerColor = colorScheme.surface,
-                        )
+                        ),
+                        label={Text("course name")}
                     )
+                    Button(onClick = onClick, enabled = uiState.canAdd) {
+                        Text("add new course")
+                    }
                 }
-            }
-            Spacer(Modifier.height(20.dp))
-            Button(onClick = onClick, enabled = uiState.canAdd) {
-                Text("add new course")
             }
         }
     }

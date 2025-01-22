@@ -2,7 +2,6 @@ package com.example.learner.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -23,8 +22,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.learner.ui.viewModels.AddUnitUiState
 import com.example.learner.ui.viewModels.AddUnitViewModel
@@ -68,18 +69,16 @@ fun AddUnitBody(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(10.dp),
-                    verticalArrangement = Arrangement.Center,
+                    verticalArrangement = Arrangement.SpaceBetween,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "add a new unit",
-                        Modifier.padding(top = 5.dp),
-                        style = typography.bodyLarge,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Text(
-                        text = "each unit has a name and a description",
-                        Modifier.padding(bottom = 5.dp)
+                        text = "add unit",
+                        style = typography.titleLarge,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 40.sp,
+                        lineHeight = 40.sp,
+                        textAlign = TextAlign.Center
                     )
                     TextField(
                         value = uiState.unitName,
@@ -93,7 +92,6 @@ fun AddUnitBody(
                             disabledContainerColor = colorScheme.surface,
                         )
                     )
-                    Spacer(Modifier.height(20.dp))
                     TextField(
                         value = uiState.unitDesc,
                         onValueChange = { onDescChange(it) },
@@ -106,12 +104,12 @@ fun AddUnitBody(
                             disabledContainerColor = colorScheme.surface,
                         )
                     )
+                    Button(onClick = onClick, enabled = uiState.canAdd) {
+                        Text("add unit to course")
+                    }
                 }
             }
-            Spacer(Modifier.height(20.dp))
-            Button(onClick = onClick, enabled = uiState.canAdd) {
-                Text("add unit to course")
-            }
+
         }
     }
 }
