@@ -44,6 +44,7 @@ fun AddUnitScreen(
     }, { addUnitViewModel.onNameChange(it) }) { addUnitViewModel.onDescChange(it) }
 }
 
+/**the body of the add unit screen*/
 @Composable
 fun AddUnitBody(
     uiState: AddUnitUiState,
@@ -72,6 +73,7 @@ fun AddUnitBody(
                     verticalArrangement = Arrangement.SpaceBetween,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
+                    //title
                     Text(
                         text = "add unit",
                         style = typography.titleLarge,
@@ -80,6 +82,7 @@ fun AddUnitBody(
                         lineHeight = 40.sp,
                         textAlign = TextAlign.Center
                     )
+                    //unit name
                     TextField(
                         value = uiState.unitName,
                         onValueChange = { onNameChange(it) },
@@ -92,6 +95,7 @@ fun AddUnitBody(
                             disabledContainerColor = colorScheme.surface,
                         )
                     )
+                    //unit description
                     TextField(
                         value = uiState.unitDesc,
                         onValueChange = { onDescChange(it) },
@@ -104,6 +108,7 @@ fun AddUnitBody(
                             disabledContainerColor = colorScheme.surface,
                         )
                     )
+                    //button to add
                     Button(onClick = onClick, enabled = uiState.canAdd) {
                         Text("add unit to course")
                     }

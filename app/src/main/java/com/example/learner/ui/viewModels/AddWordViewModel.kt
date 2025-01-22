@@ -23,11 +23,13 @@ class AddWordViewModel(
     private val _uiState = MutableStateFlow(AddWordUiState())
     val uiState = _uiState.asStateFlow()
 
+    //the input fields states
     private var inpGerm = ""
     private var inpTrans: String = ""
     private var inpGend: Int = -1
     private var inpPl: Int = -1
 
+    //SETTERS:
     fun onGermChange(germ: String) {
         inpGerm = germ
         _uiState.update { currentState ->
@@ -112,7 +114,15 @@ class AddWordViewModel(
         viewModelScope.launch {
             try {
                 val wid: Int =
-                    wordRepository.insertWord(WordEntity(0, inpGerm.trim(), inpTrans.trim(), inpGend, inpPl))
+                    wordRepository.insertWord(
+                        WordEntity(
+                            0,
+                            inpGerm.trim(),
+                            inpTrans.trim(),
+                            inpGend,
+                            inpPl
+                        )
+                    )
                         .toInt()
                 val currentUnit = LessonData.unitUid
                 if (wid != -1) {

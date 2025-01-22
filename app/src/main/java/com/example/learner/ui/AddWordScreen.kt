@@ -72,7 +72,7 @@ fun AddWordScreen(
 
 }
 
-/**the body od add word screen*/
+/**the body of add word screen*/
 @Composable
 fun AddWordBody(
     uiState: AddWordUiState,

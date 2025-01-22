@@ -44,6 +44,7 @@ fun AddCourseScreen(
     }, { addCourseViewModel.onValueChange(it) })
 }
 
+/**the body of the add course screen*/
 @Composable
 fun AddCourseBody(uiState: AddCourseUiState, onClick: () -> Unit, onValueChange: (String) -> Unit) {
     Surface(modifier = Modifier.fillMaxSize()) {
@@ -67,6 +68,7 @@ fun AddCourseBody(uiState: AddCourseUiState, onClick: () -> Unit, onValueChange:
                     verticalArrangement = Arrangement.SpaceBetween,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
+                    //title
                     Text(
                         text = "Add course",
                         style = typography.titleLarge,
@@ -75,6 +77,7 @@ fun AddCourseBody(uiState: AddCourseUiState, onClick: () -> Unit, onValueChange:
                         lineHeight = 40.sp,
                         textAlign = TextAlign.Center
                     )
+                    //course name
                     TextField(
                         value = uiState.courseName,
                         onValueChange = { onValueChange(it) },
@@ -85,8 +88,9 @@ fun AddCourseBody(uiState: AddCourseUiState, onClick: () -> Unit, onValueChange:
                             unfocusedContainerColor = colorScheme.surface,
                             disabledContainerColor = colorScheme.surface,
                         ),
-                        label={Text("course name")}
+                        label = { Text("course name") }
                     )
+                    //submit button
                     Button(onClick = onClick, enabled = uiState.canAdd) {
                         Text("add new course")
                     }
