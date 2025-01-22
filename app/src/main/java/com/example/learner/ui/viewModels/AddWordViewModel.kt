@@ -68,13 +68,15 @@ class AddWordViewModel(
                     inpGend = inpGend,
                     inpPl = inpPl,
                     isNoun = false,
-                    canInsert = canAdd()
                 )
             }
         } else {
             _uiState.update { currentState ->
-                currentState.copy(isNoun = true, canInsert = canAdd())
+                currentState.copy(isNoun = true)
             }
+        }
+        _uiState.update { currentState ->
+            currentState.copy(canInsert = canAdd())
         }
     }
 

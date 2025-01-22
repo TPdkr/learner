@@ -123,7 +123,7 @@ fun MainScreenBody(
                     }
                     Spacer(modifier = Modifier.height(100.dp))
                     //NAVIGATION:
-                    Card {
+                    Column {
                         MenuButton(
                             { toLesson(mainUiState.currentCourse.reviewLesson()) },
                             stringResource(

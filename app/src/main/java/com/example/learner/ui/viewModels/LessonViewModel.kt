@@ -22,7 +22,7 @@ import kotlinx.coroutines.launch
 
 object LessonData {
     var lesson: Lesson = Lesson(listOf())
-    var unit: CourseUnit = CourseUnit(listOf(), "",0,"")
+    var unit: CourseUnit = CourseUnit(listOf(), "", 0, "")
     var unitUid: Int = 1
 }
 
@@ -63,7 +63,9 @@ class LessonViewModel(
                 info = currentWord.toUiString(),
                 currentTaskType = newTaskType,
                 isNoun = isNoun(),
-                taskCount = currentLesson.tasks.size
+                taskCount = currentLesson.tasks.size,
+                onCheckAnswer = ::checkAnswer,
+                onNextTask = ::nextTask
             )
         }
     }
@@ -74,16 +76,25 @@ class LessonViewModel(
     /**update user guess after change*/
     fun updateUserGuess(newGuess: String) {
         userGuess = newGuess
+        _uiState.update { currentState->
+            currentState.copy(currentGuess = newGuess)
+        }
     }
 
     /**update user gender guess for the word*/
     fun updateGenderGuess(gender: Int) {
         userGenderGuess = gender
+        _uiState.update { currentState->
+            currentState.copy(genderGuess = gender)
+        }
     }
 
     /**update plural guess for the word*/
     fun updatePluralGuess(plural: Int) {
         userPluralGuess = plural
+        _uiState.update { currentState->
+            currentState.copy(plGuess = plural)
+        }
     }
 
     /**save the state change after the lesson is over*/
@@ -94,6 +105,7 @@ class LessonViewModel(
         }
     }
 
+    /**save the xp score of the lesson*/
     private fun saveScore() {
         viewModelScope.launch {
             val userData = userRepository.getUserData().filterNotNull().first()
@@ -157,7 +169,7 @@ class LessonViewModel(
         val lessonScore = getLessonScore()
         val excellent = listOf(
             "good boy!(gender neutral)✨",
-            "Slaying so hard, even Beyoncé might be worried. 👑",
+            "Slaying so hard, even Lady Gaga might be worried. 👑",
             "Du bist mein Lebkuchen",
             "I would hug you, but I'm just a text. I bet you give great hugs",
             "Main character energy right there",
@@ -204,15 +216,27 @@ class LessonViewModel(
 
 /**These variables determine the state of the UI*/
 data class LessonUiState(
+    //the boolean values
     val isChecked: Boolean = false,
     val isWrong: Boolean = false,
     val isNoun: Boolean = false,
+    //progress indicator
     val taskNumber: Int = 0,
     val taskCount: Int = 0,
+    //xp count
     val score: Int = 0,
     val wordCount: Int = 0,
+    //current user input and task data
     val currentTrans: String = "",
+    val currentGuess: String = "",
+    val genderGuess: Int = -1,
+    val plGuess: Int = -1,
+    //info card data
     val info: String = "",
+    //final message data
     val finalMessage: String = "",
-    val currentTaskType: TaskType = TaskType.TYPE_TEXT
+    val currentTaskType: TaskType = TaskType.TYPE_TEXT,
+    //lambdas
+    val onCheckAnswer: () -> Unit = {},
+    val onNextTask: () -> Unit = {}
 )
