@@ -112,7 +112,7 @@ class AddWordViewModel(
         viewModelScope.launch {
             try {
                 val wid: Int =
-                    wordRepository.insertWord(WordEntity(0, inpGerm, inpTrans, inpGend, inpPl))
+                    wordRepository.insertWord(WordEntity(0, inpGerm.trim(), inpTrans.trim(), inpGend, inpPl))
                         .toInt()
                 val currentUnit = LessonData.unitUid
                 if (wid != -1) {

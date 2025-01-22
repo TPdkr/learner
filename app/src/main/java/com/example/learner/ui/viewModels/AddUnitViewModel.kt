@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class AddUnitViewModel(val unitRepository: UnitRepository, val userRepository: UserRepository) :
+class AddUnitViewModel(private val unitRepository: UnitRepository, private val userRepository: UserRepository) :
     ViewModel() {
     private val _uiState = MutableStateFlow(AddUnitUiState())
     val uiState = _uiState.asStateFlow()
@@ -56,7 +56,7 @@ class AddUnitViewModel(val unitRepository: UnitRepository, val userRepository: U
                 val currentCourse =
                     userRepository.getUserData().filterNotNull().first().currentCourseId
                 val unitCount = unitRepository.getUnitCount(currentCourse).filterNotNull().first()
-                val newUnit = UnitEntity(0, userInputName, userInputDesc, unitCount+1, currentCourse)
+                val newUnit = UnitEntity(0, userInputName.trim(), userInputDesc.trim(), unitCount+1, currentCourse)
                 unitRepository.insert(newUnit)
             } catch(e: Exception){
                 Log.e("AddUnitViewModel", e.message?:"no message given")

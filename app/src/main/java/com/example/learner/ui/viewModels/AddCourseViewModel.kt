@@ -1,5 +1,6 @@
 package com.example.learner.ui.viewModels
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.learner.data.course.CourseEntity
@@ -46,7 +47,11 @@ class AddCourseViewModel(private val courseRepository: CourseRepository) : ViewM
     /**insert the entered course into the database*/
     fun addCourse() {
         viewModelScope.launch {
-            courseRepository.insert(CourseEntity(0, userInput))
+            try {
+                courseRepository.insert(CourseEntity(0, userInput.trim()))
+            }  catch(e: Exception){
+                Log.e("AddCourseViewModel", e.message?:"no value given")
+            }
         }
     }
 
