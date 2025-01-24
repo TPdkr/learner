@@ -2,7 +2,7 @@ package com.example.learner.classes
 
 /**A course instance stores a list of [units] and has a [name], which is displayed in catalogue and
  *  on units page*/
-data class Course(val units: List<CourseUnit>, val name: String) {
+data class Course(val units: List<CourseUnit>, val name: String, val cid: Int=0) {
     /**get all ready to learn words*/
     private fun wordsToLearn(): List<Word> {
         val words = mutableListOf<Word>()

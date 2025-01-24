@@ -5,21 +5,37 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.learner.classes.CourseUnit
 import com.example.learner.classes.Lesson
 import com.example.learner.classes.TaskType
 import com.example.learner.classes.Word
+import com.example.learner.data.user.UserRepository
+import com.example.learner.data.word.WordRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
-class LessonViewModel(lesson: Lesson) : ViewModel() {
+object LessonData {
+    var lesson: Lesson = Lesson(listOf())
+    var unit: CourseUnit = CourseUnit(listOf(), "", 0, "")
+    var unitUid: Int = 1
+}
+
+class LessonViewModel(
+    private val wordRepository: WordRepository,
+    private val userRepository: UserRepository
+) : ViewModel() {
     //game ui state as state flow
     private val _uiState = MutableStateFlow(LessonUiState())
     val uiState: StateFlow<LessonUiState> = _uiState.asStateFlow()
 
     //this is the lesson data passed to the function
-    private val currentLesson: Lesson = lesson
+    private val currentLesson: Lesson = LessonData.lesson
 
     //this is the current word data
     private lateinit var currentWord: Word
@@ -30,12 +46,9 @@ class LessonViewModel(lesson: Lesson) : ViewModel() {
     }
 
     //user guess variables for inputs
-    var userGuess by mutableStateOf("")
-        private set
-    var userGenderGuess by mutableIntStateOf(-1)
-        private set
-    var userPluralGuess by mutableIntStateOf(-1)
-        private set
+    private var userGuess by mutableStateOf("")
+    private var userGenderGuess by mutableIntStateOf(-1)
+    private var userPluralGuess by mutableIntStateOf(-1)
 
     /**start the lesson and set the default values*/
     private fun startLesson() {
@@ -47,7 +60,12 @@ class LessonViewModel(lesson: Lesson) : ViewModel() {
                 info = currentWord.toUiString(),
                 currentTaskType = newTaskType,
                 isNoun = isNoun(),
-                taskCount = currentLesson.tasks.size
+                taskCount = currentLesson.tasks.size,
+                onCheckAnswer = ::checkAnswer,
+                onNextTask = ::nextTask,
+                onGenderChange = ::updateGenderGuess,
+                onGuessChange = ::updateUserGuess,
+                onPlChange = ::updatePluralGuess
             )
         }
     }
@@ -58,21 +76,42 @@ class LessonViewModel(lesson: Lesson) : ViewModel() {
     /**update user guess after change*/
     fun updateUserGuess(newGuess: String) {
         userGuess = newGuess
+        _uiState.update { currentState->
+            currentState.copy(currentGuess = newGuess)
+        }
     }
 
     /**update user gender guess for the word*/
     fun updateGenderGuess(gender: Int) {
         userGenderGuess = gender
+        _uiState.update { currentState->
+            currentState.copy(genderGuess = gender)
+        }
     }
 
     /**update plural guess for the word*/
     fun updatePluralGuess(plural: Int) {
         userPluralGuess = plural
+        _uiState.update { currentState->
+            currentState.copy(plGuess = plural)
+        }
     }
 
     /**save the state change after the lesson is over*/
     fun saveLesson() {
-        currentLesson.saveLesson()
+        saveScore()
+        viewModelScope.launch {
+            currentLesson.saveLesson(wordRepository = wordRepository)
+        }
+    }
+
+    /**save the xp score of the lesson*/
+    private fun saveScore() {
+        viewModelScope.launch {
+            val userData = userRepository.getUserData().filterNotNull().first()
+            userData.xp += _uiState.value.score
+            userRepository.update(userData)
+        }
     }
 
     /**move to next task if possible*/
@@ -130,7 +169,7 @@ class LessonViewModel(lesson: Lesson) : ViewModel() {
         val lessonScore = getLessonScore()
         val excellent = listOf(
             "good boy!(gender neutral)✨",
-            "Slaying so hard, even Beyoncé might be worried. 👑",
+            "Slaying so hard, even Lady Gaga might be worried. 👑",
             "Du bist mein Lebkuchen",
             "I would hug you, but I'm just a text. I bet you give great hugs",
             "Main character energy right there",
@@ -177,15 +216,32 @@ class LessonViewModel(lesson: Lesson) : ViewModel() {
 
 /**These variables determine the state of the UI*/
 data class LessonUiState(
+    //the boolean values
     val isChecked: Boolean = false,
     val isWrong: Boolean = false,
     val isNoun: Boolean = false,
+    //progress indicator
     val taskNumber: Int = 0,
     val taskCount: Int = 0,
+    //xp count
     val score: Int = 0,
     val wordCount: Int = 0,
+    //current user input and task data
     val currentTrans: String = "",
+    val currentGuess: String = "",
+    val genderGuess: Int = -1,
+    val plGuess: Int = -1,
+    //info card data
     val info: String = "",
+    //final message data
     val finalMessage: String = "",
-    val currentTaskType: TaskType = TaskType.TYPE_TEXT
+    val currentTaskType: TaskType = TaskType.TYPE_TEXT,
+    //lambdas-------------------------------------------
+    val onCheckAnswer: () -> Unit = {},
+    val onNextTask: () -> Unit = {},
+    //changing the answer
+    val onGenderChange: (Int)->Unit = {},
+    val onGuessChange: (String)->Unit={},
+    val onPlChange: (Int)->Unit={}
+
 )

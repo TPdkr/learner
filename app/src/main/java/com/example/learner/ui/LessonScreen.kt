@@ -49,8 +49,6 @@ import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.learner.R
 import com.example.learner.classes.TaskType
-import com.example.learner.data.infoTestLesson
-import com.example.learner.data.testLesson
 import com.example.learner.ui.viewModels.LessonUiState
 import com.example.learner.ui.viewModels.LessonViewModel
 
@@ -59,12 +57,27 @@ val genders = listOf("Der", "Die", "Das")
 
 @Composable
 fun LessonScreen(
-    lessonViewModel: LessonViewModel = viewModel(),
-    toPrevious: () -> Unit,
-    updateScore: (Int) -> Unit
+    lessonViewModel: LessonViewModel = viewModel(factory = ViewModelFactory.Factory),
+    toPrevious: () -> Unit
 ) {
     val lessonUiState by lessonViewModel.uiState.collectAsState()
     var isSubmitted by remember { mutableStateOf(false) }
+
+    LessonScreenBody(lessonUiState, isSubmitted, onSubmit = {
+        lessonViewModel.saveLesson()
+        lessonViewModel.getFinalMessage()
+        isSubmitted = true
+    }, toPrevious = toPrevious)
+}
+
+/**this is the body of the lesson screen*/
+@Composable
+fun LessonScreenBody(
+    lessonUiState: LessonUiState,
+    isSubmitted: Boolean,
+    onSubmit: () -> Unit,
+    toPrevious: () -> Unit
+) {
     Surface(
         modifier = Modifier
             .fillMaxSize()
@@ -91,21 +104,20 @@ fun LessonScreen(
                 StatusRow(lessonUiState)
                 //This is the task card
                 when (lessonUiState.currentTaskType) {
-                    TaskType.TYPE_TEXT -> TypeTaskCard(lessonUiState, lessonViewModel)
+                    TaskType.TYPE_TEXT -> TypeTaskCard(
+                        lessonUiState
+                    )
+
                     TaskType.INFO -> InfoCard(lessonUiState)
-                    //else -> Text(text = "error in task type info")
                 }
                 //This is the button section that changes depending on context to either check or next
-                ControlBlock(lessonUiState, lessonViewModel) {
-                    updateScore(lessonUiState.score)
-                    lessonViewModel.saveLesson()
-                    lessonViewModel.getFinalMessage()
-                    isSubmitted = true
+                ControlBlock(lessonUiState) {
+                    onSubmit()
                 }
             }
         }
     }
-
+    //the final lesson message
     if (isSubmitted) {
         FinalDialog(lessonUiState.score, toPrevious = toPrevious, lessonUiState)
     }
@@ -153,7 +165,9 @@ fun InfoCard(uiState: LessonUiState) {
 /**This is a card of a typing task in a lesson. Here the user has to type out the word letter by
  * letter*/
 @Composable
-fun TypeTaskCard(lessonUiState: LessonUiState, lessonViewModel: LessonViewModel) {
+fun TypeTaskCard(
+    lessonUiState: LessonUiState
+) {
     //This is the task card
     Card(
         modifier = Modifier
@@ -167,7 +181,7 @@ fun TypeTaskCard(lessonUiState: LessonUiState, lessonViewModel: LessonViewModel)
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-
+            //the english word we need to translate
             Text(
                 text = lessonUiState.currentTrans,
                 style = typography.titleLarge,
@@ -176,18 +190,20 @@ fun TypeTaskCard(lessonUiState: LessonUiState, lessonViewModel: LessonViewModel)
                 lineHeight = 40.sp,
                 textAlign = TextAlign.Center
             )
-            if (lessonUiState.isNoun) {//here we allow the user to choose the gender of the word
+            //here we allow the user to choose the gender of the word
+            if (lessonUiState.isNoun) {
                 AnswerSegmentedButton(
                     genders,
-                    { index -> lessonViewModel.updateGenderGuess(index) },
-                    lessonViewModel.userGenderGuess
+                    { index -> lessonUiState.onGenderChange(index) },
+                    lessonUiState.genderGuess
                 )
             }
+            //german translation field
             OutlinedTextField(
-                value = lessonViewModel.userGuess,
+                value = lessonUiState.currentGuess,
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth(),
-                onValueChange = { lessonViewModel.updateUserGuess(it) },
+                onValueChange = { lessonUiState.onGuessChange(it) },
                 colors = TextFieldDefaults.colors(
                     focusedContainerColor = colorScheme.surface,
                     unfocusedContainerColor = colorScheme.surface,
@@ -203,22 +219,23 @@ fun TypeTaskCard(lessonUiState: LessonUiState, lessonViewModel: LessonViewModel)
                     imeAction = ImeAction.Done
                 ),
                 keyboardActions = KeyboardActions(
-                    onDone = { }//TODO!!!!!Sch
+                    onDone = { }//!!! complete the action
                 )
             )
-            if (lessonUiState.isNoun) {//here the user chooses the plural form
+            //here the user chooses the plural form
+            if (lessonUiState.isNoun) {
                 AnswerSegmentedButton(
                     endings,
-                    { index -> lessonViewModel.updatePluralGuess(index) },
-                    lessonViewModel.userPluralGuess
+                    { index -> lessonUiState.onPlChange(index) },
+                    lessonUiState.plGuess
                 )
             }
         }
     }
 }
 
+/**a segmented button that takes a  list of [options], what to do [onClick] and current [choice]*/
 @Composable
-        /**a segmented button that takes a  list of [options], what to do [onClick] and current [choice]*/
 fun AnswerSegmentedButton(options: List<String>, onClick: (Int) -> Unit, choice: Int) {
     SingleChoiceSegmentedButtonRow {
         options.forEachIndexed { index, label ->
@@ -235,11 +252,10 @@ fun AnswerSegmentedButton(options: List<String>, onClick: (Int) -> Unit, choice:
     }
 }
 
+/**section of the screen that controls the flow of the lesson and users traversal over it*/
 @Composable
-        /**section of the screen that controls the flow of the lesson and users traversal over it*/
 fun ControlBlock(
     lessonUiState: LessonUiState,
-    lessonViewModel: LessonViewModel,
     onSubmit: () -> Unit
 ) {
     Column(
@@ -248,13 +264,15 @@ fun ControlBlock(
             .padding(40.dp), horizontalAlignment = Alignment.CenterHorizontally
     ) {
         if (!lessonUiState.isChecked && lessonUiState.currentTaskType != TaskType.INFO) {
+            //check the answer
             Button(
-                onClick = { lessonViewModel.checkAnswer() },
+                onClick = lessonUiState.onCheckAnswer,
                 modifier = Modifier.width(300.dp)
             ) {
                 Text(text = "Check")
             }
         } else if (lessonUiState.taskNumber + 1 == lessonUiState.taskCount) {
+            //submit the final score
             OutlinedButton(
                 onClick = onSubmit,
                 modifier = Modifier.width(300.dp)
@@ -262,8 +280,9 @@ fun ControlBlock(
                 Text(text = "Submit")
             }
         } else {
+            //to next task
             OutlinedButton(
-                onClick = { lessonViewModel.nextTask() },
+                onClick = lessonUiState.onNextTask,
                 modifier = Modifier.width(300.dp)
             ) {
                 Text(text = "Next")
@@ -272,21 +291,24 @@ fun ControlBlock(
     }
 }
 
+/**a progress bar that shows the state of the lesson*/
 @Composable
-        /**a progress bar that shows the state of the lesson*/
 fun LessonProgressBar(lessonUiState: LessonUiState) {
+    val progress = if (lessonUiState.taskCount > 0) {
+        (lessonUiState.taskNumber).toFloat() / (lessonUiState.taskCount).toFloat()
+    } else {
+        0f
+    }
     LinearProgressIndicator(
-        progress = {
-            (lessonUiState.taskNumber).toFloat() / (lessonUiState.taskCount).toFloat()
-        },
+        progress = { progress },
         modifier = Modifier
             .fillMaxWidth()
-            .height(20.dp)
+            .height(20.dp),
     )
 }
 
+/**this is the final dialog that shows the total xp earned during a lesson and a message*/
 @Composable
-        /**this is the final dialog that shows the total xp earned during a lesson and a message*/
 fun FinalDialog(score: Int, toPrevious: () -> Unit, lessonUiState: LessonUiState) {
     Dialog(onDismissRequest = {}) {
         Card(
@@ -300,6 +322,7 @@ fun FinalDialog(score: Int, toPrevious: () -> Unit, lessonUiState: LessonUiState
                 verticalArrangement = Arrangement.Center,
                 modifier = Modifier.fillMaxSize()
             ) {
+                //title
                 Text(
                     text = "You finished a lesson!",
                     textAlign = TextAlign.Center,
@@ -309,6 +332,7 @@ fun FinalDialog(score: Int, toPrevious: () -> Unit, lessonUiState: LessonUiState
                         .wrapContentSize(Alignment.Center)
                         .padding(5.dp)
                 )
+                //encouraging message
                 Text(
                     text = lessonUiState.finalMessage,
                     modifier = Modifier
@@ -317,6 +341,7 @@ fun FinalDialog(score: Int, toPrevious: () -> Unit, lessonUiState: LessonUiState
                         .padding(5.dp),
                     textAlign = TextAlign.Center
                 )
+                //the score:
                 Text(
                     text = stringResource(R.string.you_earned_xp, score),
                     textAlign = TextAlign.Center,
@@ -327,6 +352,7 @@ fun FinalDialog(score: Int, toPrevious: () -> Unit, lessonUiState: LessonUiState
                         .wrapContentSize(Alignment.Center)
                         .padding(10.dp)
                 )
+                //return to previous screen
                 TextButton(onClick = toPrevious, modifier = Modifier.fillMaxWidth()) {
                     Text("return back", textAlign = TextAlign.Center)
                 }
@@ -337,12 +363,16 @@ fun FinalDialog(score: Int, toPrevious: () -> Unit, lessonUiState: LessonUiState
 
 @Preview
 @Composable
-fun LessonPreview() {
-    LessonScreen(LessonViewModel(testLesson), {}) {}
+fun LessonInfoPreview() {
+    LessonScreenBody(
+        LessonUiState(currentTrans = "Car", currentGuess = "Auto", isNoun = true),
+        false,
+        {},
+        {})
 }
 
 @Preview
 @Composable
-fun LessonInfoPreview() {
-    LessonScreen(LessonViewModel(infoTestLesson), {}) {}
+fun FinalPreview() {
+    FinalDialog(35, {}, LessonUiState())
 }

@@ -2,6 +2,7 @@ package com.example.learner.classes
 
 import android.util.Log
 import com.example.learner.classes.Lesson.Companion.fromWords
+import com.example.learner.data.word.WordRepository
 
 /**A task type is stored as a enum class, which allows for future extensions*/
 enum class TaskType {
@@ -76,20 +77,11 @@ data class Lesson(
     }
 
     /**save the state of words after the lesson, update and reset key values*/
-    fun saveLesson() {
+    suspend fun saveLesson(wordRepository: WordRepository) {
         val words = tasks.map { it.first }.toSet()//we get all words in a lesson
         words.forEach {
-            //update state of the word
-            Log.d(
-                "state check",
-                "Before save: $it, status: ${it.getWordStatus()}, reviewTime: ${it.revisionTime}"
-            )
-            it.saveProgress()
+            it.saveProgress(wordRepository)
             it.resetLesson()
-            Log.d(
-                "state check",
-                "After save: $it, status: ${it.getWordStatus()}, reviewTime ${it.revisionTime}"
-            )
         }
     }
 

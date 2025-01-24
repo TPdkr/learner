@@ -1,6 +1,8 @@
 package com.example.learner.classes
 
 import androidx.compose.ui.util.fastJoinToString
+import com.example.learner.data.word.WordEntity
+import com.example.learner.data.word.WordRepository
 import java.util.Calendar
 import kotlin.math.max
 import kotlin.math.pow
@@ -25,7 +27,18 @@ enum class Gender(val code: Int) {
     DER(0),
     DIE(1),
     DAS(2),
-    NOT_SET(-1)
+    NOT_SET(-1);
+
+    companion object {
+        fun fromCode(code: Int): Gender {
+            return when (code) {
+                0 -> DER
+                1 -> DIE
+                2 -> DAS
+                else -> NOT_SET
+            }
+        }
+    }
 }
 
 /**
@@ -40,8 +53,22 @@ enum class Plural(val code: Int) {
     ER_UMLAUT(4),
     EN(5),
     N(6),
-    NOT_SET(-1),
+    NOT_SET(-1);
 
+    companion object {
+        fun fromCode(code: Int): Plural {
+            return when (code) {
+                0 -> NO_CHANGE
+                1 -> E
+                2 -> E_UMLAUT
+                3 -> S
+                4 -> ER_UMLAUT
+                5 -> EN
+                6 -> N
+                else -> NOT_SET
+            }
+        }
+    }
 }
 
 /**
@@ -50,6 +77,7 @@ This stores the information of a word that can be a noun and not a noun. I decid
 inheritance with data classes in Kotlin is a bit fucked apparently.
  */
 data class Word(
+    val wid: Int = 0,
     //common word properties:
     val german: String,
     val translation: String,
@@ -62,7 +90,8 @@ data class Word(
     var revision: Int = 0,
     //noun properties:
     val gender: Gender = Gender.NOT_SET,
-    val plural: Plural = Plural.NOT_SET
+    val plural: Plural = Plural.NOT_SET,
+    var revisionTime: Calendar = Calendar.getInstance()
 ) {
     /**calculate the status of the word using its data. Mainly [revisionTime] and [revision]*/
     fun getWordStatus(): Status {
@@ -77,11 +106,11 @@ data class Word(
     }
 
     /**when should a word be revised?*/
-    var revisionTime: Calendar //can this cause issues?!!!
+    //var revisionTime: Calendar //can this cause issues?!!!
 
-    init {
+    /*init {
         revisionTime = Calendar.getInstance()
-    }
+    }*/
 
     /**turn key info of a class instance into a readable string containing the [gender], [german]
      * translation and [plural] form as well as the [translation] into users language*/
@@ -124,19 +153,58 @@ data class Word(
         germanGuess.trimEnd().equals(german, ignoreCase = true)
                 && if (isNoun()) (genderGuess == (gender.code) && (pluralGuess == (plural.code))) else true
 
+    /**turn a word into a word entity*/
+    private fun toWordEntity(): WordEntity {
+        return WordEntity(
+            wid,
+            german,
+            translation,
+            gender.code,
+            plural.code,
+            revision,
+            revisionTime.timeInMillis
+        )
+    }
+
     /**save progress and revise the word later*/
-    fun saveProgress() {
+    suspend fun saveProgress(wordRepository: WordRepository) {
         if (revision != -1) {
             revision++
             val newRevisionTime = Calendar.getInstance()//we get current time
             //how many hours to add is calculated
-            val hours = 8.0 + 2.0 * (revision.toDouble() - 1.0).pow(2.0) - 3.0 * mistakes
+            var hours =
+                12.0 + 24.0 * (revision.toDouble() - 1.0).pow(2.0) -
+                        60.0 * (mistakes.toDouble()).pow(2.0)
+            if(hours<0){
+                hours = 5.0
+            }
             //i turn it into minutes and randomize a bit in order to not review everything at once
             val minutes = (hours * 60.0 * ((7..13).random().toDouble() / 10.0)).toInt()
             //we update revision time
             newRevisionTime.add(Calendar.HOUR_OF_DAY, minutes / 60)
             newRevisionTime.add(Calendar.MINUTE, minutes % 60)
+            //we change the word state to memorized
             revisionTime = newRevisionTime
+            if (hours / 24 > 100) {
+                revision = -1
+            }
+            //we save the state of the word
+            wordRepository.updateWord(this.toWordEntity())
+        }
+    }
+
+    /**get revision time of the word*/
+    fun getRevisionTime(): String{
+        var dif = revisionTime.timeInMillis-Calendar.getInstance().timeInMillis
+        dif /=1000
+        dif/=60
+        return when{
+            (revision==-1)->"learned"
+            revision<2->"-"
+            (dif)<0->"revision"
+            (dif<60)->"in $dif min"
+            (dif/60<24)->"in ${dif/60} h"
+            else -> "in ${dif/60/24} d"
         }
     }
 

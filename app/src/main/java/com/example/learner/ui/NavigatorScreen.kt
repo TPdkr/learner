@@ -3,17 +3,11 @@ package com.example.learner.ui
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.learner.classes.Course
-import com.example.learner.classes.Lesson
-import com.example.learner.ui.viewModels.AppViewModel
-import com.example.learner.ui.viewModels.CourseUnitViewModel
-import com.example.learner.ui.viewModels.CoursesViewModel
-import com.example.learner.ui.viewModels.LessonViewModel
+import com.example.learner.ui.viewModels.LessonData
 
 /**
  * ScreenState is a enum class that captures the state of the screen at any time
@@ -21,69 +15,76 @@ import com.example.learner.ui.viewModels.LessonViewModel
 enum class ScreenSate {
     MainScreen,
     LessonScreen,
-    UnitsScreen,
-    CoursesScreen
+    UnitCatScreen,
+    CoursesScreen,
+    UnitScreen,
+    AddCourseScreen,
+    AddUnitScreen,
+    AddWordScreen
 }
 
 /**
  * This is the main function that is the entry into the app. It Navigates between different screen
- * states.
+ * states. The possible states are stored in [ScreenSate]
  */
 @Composable
 fun LearnerApp(
-    appViewModel: AppViewModel = viewModel(),
     navController: NavHostController = rememberNavController()
 ) {
-    //the ui state of the app
-    //val appUiState by appViewModel.uiState.collectAsState()
-    // Get current back stack entry
-    //val backStackEntry by navController.currentBackStackEntryAsState()
-    // Get the name of the current screen
-    /*val currentScreen = ScreenSate.valueOf(
-        backStackEntry?.destination?.route ?: ScreenSate.MainScreen.name
-    )*/
     NavHost(
         navController = navController,
         startDestination = ScreenSate.MainScreen.name,
         modifier = Modifier.fillMaxSize()
     ) {
+        //MAIN SCREEN==========================================================
         composable(route = ScreenSate.MainScreen.name) {
             MainScreen(
-                toUnits = { navController.navigate(ScreenSate.UnitsScreen.name) },
+                toUnits = { navController.navigate(ScreenSate.UnitCatScreen.name) },
                 toCourses = { navController.navigate(ScreenSate.CoursesScreen.name) },
-                toLesson = {
-                    appViewModel.changeLesson(appViewModel.currentCourse.learnLesson())
+                toLesson = { lesson ->
+                    LessonData.lesson = lesson
                     navController.navigate(ScreenSate.LessonScreen.name)
-                },
-                toPrevious = { navController.popBackStack() },
-                toReview = {
-                    appViewModel.changeLesson(appViewModel.currentCourse.reviewLesson())
-                    navController.navigate(ScreenSate.LessonScreen.name)
-                },
-                canReview = appViewModel.currentCourse.canReview(),
-                canLearn = appViewModel.currentCourse.canLearn(),
-                reviewCount = appViewModel.currentCourse.reviewCount(),
-                xp = appViewModel.xp
-
+                }
             )
         }
-        composable(route = ScreenSate.UnitsScreen.name) {
-            UnitScreen(
-                CourseUnitViewModel(appViewModel.currentCourse)
-            ) { lesson: Lesson ->
-                appViewModel.changeLesson(lesson)
+        //COURSE CATALOGUE SCREEN==============================================
+        composable(route = ScreenSate.CoursesScreen.name) {
+            CoursesScreen({ navController.navigate(ScreenSate.AddCourseScreen.name) })
+        }
+        //UNITS CATALOGUE SCREEN===============================================
+        composable(route = ScreenSate.UnitCatScreen.name) {
+            UnitCatScreen(toAddUnit = {
+                navController.navigate((ScreenSate.AddUnitScreen.name))
+            }) { unit ->
+                LessonData.unitUid = unit.uid
+                navController.navigate(ScreenSate.UnitScreen.name)
+            }
+        }
+        //UNIT INFO SCREEN=====================================================
+        composable(route = ScreenSate.UnitScreen.name) {
+            UnitScreen(toAddUnit = { navController.navigate(ScreenSate.AddWordScreen.name) })
+            { lesson ->
+                LessonData.lesson = lesson
                 navController.navigate(ScreenSate.LessonScreen.name)
             }
         }
-        composable(route = ScreenSate.CoursesScreen.name) {
-            CoursesScreen(
-                chooseCourse = { course: Course -> appViewModel.switchCourse(course) },
-                coursesViewModel = CoursesViewModel(appViewModel)
-            )
+        //LESSON SCREEN========================================================
+        composable(
+            route = ScreenSate.LessonScreen.name
+        ) {
+            LessonScreen(toPrevious = { navController.popBackStack() })
         }
-        composable(route = ScreenSate.LessonScreen.name) {
-            LessonScreen(LessonViewModel(appViewModel.currentLesson),
-                { navController.popBackStack() }) { inc: Int -> appViewModel.updateScore(inc) }
+        //ADD COURSE SCREEN====================================================
+        composable(route = ScreenSate.AddCourseScreen.name) {
+            AddCourseScreen({ navController.popBackStack() })
+        }
+        //ADD UNIT SCREEN======================================================
+        composable(route = ScreenSate.AddUnitScreen.name) {
+            AddUnitScreen(toPrevious = { navController.popBackStack() })
+        }
+        //ADD WORD SCREEN======================================================
+        composable(route = ScreenSate.AddWordScreen.name) {
+            AddWordScreen(toPrevious = { navController.popBackStack() })
         }
     }
 }
