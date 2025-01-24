@@ -352,6 +352,13 @@ fun FinalDialog(score: Int, toPrevious: () -> Unit, lessonUiState: LessonUiState
                         .wrapContentSize(Alignment.Center)
                         .padding(10.dp)
                 )
+                Text(
+                    stringResource(R.string.lesson_percentage, lessonUiState.finalScore),
+                    style = typography.titleLarge,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentSize(Alignment.Center)
+                )
                 //return to previous screen
                 TextButton(onClick = toPrevious, modifier = Modifier.fillMaxWidth()) {
                     Text("return back", textAlign = TextAlign.Center)
@@ -374,5 +381,5 @@ fun LessonInfoPreview() {
 @Preview
 @Composable
 fun FinalPreview() {
-    FinalDialog(35, {}, LessonUiState())
+    FinalDialog(2, {}, LessonUiState(finalMessage = "I had expectations...", finalScore = 20))
 }

@@ -209,7 +209,7 @@ class LessonViewModel(
             else -> murder.random()
         }
         _uiState.update { currentSate ->
-            currentSate.copy(finalMessage = newInfo)
+            currentSate.copy(finalMessage = newInfo, finalScore = (lessonScore*100).toInt())
         }
     }
 }
@@ -235,6 +235,7 @@ data class LessonUiState(
     val info: String = "",
     //final message data
     val finalMessage: String = "",
+    val finalScore: Int = 0,
     val currentTaskType: TaskType = TaskType.TYPE_TEXT,
     //lambdas-------------------------------------------
     val onCheckAnswer: () -> Unit = {},

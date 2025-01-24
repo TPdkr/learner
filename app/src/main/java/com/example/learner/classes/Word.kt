@@ -4,7 +4,6 @@ import androidx.compose.ui.util.fastJoinToString
 import com.example.learner.data.word.WordEntity
 import com.example.learner.data.word.WordRepository
 import java.util.Calendar
-import kotlin.math.max
 import kotlin.math.pow
 
 /**
