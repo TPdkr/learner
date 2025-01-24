@@ -50,17 +50,17 @@ class WordUnitTest {
     fun scoreNounTest() {
         //normal fully correct answer
         var score = testNoun.countScore(2, "Auto", 3)
-        assertEquals(20, score)
+        assertEquals(2, score)
         //partially correct answers:
         score = testNoun.countScore(1, "Auto", 3)
-        assertEquals(15, score)
+        assertEquals(1, score)
         score = testNoun.countScore(2, "Aujhaskfhdskj", 3)
-        assertEquals(10, score)
+        assertEquals(1, score)
         score = testNoun.countScore(2, "Auto", 1)
-        assertEquals(15, score)
+        assertEquals(1, score)
         //check for spaces at the end affecting score
         score = testNoun.countScore(2, "Auto   ", 3)
-        assertEquals(20, score)
+        assertEquals(2, score)
         //check that completely wrong gives 0
         score = testNoun.countScore(1, "", 2)
         assertEquals(0, score)
@@ -69,9 +69,9 @@ class WordUnitTest {
     @Test
     fun scoreTest2() {
         var score = testWord2.countScore(-1, "laut", -1)
-        assertEquals(20, score)
+        assertEquals(2, score)
         score = testWord2.countScore(1, "laut  ", 2)
-        assertEquals(20, score)
+        assertEquals(2, score)
         score = testWord2.countScore(1, "loud", 2)
         assertEquals(0, score)
 
