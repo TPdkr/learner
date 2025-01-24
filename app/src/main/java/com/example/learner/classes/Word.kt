@@ -154,7 +154,7 @@ data class Word(
                 && if (isNoun()) (genderGuess == (gender.code) && (pluralGuess == (plural.code))) else true
 
     /**turn a word into a word entity*/
-    fun toWordEntity(): WordEntity {
+    private fun toWordEntity(): WordEntity {
         return WordEntity(
             wid,
             german,
@@ -172,9 +172,12 @@ data class Word(
             revision++
             val newRevisionTime = Calendar.getInstance()//we get current time
             //how many hours to add is calculated
-            val hours =
-                12.0 + 2.0 * (revision.toDouble() - 1.0).pow(2.0) -
-                        5.0 * (mistakes.toDouble()).pow(2.0)
+            var hours =
+                12.0 + 24.0 * (revision.toDouble() - 1.0).pow(2.0) -
+                        60.0 * (mistakes.toDouble()).pow(2.0)
+            if(hours<0){
+                hours = 5.0
+            }
             //i turn it into minutes and randomize a bit in order to not review everything at once
             val minutes = (hours * 60.0 * ((7..13).random().toDouble() / 10.0)).toInt()
             //we update revision time
@@ -196,7 +199,9 @@ data class Word(
         dif /=1000
         dif/=60
         return when{
+            (revision==-1)->"learned"
             revision<2->"-"
+            (dif)<0->"revision"
             (dif<60)->"in $dif min"
             (dif/60<24)->"in ${dif/60} h"
             else -> "in ${dif/60/24} d"

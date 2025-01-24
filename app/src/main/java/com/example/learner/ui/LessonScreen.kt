@@ -62,6 +62,22 @@ fun LessonScreen(
 ) {
     val lessonUiState by lessonViewModel.uiState.collectAsState()
     var isSubmitted by remember { mutableStateOf(false) }
+
+    LessonScreenBody(lessonUiState, isSubmitted, onSubmit = {
+        lessonViewModel.saveLesson()
+        lessonViewModel.getFinalMessage()
+        isSubmitted = true
+    }, toPrevious = toPrevious)
+}
+
+/**this is the body of the lesson screen*/
+@Composable
+fun LessonScreenBody(
+    lessonUiState: LessonUiState,
+    isSubmitted: Boolean,
+    onSubmit: () -> Unit,
+    toPrevious: () -> Unit
+) {
     Surface(
         modifier = Modifier
             .fillMaxSize()
@@ -89,23 +105,19 @@ fun LessonScreen(
                 //This is the task card
                 when (lessonUiState.currentTaskType) {
                     TaskType.TYPE_TEXT -> TypeTaskCard(
-                        lessonUiState,
-                        lessonViewModel
-                    ) { lessonViewModel.updateUserGuess(it) }
+                        lessonUiState
+                    )
 
                     TaskType.INFO -> InfoCard(lessonUiState)
-                    //else -> Text(text = "error in task type info")
                 }
                 //This is the button section that changes depending on context to either check or next
                 ControlBlock(lessonUiState) {
-                    lessonViewModel.saveLesson()
-                    lessonViewModel.getFinalMessage()
-                    isSubmitted = true
+                    onSubmit()
                 }
             }
         }
     }
-
+    //the final lesson message
     if (isSubmitted) {
         FinalDialog(lessonUiState.score, toPrevious = toPrevious, lessonUiState)
     }
@@ -154,9 +166,7 @@ fun InfoCard(uiState: LessonUiState) {
  * letter*/
 @Composable
 fun TypeTaskCard(
-    lessonUiState: LessonUiState,
-    lessonViewModel: LessonViewModel,
-    onGuessCh: (String) -> Unit
+    lessonUiState: LessonUiState
 ) {
     //This is the task card
     Card(
@@ -171,7 +181,7 @@ fun TypeTaskCard(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-
+            //the english word we need to translate
             Text(
                 text = lessonUiState.currentTrans,
                 style = typography.titleLarge,
@@ -180,18 +190,20 @@ fun TypeTaskCard(
                 lineHeight = 40.sp,
                 textAlign = TextAlign.Center
             )
-            if (lessonUiState.isNoun) {//here we allow the user to choose the gender of the word
+            //here we allow the user to choose the gender of the word
+            if (lessonUiState.isNoun) {
                 AnswerSegmentedButton(
                     genders,
-                    { index -> lessonViewModel.updateGenderGuess(index) },
+                    { index -> lessonUiState.onGenderChange(index) },
                     lessonUiState.genderGuess
                 )
             }
+            //german translation field
             OutlinedTextField(
                 value = lessonUiState.currentGuess,
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth(),
-                onValueChange = { onGuessCh(it) },
+                onValueChange = { lessonUiState.onGuessChange(it) },
                 colors = TextFieldDefaults.colors(
                     focusedContainerColor = colorScheme.surface,
                     unfocusedContainerColor = colorScheme.surface,
@@ -207,13 +219,14 @@ fun TypeTaskCard(
                     imeAction = ImeAction.Done
                 ),
                 keyboardActions = KeyboardActions(
-                    onDone = { }
+                    onDone = { }//!!! complete the action
                 )
             )
-            if (lessonUiState.isNoun) {//here the user chooses the plural form
+            //here the user chooses the plural form
+            if (lessonUiState.isNoun) {
                 AnswerSegmentedButton(
                     endings,
-                    { index -> lessonViewModel.updatePluralGuess(index) },
+                    { index -> lessonUiState.onPlChange(index) },
                     lessonUiState.plGuess
                 )
             }
@@ -281,7 +294,7 @@ fun ControlBlock(
 /**a progress bar that shows the state of the lesson*/
 @Composable
 fun LessonProgressBar(lessonUiState: LessonUiState) {
-    val progress = if (lessonUiState.taskCount>0){
+    val progress = if (lessonUiState.taskCount > 0) {
         (lessonUiState.taskNumber).toFloat() / (lessonUiState.taskCount).toFloat()
     } else {
         0f
@@ -350,15 +363,13 @@ fun FinalDialog(score: Int, toPrevious: () -> Unit, lessonUiState: LessonUiState
 
 @Preview
 @Composable
-fun LessonPreview() {
-    LessonScreen(toPrevious = {})
-}
-
-/*@Preview
-@Composable
 fun LessonInfoPreview() {
-    LessonScreen(LessonViewModel(infoTestLesson), {}) {}
-}*/
+    LessonScreenBody(
+        LessonUiState(currentTrans = "Car", currentGuess = "Auto", isNoun = true),
+        false,
+        {},
+        {})
+}
 
 @Preview
 @Composable

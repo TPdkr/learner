@@ -62,7 +62,10 @@ class LessonViewModel(
                 isNoun = isNoun(),
                 taskCount = currentLesson.tasks.size,
                 onCheckAnswer = ::checkAnswer,
-                onNextTask = ::nextTask
+                onNextTask = ::nextTask,
+                onGenderChange = ::updateGenderGuess,
+                onGuessChange = ::updateUserGuess,
+                onPlChange = ::updatePluralGuess
             )
         }
     }
@@ -233,7 +236,12 @@ data class LessonUiState(
     //final message data
     val finalMessage: String = "",
     val currentTaskType: TaskType = TaskType.TYPE_TEXT,
-    //lambdas
+    //lambdas-------------------------------------------
     val onCheckAnswer: () -> Unit = {},
-    val onNextTask: () -> Unit = {}
+    val onNextTask: () -> Unit = {},
+    //changing the answer
+    val onGenderChange: (Int)->Unit = {},
+    val onGuessChange: (String)->Unit={},
+    val onPlChange: (Int)->Unit={}
+
 )

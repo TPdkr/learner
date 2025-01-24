@@ -5,8 +5,8 @@
     <string name="you_earned_xp">You earned %d XP!</string>
     <string name="unit_number">Unit: %d</string>
     <string name="to_review_button">review %d words</string>
-    <string name="info_app_message">This app is still in early development. Please report errors and
-        bugs. Code is fully open source. If you have any suggestions feel free to reach out!</string>
+    <string name="info_app_message">Early development. Please report errors and
+        bugs. If you have any suggestions feel free to reach out!</string>
     <string name="tanks_for_testing">Tanks for testing!</string>
     <string name="learn_words_button">learn words</string>
     <string name="units_button">units</string>
