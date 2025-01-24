@@ -13,4 +13,5 @@
     <string name="courses_catalogue_button">courses catalogue</string>
     <string name="app_title">Genau</string>
     <string name="lesson_percentage">%d%%</string>
+    <string name="words_learned_mainScr">words learned: %d</string>
 </resources>

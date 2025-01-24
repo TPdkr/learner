@@ -120,6 +120,10 @@ fun MainScreenBody(
                             stringResource(R.string.xp, mainUiState.xp),
                             textAlign = TextAlign.Center
                         )
+                        Text(
+                            stringResource(R.string.words_learned_mainScr, mainUiState.wordCount),
+                            textAlign = TextAlign.Center
+                        )
                     }
                     Spacer(modifier = Modifier.height(100.dp))
                     //NAVIGATION:
@@ -300,6 +304,6 @@ fun SelfDestructDialog(onDismissRequest: () -> Unit = {}, onClick: () -> Unit = 
 @Preview
 @Composable
 fun MainScreenPreview() {
-    MainScreenBody({}, {}, {}, {}, {}, {}, MainScreenUiState(testCourse, 45, false))
+    MainScreenBody({}, {}, {}, {}, {}, {}, MainScreenUiState(testCourse, 45, 8, false))
 }
 
