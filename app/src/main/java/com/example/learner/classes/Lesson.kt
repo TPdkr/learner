@@ -86,5 +86,5 @@ data class Lesson(
     }
 
     /**get max score achievable in a lesson*/
-    fun getMaxScore(): Int = tasks.filter { it.second != TaskType.INFO }.size * 20
+    fun getMaxScore(): Int = tasks.filter { it.second != TaskType.INFO }.size * 2
 }

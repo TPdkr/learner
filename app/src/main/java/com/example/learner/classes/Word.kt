@@ -198,9 +198,9 @@ data class Word(
         dif /=1000
         dif/=60
         return when{
-            (revision==-1)->"learned"
+            (revision==-1)->"done"
             revision<2->"-"
-            (dif)<0->"revision"
+            (dif)<0->"review"
             (dif<60)->"in $dif min"
             (dif/60<24)->"in ${dif/60} h"
             else -> "in ${dif/60/24} d"
