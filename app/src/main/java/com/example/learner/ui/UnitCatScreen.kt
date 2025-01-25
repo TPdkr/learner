@@ -21,7 +21,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -86,8 +85,7 @@ fun UnitCatScreenBody(
                             pair[0],
                             {
                                 toUnit(pair[0])
-                            }, toAddUnit,
-                            modifier = Modifier
+                            }, modifier = Modifier
                                 .weight(1f)
                                 .padding(top = 8.dp, end = 8.dp, start = 8.dp)
                         )
@@ -96,8 +94,7 @@ fun UnitCatScreenBody(
                                 pair[1],
                                 {
                                     toUnit(pair[1])
-                                }, toAddUnit,
-                                modifier = Modifier
+                                }, modifier = Modifier
                                     .weight(1f)
                                     .padding(top = 8.dp, end = 8.dp)
                             )
@@ -137,14 +134,13 @@ fun UnitCatScreenBody(
 fun UnitCard(
     unit: CourseUnit,
     onClick: () -> Unit,
-    toAddUnit: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(modifier = modifier.height(70.dp), onClick = onClick) {
         Row(
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(5.dp)
+            modifier = Modifier.padding(10.dp)
         ) {
             //Main course info
             Column(
@@ -152,16 +148,12 @@ fun UnitCard(
                     .fillMaxSize()
                     .weight(3f),
             ) {
-                TextButton({ toAddUnit(unit.uid) }) {
-                    Column {
-                        Text(
-                            text = stringResource(R.string.unit_number, unit.number),
-                            style = typography.bodyLarge,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Text(text = unit.name)
-                    }
-                }
+                Text(
+                    text = stringResource(R.string.unit_number, unit.number),
+                    style = typography.bodyLarge,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(text = unit.name)
             }
             //how many words are in long term or memorized?
             CircularProgressIndicator(

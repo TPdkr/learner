@@ -1,6 +1,7 @@
 package com.example.learner.ui
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,10 +13,13 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Create
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.OutlinedButton
@@ -42,16 +46,22 @@ import com.example.learner.ui.viewModels.UnitViewModel
 @Composable
 fun UnitScreen(
     unitViewModel: UnitViewModel = viewModel(factory = ViewModelFactory.Factory),
-    toAddUnit: () -> Unit,
-    toLesson: (Lesson) -> Unit
+    toAddWord: () -> Unit,
+    toLesson: (Lesson) -> Unit,
+    toEditUnit: (Int)->Unit
 ) {
     val uiSate by unitViewModel.uiState.collectAsState()
     val unit = uiSate.unit
-    UnitScreenBody(unit, toAddUnit, toLesson)
+    UnitScreenBody(unit, toAddWord, toLesson, toEditUnit)
 }
 
 @Composable
-fun UnitScreenBody(unit: CourseUnit, toAddUnit: () -> Unit, toLesson: (Lesson) -> Unit) {
+fun UnitScreenBody(
+    unit: CourseUnit,
+    toAddWord: () -> Unit,
+    toLesson: (Lesson) -> Unit,
+    toEditUnit: (Int) -> Unit
+) {
     Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.surfaceContainer) {
         Column(
             modifier = Modifier
@@ -100,7 +110,7 @@ fun UnitScreenBody(unit: CourseUnit, toAddUnit: () -> Unit, toLesson: (Lesson) -
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(text = word.toUiString(), modifier = Modifier.weight(5f))
-                            Text(text=word.getRevisionTime(), modifier = Modifier.weight(1f))
+                            Text(text = word.getRevisionTime(), modifier = Modifier.weight(1f))
                         }
                         HorizontalDivider(thickness = 2.dp)
                     }
@@ -121,11 +131,25 @@ fun UnitScreenBody(unit: CourseUnit, toAddUnit: () -> Unit, toLesson: (Lesson) -
                     Text(text = "learn", style = typography.bodyMedium)
                 }
                 OutlinedButton(
-                    onClick = toAddUnit,
+                    onClick = toAddWord,
                     modifier = Modifier.width(130.dp),
                 ) {
                     Text(text = "add", style = typography.bodyMedium)
                 }
+            }
+        }
+        Box(
+            Modifier
+                .fillMaxSize()
+                .statusBarsPadding()
+                .padding(5.dp)
+        ) {
+            OutlinedButton(
+                { toEditUnit(unit.uid) },
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+            ) {
+                Icon(Icons.Filled.Create, contentDescription = "edit unit button")
             }
         }
     }
@@ -135,6 +159,6 @@ fun UnitScreenBody(unit: CourseUnit, toAddUnit: () -> Unit, toLesson: (Lesson) -
 @Composable
 fun UnitScreenPreview() {
     LearnerTheme {
-        UnitScreenBody(testUnit,{}) { }
+        UnitScreenBody(testUnit, {}, {}) { }
     }
 }
