@@ -1,5 +1,6 @@
 package com.example.learner.ui
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -25,7 +26,6 @@ import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -49,7 +49,7 @@ fun UnitScreen(
     unitViewModel: UnitViewModel = viewModel(factory = ViewModelFactory.Factory),
     toAddWord: (Int) -> Unit,
     toLesson: (Lesson) -> Unit,
-    toEditUnit: (Int)->Unit
+    toEditUnit: (Int) -> Unit
 ) {
     val uiSate by unitViewModel.uiState.collectAsState()
     val unit = uiSate.unit
@@ -107,13 +107,24 @@ fun UnitScreenBody(
                 ) {
                     items(unit.words) { word ->
                         Row(
-                            modifier = Modifier,
-                            verticalAlignment = Alignment.CenterVertically
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(5.dp),
+                            verticalAlignment = Alignment.CenterVertically,
                         ) {
-                            TextButton({toAddWord(word.wid)}, modifier = Modifier.fillMaxSize().weight(5f)) {
-                                Text(text = word.toUiString(), textAlign = TextAlign.Start, modifier = Modifier.fillMaxSize())
-                            }
-                            Text(text = word.getRevisionTime(), modifier = Modifier.weight(1f))
+                            Text(
+                                text = word.toUiString(),
+                                textAlign = TextAlign.Start,
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .clickable { toAddWord(word.wid) }
+                                    .weight(5f)
+                            )
+                            Text(
+                                text = word.getRevisionTime(),
+                                modifier = Modifier
+                                    .weight(1f)
+                            )
                         }
                         HorizontalDivider(thickness = 2.dp)
                     }
@@ -134,7 +145,7 @@ fun UnitScreenBody(
                     Text(text = "learn", style = typography.bodyMedium)
                 }
                 OutlinedButton(
-                    onClick = {toAddWord(-1)},
+                    onClick = { toAddWord(-1) },
                     modifier = Modifier.width(130.dp),
                 ) {
                     Text(text = "add", style = typography.bodyMedium)
