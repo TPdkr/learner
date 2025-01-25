@@ -21,11 +21,40 @@ class AddUnitViewModel(
     private val _uiState = MutableStateFlow(AddUnitUiState())
     val uiState = _uiState.asStateFlow()
 
+    //the unit id
+    private var unitId = AppData.unitUid
+
+    //the unit number
+    private var unitNum = -1
+
     //desired name of the course
     private var userInputName: String = ""
 
     //desired description
     private var userInputDesc: String = ""
+
+    init {
+        if (unitId != -1) {
+            viewModelScope.launch {
+                try {
+                    val editUnit = unitRepository.getUnitStream(unitId).filterNotNull().first()
+                    unitNum = editUnit.number
+                    userInputName = editUnit.name
+                    userInputDesc = editUnit.desc
+                    _uiState.update { currentState ->
+                        currentState.copy(
+                            unitName = editUnit.name,
+                            unitDesc = editUnit.desc,
+                            canAdd = true,
+                            isEdit = true
+                        )
+                    }
+                } catch (e: Exception) {
+                    Log.e("AddUnitViewModel", e.message ?: "no message given")
+                }
+            }
+        }
+    }
 
     /**change the name with the user input*/
     fun onNameChange(newValue: String) {
@@ -34,7 +63,7 @@ class AddUnitViewModel(
             _uiState.update { currentState ->
                 currentState.copy(
                     unitName = userInputName,
-                    canAdd = userInputName.isNotEmpty()
+                    canAdd = canAdd()
                 )
             }
         }
@@ -47,14 +76,14 @@ class AddUnitViewModel(
             _uiState.update { currentState ->
                 currentState.copy(
                     unitDesc = userInputDesc,
-                    canAdd = userInputName.isNotEmpty()
+                    canAdd = canAdd()
                 )
             }
         }
     }
 
-    /**insert the entered course into the database*/
-    fun addUnit() {
+    /**insert the entered unit into the database*/
+    private fun addUnit() {
         viewModelScope.launch {
             try {
                 val currentCourse =
@@ -74,6 +103,35 @@ class AddUnitViewModel(
         }
     }
 
+    /**update unit in the database*/
+    private fun updateUnit() {
+        viewModelScope.launch {
+            try {
+                val currentCourse =
+                    userRepository.getUserData().filterNotNull().first().currentCourseId
+                val editUnit = UnitEntity(
+                    unitId,
+                    userInputName.trim(),
+                    userInputDesc.trim(),
+                    unitNum,
+                    currentCourse
+                )
+                unitRepository.update(editUnit)
+            } catch (e: Exception) {
+                Log.e("AddUnitViewModel", e.message ?: "no message given")
+            }
+        }
+    }
+
+    /**submit changes made by user*/
+    fun submitChanges() {
+        if (unitId != -1) {
+            updateUnit()
+        } else {
+            addUnit()
+        }
+    }
+
     /**can we add a course?*/
     fun canAdd(): Boolean =
         userInputName.isNotEmpty()
@@ -82,5 +140,6 @@ class AddUnitViewModel(
 data class AddUnitUiState(
     val unitName: String = "",
     val unitDesc: String = "",
-    val canAdd: Boolean = false
+    val canAdd: Boolean = false,
+    val isEdit: Boolean = false
 )

@@ -21,6 +21,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -41,7 +42,7 @@ import com.example.learner.ui.viewModels.UnitCatViewModel
 @Composable
 fun UnitCatScreen(
     unitCatViewModel: UnitCatViewModel = viewModel(factory = ViewModelFactory.Factory),
-    toAddUnit: () -> Unit,
+    toAddUnit: (Int) -> Unit,
     toUnit: (CourseUnit) -> Unit
 ) {
     val courseUiState by unitCatViewModel.uiState.collectAsState()
@@ -58,7 +59,7 @@ fun UnitCatScreen(
 @Composable
 fun UnitCatScreenBody(
     unitCatUiState: UnitCatUiState,
-    toAddUnit: () -> Unit,
+    toAddUnit: (Int) -> Unit,
     toUnit: (CourseUnit) -> Unit
 ) {
     Surface(modifier = Modifier.fillMaxSize()) {
@@ -85,7 +86,7 @@ fun UnitCatScreenBody(
                             pair[0],
                             {
                                 toUnit(pair[0])
-                            },
+                            }, toAddUnit,
                             modifier = Modifier
                                 .weight(1f)
                                 .padding(top = 8.dp, end = 8.dp, start = 8.dp)
@@ -95,7 +96,7 @@ fun UnitCatScreenBody(
                                 pair[1],
                                 {
                                     toUnit(pair[1])
-                                },
+                                }, toAddUnit,
                                 modifier = Modifier
                                     .weight(1f)
                                     .padding(top = 8.dp, end = 8.dp)
@@ -120,7 +121,7 @@ fun UnitCatScreenBody(
             FloatingActionButton(
                 onClick = {
                     if (unitCatUiState.cid != 1) {
-                        toAddUnit()
+                        toAddUnit(-1)
                     }
                 },
                 modifier = Modifier.align(Alignment.BottomEnd)
@@ -133,12 +134,17 @@ fun UnitCatScreenBody(
 
 /**A single unit card that displays key unit info*/
 @Composable
-fun UnitCard(unit: CourseUnit, onClick: () -> Unit, modifier: Modifier = Modifier) {
+fun UnitCard(
+    unit: CourseUnit,
+    onClick: () -> Unit,
+    toAddUnit: (Int) -> Unit,
+    modifier: Modifier = Modifier
+) {
     Card(modifier = modifier.height(70.dp), onClick = onClick) {
         Row(
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(10.dp)
+            modifier = Modifier.padding(5.dp)
         ) {
             //Main course info
             Column(
@@ -146,12 +152,16 @@ fun UnitCard(unit: CourseUnit, onClick: () -> Unit, modifier: Modifier = Modifie
                     .fillMaxSize()
                     .weight(3f),
             ) {
-                Text(
-                    text = stringResource(R.string.unit_number, unit.number),
-                    style = typography.bodyLarge,
-                    fontWeight = FontWeight.Bold
-                )
-                Text(text = unit.name)
+                TextButton({ toAddUnit(unit.uid) }) {
+                    Column {
+                        Text(
+                            text = stringResource(R.string.unit_number, unit.number),
+                            style = typography.bodyLarge,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Text(text = unit.name)
+                    }
+                }
             }
             //how many words are in long term or memorized?
             CircularProgressIndicator(

@@ -12,6 +12,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.typography
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -38,7 +39,7 @@ fun AddUnitScreen(
     val uiState by addUnitViewModel.uiState.collectAsState()
     AddUnitBody(uiState, {
         if (addUnitViewModel.canAdd()) {
-            addUnitViewModel.addUnit()
+            addUnitViewModel.submitChanges()
             toPrevious()
         }
     }, { addUnitViewModel.onNameChange(it) }) { addUnitViewModel.onDescChange(it) }
@@ -48,7 +49,7 @@ fun AddUnitScreen(
 @Composable
 fun AddUnitBody(
     uiState: AddUnitUiState,
-    onClick: () -> Unit,
+    submit: () -> Unit,
     onNameChange: (String) -> Unit,
     onDescChange: (String) -> Unit
 ) {
@@ -75,7 +76,7 @@ fun AddUnitBody(
                 ) {
                     //title
                     Text(
-                        text = "add unit",
+                        text = if (uiState.isEdit) "Edit unit" else "Add unit",
                         style = typography.titleLarge,
                         fontWeight = FontWeight.Bold,
                         fontSize = 40.sp,
@@ -88,7 +89,7 @@ fun AddUnitBody(
                         onValueChange = { onNameChange(it) },
                         singleLine = true,
                         label = { Text("unit name") },
-                        keyboardActions = KeyboardActions(onDone = { onClick() }),
+                        keyboardActions = KeyboardActions(onDone = { submit() }),
                         colors = TextFieldDefaults.colors(
                             focusedContainerColor = colorScheme.surface,
                             unfocusedContainerColor = colorScheme.surface,
@@ -101,16 +102,23 @@ fun AddUnitBody(
                         onValueChange = { onDescChange(it) },
                         singleLine = true,
                         label = { Text("unit description") },
-                        keyboardActions = KeyboardActions(onDone = { onClick() }),
+                        keyboardActions = KeyboardActions(onDone = { submit() }),
                         colors = TextFieldDefaults.colors(
                             focusedContainerColor = colorScheme.surface,
                             unfocusedContainerColor = colorScheme.surface,
                             disabledContainerColor = colorScheme.surface,
                         )
                     )
-                    //button to add
-                    Button(onClick = onClick, enabled = uiState.canAdd) {
-                        Text("add unit to course")
+                    if (uiState.isEdit) {
+                        //button to submit changes
+                        OutlinedButton(onClick = submit, enabled = uiState.canAdd) {
+                            Text("submit changes")
+                        }
+                    } else {
+                        //button to add
+                        Button(onClick = submit, enabled = uiState.canAdd) {
+                            Text("add unit to course")
+                        }
                     }
                 }
             }
@@ -123,4 +131,10 @@ fun AddUnitBody(
 @Preview
 fun AddUnitPreview() {
     AddUnitBody(AddUnitUiState("test unit", "test description", true), {}, {}, {})
+}
+
+@Composable
+@Preview
+fun EditUnitPreview() {
+    AddUnitBody(AddUnitUiState("test unit", "test description", canAdd = true, true), {}, {}, {})
 }
