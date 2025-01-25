@@ -12,6 +12,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.typography
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -38,7 +39,7 @@ fun AddCourseScreen(
     val uiState by addCourseViewModel.uiState.collectAsState()
     AddCourseBody(uiState, {
         if (addCourseViewModel.canAdd()) {
-            addCourseViewModel.addCourse()
+            addCourseViewModel.submitChanges()
             returnBack()
         }
     }, { addCourseViewModel.onValueChange(it) })
@@ -46,7 +47,7 @@ fun AddCourseScreen(
 
 /**the body of the add course screen*/
 @Composable
-fun AddCourseBody(uiState: AddCourseUiState, onClick: () -> Unit, onValueChange: (String) -> Unit) {
+fun AddCourseBody(uiState: AddCourseUiState, submit: () -> Unit, onValueChange: (String) -> Unit) {
     Surface(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
@@ -70,7 +71,7 @@ fun AddCourseBody(uiState: AddCourseUiState, onClick: () -> Unit, onValueChange:
                 ) {
                     //title
                     Text(
-                        text = "Add course",
+                        text = if (uiState.isEdit) "Edit course" else "Add course",
                         style = typography.titleLarge,
                         fontWeight = FontWeight.Bold,
                         fontSize = 40.sp,
@@ -82,7 +83,7 @@ fun AddCourseBody(uiState: AddCourseUiState, onClick: () -> Unit, onValueChange:
                         value = uiState.courseName,
                         onValueChange = { onValueChange(it) },
                         singleLine = true,
-                        keyboardActions = KeyboardActions(onDone = { onClick() }),
+                        keyboardActions = KeyboardActions(onDone = { submit() }),
                         colors = TextFieldDefaults.colors(
                             focusedContainerColor = colorScheme.surface,
                             unfocusedContainerColor = colorScheme.surface,
@@ -90,9 +91,16 @@ fun AddCourseBody(uiState: AddCourseUiState, onClick: () -> Unit, onValueChange:
                         ),
                         label = { Text("course name") }
                     )
-                    //submit button
-                    Button(onClick = onClick, enabled = uiState.canAdd) {
-                        Text("add new course")
+                    if (uiState.isEdit) {
+                        //update existing course button
+                        OutlinedButton(onClick = submit, enabled = uiState.canAdd) {
+                            Text("submit changes")
+                        }
+                    } else {
+                        //add course button
+                        Button(onClick = submit, enabled = uiState.canAdd) {
+                            Text("add new course")
+                        }
                     }
                 }
             }
@@ -104,4 +112,10 @@ fun AddCourseBody(uiState: AddCourseUiState, onClick: () -> Unit, onValueChange:
 @Composable
 fun AddScreenPreview() {
     AddCourseBody(AddCourseUiState("new name...", true), {}, {})
+}
+
+@Preview
+@Composable
+fun ChangeScreenPreview() {
+    AddCourseBody(AddCourseUiState("old new name...", canAdd = true, true), {}, {})
 }

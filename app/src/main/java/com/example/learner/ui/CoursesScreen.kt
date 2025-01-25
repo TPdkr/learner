@@ -23,6 +23,7 @@ import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -41,7 +42,7 @@ import com.example.learner.ui.viewModels.CoursesViewModel
 
 @Composable
 fun CoursesScreen(
-    toAddCourse: ()->Unit,
+    toAddCourse: (Int) -> Unit,
     coursesViewModel: CoursesViewModel = viewModel(factory = ViewModelFactory.Factory)
 ) {
     //we get the ui state
@@ -53,7 +54,11 @@ fun CoursesScreen(
 
 /**this function assembles ui from given ui state*/
 @Composable
-fun CourseScreenBody(uiState: CoursesUiState, toAddCourse: () -> Unit, onCheck: (Course) -> Unit) {
+fun CourseScreenBody(
+    uiState: CoursesUiState,
+    toAddCourse: (Int) -> Unit,
+    onCheck: (Course) -> Unit
+) {
     Surface(
         modifier = Modifier
             .fillMaxSize()
@@ -90,9 +95,11 @@ fun CourseScreenBody(uiState: CoursesUiState, toAddCourse: () -> Unit, onCheck: 
                                 horizontalArrangement = Arrangement.SpaceBetween,
                                 modifier = Modifier
                                     .fillMaxSize()
-                                    .padding(10.dp)
+                                    .padding(5.dp)
                             ) {
-                                Text(text = course.name, fontWeight = FontWeight.Bold)
+                                TextButton(onClick = { toAddCourse(course.cid) }) {
+                                    Text(text = course.name, fontWeight = FontWeight.Bold)
+                                }
                                 Row(
                                     modifier = Modifier.width(90.dp),
                                     horizontalArrangement = Arrangement.SpaceBetween
@@ -120,7 +127,10 @@ fun CourseScreenBody(uiState: CoursesUiState, toAddCourse: () -> Unit, onCheck: 
             .fillMaxSize()
             .padding(25.dp)
     ) {
-        FloatingActionButton(onClick = toAddCourse, modifier = Modifier.align(Alignment.BottomEnd)) {
+        FloatingActionButton(
+            onClick = { toAddCourse(-1) },
+            modifier = Modifier.align(Alignment.BottomEnd)
+        ) {
             Icon(Icons.Filled.Add, "")
         }
     }
@@ -129,5 +139,5 @@ fun CourseScreenBody(uiState: CoursesUiState, toAddCourse: () -> Unit, onCheck: 
 @Preview
 @Composable
 fun CoursesScreenPreview() {
-    CourseScreenBody(CoursesUiState(testCourse, testCourses),{}) { }
+    CourseScreenBody(CoursesUiState(testCourse, testCourses), {}) { }
 }

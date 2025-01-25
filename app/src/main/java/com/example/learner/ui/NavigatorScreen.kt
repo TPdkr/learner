@@ -7,7 +7,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.learner.ui.viewModels.LessonData
+import com.example.learner.ui.viewModels.AppData
 
 /**
  * ScreenState is a enum class that captures the state of the screen at any time
@@ -42,21 +42,24 @@ fun LearnerApp(
                 toUnits = { navController.navigate(ScreenSate.UnitCatScreen.name) },
                 toCourses = { navController.navigate(ScreenSate.CoursesScreen.name) },
                 toLesson = { lesson ->
-                    LessonData.lesson = lesson
+                    AppData.lesson = lesson
                     navController.navigate(ScreenSate.LessonScreen.name)
                 }
             )
         }
         //COURSE CATALOGUE SCREEN==============================================
         composable(route = ScreenSate.CoursesScreen.name) {
-            CoursesScreen({ navController.navigate(ScreenSate.AddCourseScreen.name) })
+            CoursesScreen({ id ->
+                AppData.CourseId = id
+                navController.navigate(ScreenSate.AddCourseScreen.name)
+            })
         }
         //UNITS CATALOGUE SCREEN===============================================
         composable(route = ScreenSate.UnitCatScreen.name) {
             UnitCatScreen(toAddUnit = {
                 navController.navigate((ScreenSate.AddUnitScreen.name))
             }) { unit ->
-                LessonData.unitUid = unit.uid
+                AppData.unitUid = unit.uid
                 navController.navigate(ScreenSate.UnitScreen.name)
             }
         }
@@ -64,7 +67,7 @@ fun LearnerApp(
         composable(route = ScreenSate.UnitScreen.name) {
             UnitScreen(toAddUnit = { navController.navigate(ScreenSate.AddWordScreen.name) })
             { lesson ->
-                LessonData.lesson = lesson
+                AppData.lesson = lesson
                 navController.navigate(ScreenSate.LessonScreen.name)
             }
         }

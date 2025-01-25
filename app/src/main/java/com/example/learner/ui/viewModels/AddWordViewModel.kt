@@ -129,7 +129,7 @@ class AddWordViewModel(
                         )
                     )
                         .toInt()
-                val currentUnit = LessonData.unitUid
+                val currentUnit = AppData.unitUid
                 if (wid != -1) {
                     unitWordRepository.addWordToUnit(wid, currentUnit)
                 }

@@ -8,6 +8,7 @@ import com.example.learner.data.course.CourseRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.Locale
@@ -19,14 +20,42 @@ class AddCourseViewModel(private val courseRepository: CourseRepository) : ViewM
     //the list of names that are not available anymore
     private lateinit var usedNames: List<String>
 
+    //the course to edit if needed
+    private var courseId: Int = AppData.CourseId
+
     //desired name of the course
     private var userInput: String = ""
 
     //INIT BLOCK
     init {
         viewModelScope.launch {
-            courseRepository.getAllCourses().filterNotNull().collect { courses ->
-                usedNames = courses.map { it.name.lowercase(Locale.getDefault()) }
+            //is this an edit or add screen?
+            if (courseId != -1) {
+                launch {
+                    try {
+                        //the course we want to edit. We get the state once
+                        val editCourse =
+                            courseRepository.getCourseStream(courseId).filterNotNull().first()
+                        //we update the ui to edit state
+                        _uiState.update { currentState ->
+                            currentState.copy(
+                                courseName = editCourse.name,
+                                isEdit = true,
+                                canAdd = true
+                            )
+                        }
+                    } catch (e: Exception) {
+                        Log.e("AddCourseViewModel", e.message ?: "no value given")
+                    }
+                }
+            }
+            //we get the all used names
+            try {
+                courseRepository.getAllCourses().filterNotNull().collect { courses ->
+                    usedNames = courses.map { it.name.lowercase(Locale.getDefault()) }
+                }
+            } catch (e: Exception) {
+                Log.e("AddCourseViewModel", e.message ?: "no value given")
             }
         }
     }
@@ -45,13 +74,33 @@ class AddCourseViewModel(private val courseRepository: CourseRepository) : ViewM
     }
 
     /**insert the entered course into the database*/
-    fun addCourse() {
+    private fun addCourse() {
         viewModelScope.launch {
             try {
                 courseRepository.insert(CourseEntity(0, userInput.trim()))
-            }  catch(e: Exception){
-                Log.e("AddCourseViewModel", e.message?:"no value given")
+            } catch (e: Exception) {
+                Log.e("AddCourseViewModel", e.message ?: "no value given")
             }
+        }
+    }
+
+    /**update the entered course in the database*/
+    private fun updateCourse() {
+        viewModelScope.launch {
+            try {
+                courseRepository.update(CourseEntity(courseId, userInput.trim()))
+            } catch (e: Exception) {
+                Log.e("AddCourseViewModel", e.message ?: "no value given")
+            }
+        }
+    }
+
+    /**submit changes and either add a course or update an existing one*/
+    fun submitChanges() {
+        if (courseId != -1) {
+            updateCourse()
+        } else {
+            addCourse()
         }
     }
 
@@ -62,5 +111,6 @@ class AddCourseViewModel(private val courseRepository: CourseRepository) : ViewM
 
 data class AddCourseUiState(
     val courseName: String = "",
-    val canAdd: Boolean = false
+    val canAdd: Boolean = false,
+    val isEdit: Boolean = false
 )

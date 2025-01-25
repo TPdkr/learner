@@ -6,7 +6,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.learner.classes.CourseUnit
 import com.example.learner.classes.Lesson
 import com.example.learner.classes.TaskType
 import com.example.learner.classes.Word
@@ -20,12 +19,6 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-object LessonData {
-    var lesson: Lesson = Lesson(listOf())
-    var unit: CourseUnit = CourseUnit(listOf(), "", 0, "")
-    var unitUid: Int = 1
-}
-
 class LessonViewModel(
     private val wordRepository: WordRepository,
     private val userRepository: UserRepository
@@ -35,7 +28,7 @@ class LessonViewModel(
     val uiState: StateFlow<LessonUiState> = _uiState.asStateFlow()
 
     //this is the lesson data passed to the function
-    private val currentLesson: Lesson = LessonData.lesson
+    private val currentLesson: Lesson = AppData.lesson
 
     //this is the current word data
     private lateinit var currentWord: Word
