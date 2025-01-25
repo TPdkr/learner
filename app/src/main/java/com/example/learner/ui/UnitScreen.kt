@@ -25,6 +25,7 @@ import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -46,7 +47,7 @@ import com.example.learner.ui.viewModels.UnitViewModel
 @Composable
 fun UnitScreen(
     unitViewModel: UnitViewModel = viewModel(factory = ViewModelFactory.Factory),
-    toAddWord: () -> Unit,
+    toAddWord: (Int) -> Unit,
     toLesson: (Lesson) -> Unit,
     toEditUnit: (Int)->Unit
 ) {
@@ -58,9 +59,9 @@ fun UnitScreen(
 @Composable
 fun UnitScreenBody(
     unit: CourseUnit,
-    toAddWord: () -> Unit,
+    toAddWord: (Int) -> Unit,
     toLesson: (Lesson) -> Unit,
-    toEditUnit: (Int) -> Unit
+    toEditUnit: (Int) -> Unit,
 ) {
     Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.surfaceContainer) {
         Column(
@@ -106,10 +107,12 @@ fun UnitScreenBody(
                 ) {
                     items(unit.words) { word ->
                         Row(
-                            modifier = Modifier.padding(5.dp),
+                            modifier = Modifier,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Text(text = word.toUiString(), modifier = Modifier.weight(5f))
+                            TextButton({toAddWord(word.wid)}, modifier = Modifier.fillMaxSize().weight(5f)) {
+                                Text(text = word.toUiString(), textAlign = TextAlign.Start, modifier = Modifier.fillMaxSize())
+                            }
                             Text(text = word.getRevisionTime(), modifier = Modifier.weight(1f))
                         }
                         HorizontalDivider(thickness = 2.dp)
@@ -131,7 +134,7 @@ fun UnitScreenBody(
                     Text(text = "learn", style = typography.bodyMedium)
                 }
                 OutlinedButton(
-                    onClick = toAddWord,
+                    onClick = {toAddWord(-1)},
                     modifier = Modifier.width(130.dp),
                 ) {
                     Text(text = "add", style = typography.bodyMedium)

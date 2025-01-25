@@ -66,7 +66,9 @@ fun LearnerApp(
         }
         //UNIT INFO SCREEN=====================================================
         composable(route = ScreenSate.UnitScreen.name) {
-            UnitScreen(toAddWord = { navController.navigate(ScreenSate.AddWordScreen.name) },
+            UnitScreen(toAddWord = { id->
+                AppData.wordId=id
+                navController.navigate(ScreenSate.AddWordScreen.name) },
                 toLesson =
                 { lesson ->
                     AppData.lesson = lesson

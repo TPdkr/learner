@@ -24,6 +24,7 @@ import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.MenuAnchorType
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -65,7 +66,7 @@ fun AddWordScreen(
         { addWordViewModel.isNounSwitch() },
         {
             if (addWordViewModel.canAdd()) {
-                addWordViewModel.insert()
+                addWordViewModel.submitChanges()
                 toPrevious()
             }
         })
@@ -110,7 +111,7 @@ fun AddWordBody(
                     ) {
                         //the title
                         Text(
-                            text = "Add word:",
+                            text = if (uiState.isEdit) "Edit word" else "Add word",
                             style = typography.titleLarge,
                             fontWeight = FontWeight.Bold,
                             fontSize = 40.sp,
@@ -154,9 +155,16 @@ fun AddWordBody(
                                 uiState.inpPl
                             )
                         }
-                        //this is the input button
-                        Button(onClick = submit, enabled = uiState.canInsert) {
-                            Text(text = "add a new word")
+                        if (uiState.isEdit) {
+                            //submit the edit
+                            OutlinedButton(onClick = submit, enabled = uiState.canInsert) {
+                                Text(text = "submit changes")
+                            }
+                        } else {
+                            //this is the input button
+                            Button(onClick = submit, enabled = uiState.canInsert) {
+                                Text(text = "add a new word")
+                            }
                         }
                     }
                     //this is the noun state switch
@@ -248,5 +256,11 @@ fun DropDownTextField(
 @Preview
 @Composable
 fun AddWordPreview() {
-    AddWordBody(AddWordUiState(), {}, {}, {}, {}, {}, {}, {})
+    AddWordBody(AddWordUiState(canInsert = true), {}, {}, {}, {}, {}, {}, {})
+}
+
+@Preview
+@Composable
+fun EditWordPreview() {
+    AddWordBody(AddWordUiState(isEdit = true, canInsert = true), {}, {}, {}, {}, {}, {}, {})
 }

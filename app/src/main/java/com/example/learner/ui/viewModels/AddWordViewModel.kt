@@ -10,6 +10,7 @@ import com.example.learner.data.word.WordRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -22,6 +23,11 @@ class AddWordViewModel(
     //the user can only read the ui state
     private val _uiState = MutableStateFlow(AddWordUiState())
     val uiState = _uiState.asStateFlow()
+
+    //the current id of the word
+    private val wordId: Int = AppData.wordId
+    private var wordRev: Int = 0
+    private var wordRevTime: Long = 0
 
     //the input fields states
     private var inpGerm = ""
@@ -103,11 +109,37 @@ class AddWordViewModel(
 
     init {
         viewModelScope.launch {
+            if (wordId != -1) {
+                launch {
+                    try {
+                        val editWord = wordRepository.getWordStream(wordId).filterNotNull().first()
+                        inpGerm = editWord.german
+                        inpTrans = editWord.translation
+                        inpGend = editWord.gender
+                        inpPl = editWord.plural
+                        wordRev = editWord.revision
+                        wordRevTime = editWord.revisionTime
+                        _uiState.update { currentState ->
+                            currentState.copy(
+                                inpPl = inpPl,
+                                inpGerm = inpGerm,
+                                inpTrans = inpTrans,
+                                inpGend = inpGend,
+                                canInsert = true,
+                                isEdit = true,
+                                isNoun = editWord.toWord().isNoun()
+                            )
+                        }
+                    } catch (e: Exception) {
+                        Log.e("AddWordViewModel", e.message ?: "no message given")
+                    }
+                }
+            }
             try {
                 val words = wordRepository.getAllWords().filterNotNull().firstOrNull()
                     ?.map { it.toWord() }
                     ?: emptyList()
-                _uiState.value = AddWordUiState(wordList = words)
+                _uiState.update { currentState -> currentState.copy(wordList = words) }
             } catch (e: Exception) {
                 Log.e("AddWordViewModel", e.message ?: "no message given")
             }
@@ -136,7 +168,36 @@ class AddWordViewModel(
             } catch (e: Exception) {
                 Log.e("AddWordViewModel", e.message ?: "no message given")
             }
+        }
+    }
 
+    /**update the word in the database*/
+    fun update() {
+        viewModelScope.launch {
+            try {
+                wordRepository.updateWord(
+                    WordEntity(
+                        wordId,
+                        inpGerm.trim(),
+                        inpTrans.trim(),
+                        inpGend,
+                        inpPl,
+                        wordRev,
+                        wordRevTime
+                    )
+                )
+            } catch (e: Exception) {
+                Log.e("AddWordViewModel", e.message ?: "no message given")
+            }
+        }
+    }
+
+    /**submit changes to the database*/
+    fun submitChanges(){
+        if(wordId!=-1){
+            update()
+        } else {
+            insert()
         }
     }
 
@@ -158,4 +219,5 @@ data class AddWordUiState(
     var inpPl: Int = -1,
     var isNoun: Boolean = true,
     var canInsert: Boolean = false,
+    var isEdit: Boolean = false
 )

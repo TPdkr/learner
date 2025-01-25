@@ -8,4 +8,5 @@ object AppData {
     var unit: CourseUnit = CourseUnit(listOf(), "", 0, "")//delete line
     var unitUid: Int = -1
     var CourseId: Int = -1
+    var wordId: Int =-1
 }
