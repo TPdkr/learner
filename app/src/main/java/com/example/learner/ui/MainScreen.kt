@@ -19,6 +19,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.PlayArrow
@@ -38,6 +39,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -161,7 +163,7 @@ fun MainScreenBody(
                         style = typography.labelMedium,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(10.dp)
+                            .padding(dimensionResource(R.dimen.padding_small))
                     )
                 }
                 //this checks if the dialog should be visible or not
@@ -203,7 +205,7 @@ fun MainScreenBody(
 fun MenuButton(onClick: () -> Unit, text: String, icon: ImageVector, enabled: Boolean = true) {
     val buttonModifier = Modifier
         .width(300.dp)
-        .padding(8.dp)
+        .padding(dimensionResource(R.dimen.padding_tiny))
     Button(onClick = onClick, modifier = buttonModifier, enabled = enabled) {
         Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxSize()) {
             Icon(
@@ -225,8 +227,7 @@ fun InfoDialog(onDismissRequest: () -> Unit = {}) {
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(200.dp)
-                .padding(5.dp),
+                .height(200.dp),
             shape = RoundedCornerShape(16.dp),
         ) {
             //The info message about the app is displayed
@@ -234,12 +235,13 @@ fun InfoDialog(onDismissRequest: () -> Unit = {}) {
                 verticalArrangement = Arrangement.Center,
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(10.dp)
+                    .padding(dimensionResource(R.dimen.padding_big))
             ) {
                 Text(
                     text = stringResource(R.string.tanks_for_testing),
                     textAlign = TextAlign.Center,
                     fontWeight = FontWeight.Bold,
+                    style= typography.titleLarge,
                     modifier = Modifier
                         .fillMaxWidth()
                         .wrapContentSize(Alignment.Center)
@@ -264,8 +266,8 @@ fun SelfDestructDialog(onDismissRequest: () -> Unit = {}, onClick: () -> Unit = 
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(300.dp)
-                .padding(5.dp),
+                .height(350.dp)
+                ,
             shape = RoundedCornerShape(16.dp),
         ) {
             //The info message about the app is displayed
@@ -274,12 +276,13 @@ fun SelfDestructDialog(onDismissRequest: () -> Unit = {}, onClick: () -> Unit = 
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(10.dp)
+                    .padding(dimensionResource(R.dimen.padding_big))
             ) {
                 Text(
-                    text = "OH NO! PERRY! you have found my self destruct button! It resets all user progress!",
+                    text = "You have found my self destruct button! It resets all user progress!",
                     textAlign = TextAlign.Center,
                     fontWeight = FontWeight.Bold,
+                    style= typography.titleLarge,
                     modifier = Modifier
                         .fillMaxWidth()
                         .wrapContentSize(Alignment.Center)
@@ -294,7 +297,7 @@ fun SelfDestructDialog(onDismissRequest: () -> Unit = {}, onClick: () -> Unit = 
                         disabledContainerColor = MaterialTheme.colorScheme.onPrimary
                     )
                 ) {
-                    Text(text = "Self Destruct")
+                    Icon(Icons.Default.Clear, "self destruct button")
                 }
             }
         }

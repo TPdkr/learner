@@ -41,6 +41,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
@@ -50,6 +51,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.PopupProperties
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.learner.R
 import com.example.learner.classes.Word
 import com.example.learner.ui.viewModels.AddWordUiState
 import com.example.learner.ui.viewModels.AddWordViewModel
@@ -97,7 +99,7 @@ fun AddWordBody(
             modifier = Modifier
                 .fillMaxSize()
                 .statusBarsPadding()
-                .padding(20.dp)
+                .padding(dimensionResource(R.dimen.padding_big))
                 .verticalScroll(
                     rememberScrollState()
                 ),
@@ -108,7 +110,7 @@ fun AddWordBody(
                 OutlinedButton(
                     { uiState.dialogSwitch() }, modifier = Modifier
                         .align(Alignment.End)
-                        .padding(5.dp)
+                        .padding(dimensionResource(R.dimen.padding_tiny))
                 ) {
                     Icon(Icons.Default.Delete, "delete word button")
                 }
@@ -117,7 +119,7 @@ fun AddWordBody(
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(20.dp)
+                        .padding(dimensionResource(R.dimen.padding_big))
                 ) {
                     Column(
                         modifier = Modifier
@@ -298,7 +300,7 @@ fun DeleteDialogWord(
             Column(
                 Modifier
                     .fillMaxSize()
-                    .padding(20.dp),
+                    .padding(dimensionResource(R.dimen.padding_big)),
                 verticalArrangement = Arrangement.SpaceAround,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
