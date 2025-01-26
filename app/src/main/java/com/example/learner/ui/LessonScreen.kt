@@ -28,7 +28,6 @@ import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -38,6 +37,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -95,7 +95,7 @@ fun LessonScreenBody(
                     .statusBarsPadding()
                     .verticalScroll(rememberScrollState())
                     .safeDrawingPadding()
-                    .padding(20.dp),
+                    .padding(dimensionResource(R.dimen.padding_big)),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             )
@@ -146,7 +146,7 @@ fun InfoCard(uiState: LessonUiState) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(20.dp),
+                .padding(dimensionResource(R.dimen.padding_big)),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -177,7 +177,7 @@ fun TypeTaskCard(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(20.dp),
+                .padding(dimensionResource(R.dimen.padding_big)),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -261,7 +261,8 @@ fun ControlBlock(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(40.dp), horizontalAlignment = Alignment.CenterHorizontally
+            .padding(dimensionResource(R.dimen.padding_big)),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         if (!lessonUiState.isChecked && lessonUiState.currentTaskType != TaskType.INFO) {
             //check the answer
@@ -314,31 +315,31 @@ fun FinalDialog(score: Int, toPrevious: () -> Unit, lessonUiState: LessonUiState
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(300.dp)
-                .padding(5.dp),
+                .height(300.dp),
             shape = RoundedCornerShape(16.dp),
         ) {
             Column(
-                verticalArrangement = Arrangement.Center,
-                modifier = Modifier.fillMaxSize()
+                verticalArrangement = Arrangement.SpaceEvenly,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(dimensionResource(R.dimen.padding_big))
             ) {
                 //title
                 Text(
                     text = "You finished a lesson!",
                     textAlign = TextAlign.Center,
                     fontWeight = FontWeight.Bold,
+                    style = typography.titleLarge,
                     modifier = Modifier
                         .fillMaxWidth()
                         .wrapContentSize(Alignment.Center)
-                        .padding(5.dp)
                 )
                 //encouraging message
                 Text(
                     text = lessonUiState.finalMessage,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .wrapContentSize(Alignment.Center)
-                        .padding(5.dp),
+                        .wrapContentSize(Alignment.Center),
                     textAlign = TextAlign.Center
                 )
                 //the score:
@@ -346,11 +347,9 @@ fun FinalDialog(score: Int, toPrevious: () -> Unit, lessonUiState: LessonUiState
                     text = stringResource(R.string.you_earned_xp, score),
                     textAlign = TextAlign.Center,
                     style = typography.titleLarge,
-                    fontWeight = FontWeight.Bold,
                     modifier = Modifier
                         .fillMaxWidth()
                         .wrapContentSize(Alignment.Center)
-                        .padding(10.dp)
                 )
                 Text(
                     stringResource(R.string.lesson_percentage, lessonUiState.finalScore),
@@ -360,8 +359,8 @@ fun FinalDialog(score: Int, toPrevious: () -> Unit, lessonUiState: LessonUiState
                         .wrapContentSize(Alignment.Center)
                 )
                 //return to previous screen
-                TextButton(onClick = toPrevious, modifier = Modifier.fillMaxWidth()) {
-                    Text("return back", textAlign = TextAlign.Center)
+                OutlinedButton(onClick = toPrevious, modifier = Modifier.fillMaxWidth()) {
+                    Text("return", textAlign = TextAlign.Center)
                 }
             }
         }

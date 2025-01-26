@@ -25,6 +25,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -32,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.learner.R
 import com.example.learner.ui.viewModels.AddUnitUiState
 import com.example.learner.ui.viewModels.AddUnitViewModel
 
@@ -63,7 +65,7 @@ fun AddUnitBody(
             modifier = Modifier
                 .fillMaxSize()
                 .statusBarsPadding()
-                .padding(40.dp),
+                .padding(dimensionResource(R.dimen.padding_big)),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -71,7 +73,7 @@ fun AddUnitBody(
                 OutlinedButton(
                     { uiState.dialogSwitch() }, modifier = Modifier
                         .align(Alignment.End)
-                        .padding(5.dp)
+                        .padding(dimensionResource(R.dimen.padding_tiny))
                 ) {
                     Icon(Icons.Default.Delete, "delete unit button")
                 }
@@ -79,12 +81,12 @@ fun AddUnitBody(
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(250.dp)
+                    .height(280.dp)
             ) {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(10.dp),
+                        .padding(dimensionResource(R.dimen.padding_big)),
                     verticalArrangement = Arrangement.SpaceBetween,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
@@ -173,7 +175,7 @@ fun DeleteDialogUnit(
             Column(
                 Modifier
                     .fillMaxSize()
-                    .padding(20.dp),
+                    .padding(dimensionResource(R.dimen.padding_big)),
                 verticalArrangement = Arrangement.SpaceAround,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
