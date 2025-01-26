@@ -33,4 +33,7 @@ interface UnitDao {
 
     @Query("DELETE FROM units")
     suspend fun clear()
+
+    @Query("DELETE FROM units WHERE uid=:id")
+    suspend fun deleteById(id: Int)
 }

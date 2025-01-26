@@ -24,4 +24,7 @@ interface UnitRepository {
 
     /**delete all entries*/
     suspend fun clear()
+
+    /**delete unit by id*/
+    suspend fun deleteById(id: Int)
 }
