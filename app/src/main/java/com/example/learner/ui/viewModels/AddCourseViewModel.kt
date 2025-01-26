@@ -116,7 +116,7 @@ class AddCourseViewModel(private val courseRepository: CourseRepository) : ViewM
     fun deleteCourseAndWords() {
         viewModelScope.launch {
             try {
-                //TODO()
+                courseRepository.deleteCourseAndWords(courseId)
             } catch (e: Exception) {
                 Log.e("AddCourseViewModel", e.message ?: "no message given")
             }
@@ -127,7 +127,7 @@ class AddCourseViewModel(private val courseRepository: CourseRepository) : ViewM
     fun deleteCourseWithoutWords() {
         viewModelScope.launch {
             try {
-                //TODO()
+                courseRepository.deleteCourseWithoutWords(courseId)
             } catch (e: Exception) {
                 Log.e("AddCourseViewModel", e.message ?: "no message given")
             }

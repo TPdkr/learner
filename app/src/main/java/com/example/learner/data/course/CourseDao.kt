@@ -47,4 +47,53 @@ interface CourseDao {
     @Query("DELETE FROM courses")
     suspend fun clear()
 
+    //delete course be ID
+    @Query("DELETE FROM courses WHERE cid=:cid")
+    suspend fun deleteById(cid: Int)
+
+    //delete course units
+    @Query("DELETE FROM units WHERE courseId = :cid")
+    suspend fun deleteUnits(cid: Int)
+
+    //delete all words cross-references associated with the course
+    @Query(
+        """
+        DELETE FROM WordUnitCrossRef 
+        WHERE uid IN (SELECT uid FROM units WHERE courseId = :cid)
+    """
+    )
+    suspend fun deleteWordMappings(cid: Int)
+
+    //delete all words associated with the course
+    @Query(
+        """
+        DELETE FROM words 
+        WHERE wid IN (
+            SELECT wid 
+            FROM WordUnitCrossRef 
+            WHERE uid IN (SELECT uid FROM units WHERE courseId = :cid)
+        )
+    """
+    )
+    suspend fun deleteWords(cid: Int)
+
+    @Query("UPDATE userdata SET currentCourseId=1 WHERE id=1")
+    suspend fun resetCurrentCourse()
+
+    @Transaction
+    suspend fun deleteCourseAndWords(cid: Int) {
+        deleteWords(cid)
+        deleteWordMappings(cid)
+        deleteUnits(cid)
+        deleteById(cid)
+        resetCurrentCourse()
+    }
+
+    @Transaction
+    suspend fun deleteCourseWithoutWords(cid: Int) {
+        deleteWordMappings(cid)
+        deleteUnits(cid)
+        deleteById(cid)
+        resetCurrentCourse()
+    }
 }
