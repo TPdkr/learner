@@ -159,13 +159,13 @@ fun UnitScreenBody(
                 .statusBarsPadding()
                 .padding(dimensionResource(R.dimen.padding_big))
         ) {
-            OutlinedButton(
-                { toEditUnit(unit.uid) },
+            Icon(
+                Icons.Filled.Create,
+                contentDescription = "edit unit button",
                 modifier = Modifier
                     .align(Alignment.TopEnd)
-            ) {
-                Icon(Icons.Filled.Create, contentDescription = "edit unit button")
-            }
+                    .clickable { toEditUnit(unit.uid) }
+            )
         }
     }
 }

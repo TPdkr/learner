@@ -348,7 +348,11 @@ fun SelfDestructWarning(onDismissRequest: () -> Unit = {}, onDestruct: () -> Uni
                     style = typography.titleLarge,
                     modifier = Modifier.fillMaxWidth()
                 )
-                Text("content will be deleted permanently")
+                Text(
+                    "content will be deleted permanently",
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center
+                )
                 OutlinedButton(onDestruct, Modifier.fillMaxWidth()) {
                     Text("delete all app data")
                 }

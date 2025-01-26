@@ -73,7 +73,7 @@ fun AddUnitBody(
                 OutlinedButton(
                     { uiState.dialogSwitch() }, modifier = Modifier
                         .align(Alignment.End)
-                        .padding(dimensionResource(R.dimen.padding_tiny))
+                        .padding(bottom=dimensionResource(R.dimen.padding_tiny))
                 ) {
                     Icon(Icons.Default.Delete, "delete unit button")
                 }
