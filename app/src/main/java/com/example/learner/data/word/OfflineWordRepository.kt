@@ -28,4 +28,6 @@ class OfflineWordRepository(private val wordDao: WordDao) : WordRepository {
         (word.gender == -1 && word.plural == -1) || (word.gender != -1 && word.plural != -1)
 
     override suspend fun clear() = wordDao.clear()
+
+    override suspend fun deleteById(id: Int) = wordDao.deleteById(id)
 }

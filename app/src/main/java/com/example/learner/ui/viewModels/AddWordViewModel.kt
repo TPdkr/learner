@@ -127,7 +127,10 @@ class AddWordViewModel(
                                 inpGend = inpGend,
                                 canInsert = true,
                                 isEdit = true,
-                                isNoun = editWord.toWord().isNoun()
+                                isNoun = editWord.toWord().isNoun(),
+                                deleteFromUnit = ::deleteFromUnit,
+                                deleteAll = ::deleteAll,
+                                dialogSwitch = ::dialogSwitch
                             )
                         }
                     } catch (e: Exception) {
@@ -193,11 +196,42 @@ class AddWordViewModel(
     }
 
     /**submit changes to the database*/
-    fun submitChanges(){
-        if(wordId!=-1){
+    fun submitChanges() {
+        if (wordId != -1) {
             update()
         } else {
             insert()
+        }
+    }
+    //DELETE dialog functions:
+    /**delete word from unit*/
+    fun deleteFromUnit() {
+        viewModelScope.launch {
+            try {
+                unitWordRepository.removeWordFromUnit(wordId, AppData.unitUid)
+            } catch (e: Exception) {
+                Log.e("AddWordViewModel", e.message ?: "no message given")
+            }
+        }
+    }
+
+    /**delete word from the database*/
+    fun deleteAll() {
+        deleteFromUnit()
+        viewModelScope.launch {
+            try {
+                wordRepository.deleteById(wordId)
+            } catch (e: Exception) {
+                Log.e("AddWordViewModel", e.message ?: "no message given")
+            }
+        }
+    }
+
+    /**switch the dialog state between visible and not*/
+    fun dialogSwitch() {
+        val visibility = _uiState.value.deleteDialog
+        _uiState.update { currentState->
+            currentState.copy(deleteDialog = !visibility)
         }
     }
 
@@ -219,5 +253,11 @@ data class AddWordUiState(
     var inpPl: Int = -1,
     var isNoun: Boolean = true,
     var canInsert: Boolean = false,
-    var isEdit: Boolean = false
+    var isEdit: Boolean = false,
+    //delete dialog state
+    var deleteFromUnit: () -> Unit = {},
+    var deleteAll: () -> Unit = {},
+    var dialogSwitch: ()->Unit={},
+    var deleteDialog: Boolean = false
+
 )

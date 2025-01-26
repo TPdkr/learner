@@ -23,4 +23,7 @@ interface WordRepository {
 
     /**delete all entries*/
     suspend fun clear()
+
+    /**delete a word by its ID*/
+    suspend fun deleteById(id: Int)
 }

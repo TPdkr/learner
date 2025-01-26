@@ -31,4 +31,7 @@ interface WordDao {
 
     @Query("DELETE FROM words")
     suspend fun clear()
+
+    @Query("DELETE FROM words WHERE wid = :id")
+    suspend fun deleteById(id: Int)
 }

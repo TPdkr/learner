@@ -14,6 +14,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.DropdownMenu
@@ -21,6 +23,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.MenuAnchorType
@@ -44,6 +47,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.PopupProperties
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.learner.classes.Word
@@ -69,7 +73,9 @@ fun AddWordScreen(
                 addWordViewModel.submitChanges()
                 toPrevious()
             }
-        })
+        },
+        toPrevious = toPrevious
+    )
 
 }
 
@@ -84,6 +90,7 @@ fun AddWordBody(
     onChoice: (Word) -> Unit,
     isNounSwitch: () -> Unit,
     submit: () -> Unit,
+    toPrevious: () -> Unit
 ) {
     Surface(modifier = Modifier.fillMaxSize()) {
         Column(
@@ -97,6 +104,15 @@ fun AddWordBody(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
+            if (uiState.isEdit) {
+                OutlinedButton(
+                    { uiState.dialogSwitch() }, modifier = Modifier
+                        .align(Alignment.End)
+                        .padding(5.dp)
+                ) {
+                    Icon(Icons.Default.Delete, "delete word button")
+                }
+            }
             Card(modifier = Modifier.height(380.dp)) {
                 Box(
                     modifier = Modifier
@@ -177,6 +193,19 @@ fun AddWordBody(
             }
 
         }
+        if (uiState.deleteDialog) {
+            DeleteDialogWord(
+                onDismiss = { uiState.dialogSwitch() },
+                deleteApp = {
+                    uiState.deleteAll()
+                    toPrevious()
+                },
+                deleteLocal = {
+                    uiState.deleteFromUnit()
+                    toPrevious()
+                }
+            )
+        }
     }
 }
 
@@ -252,15 +281,53 @@ fun DropDownTextField(
     }
 }
 
+/**dialog if the user want to delete a word from the unit*/
+@Preview
+@Composable
+fun DeleteDialogWord(
+    onDismiss: () -> Unit = {},
+    deleteApp: () -> Unit = {},
+    deleteLocal: () -> Unit = {}
+) {
+    Dialog(onDismissRequest = onDismiss) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(300.dp)
+        ) {
+            Column(
+                Modifier
+                    .fillMaxSize()
+                    .padding(20.dp),
+                verticalArrangement = Arrangement.SpaceAround,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text("Are you sure you want to delete word?", style = typography.titleLarge)
+                //delete all references to word including in unit
+                OutlinedButton(deleteApp, Modifier.fillMaxWidth()) {
+                    Text("delete from app")
+                }
+                //delete reference to word in unit
+                OutlinedButton(deleteLocal, Modifier.fillMaxWidth()) {
+                    Text("delete from unit")
+                }
+                //return back
+                Button(onDismiss, Modifier.fillMaxWidth()) {
+                    Text("return")
+                }
+            }
+        }
+    }
+}
 
 @Preview
 @Composable
 fun AddWordPreview() {
-    AddWordBody(AddWordUiState(canInsert = true), {}, {}, {}, {}, {}, {}, {})
+    AddWordBody(AddWordUiState(canInsert = true), {}, {}, {}, {}, {}, {}, {}, {})
 }
 
 @Preview
 @Composable
 fun EditWordPreview() {
-    AddWordBody(AddWordUiState(isEdit = true, canInsert = true), {}, {}, {}, {}, {}, {}, {})
+    AddWordBody(AddWordUiState(isEdit = true, canInsert = true), {}, {}, {}, {}, {}, {}, {}, {})
 }
