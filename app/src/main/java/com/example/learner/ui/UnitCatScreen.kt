@@ -26,6 +26,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -66,6 +67,7 @@ fun UnitCatScreenBody(
             modifier = Modifier
                 .fillMaxSize()
                 .statusBarsPadding()
+                .padding(dimensionResource(R.dimen.padding_big))
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
@@ -87,7 +89,11 @@ fun UnitCatScreenBody(
                                 toUnit(pair[0])
                             }, modifier = Modifier
                                 .weight(1f)
-                                .padding(top = 8.dp, end = 8.dp, start = 8.dp)
+                                .padding(
+                                    top = dimensionResource(R.dimen.padding_tiny),
+                                    end = dimensionResource(R.dimen.padding_tiny),
+                                    start = dimensionResource(R.dimen.padding_tiny)
+                                )
                         )
                         if (pair.size == 2) {
                             UnitCard(
@@ -96,13 +102,19 @@ fun UnitCatScreenBody(
                                     toUnit(pair[1])
                                 }, modifier = Modifier
                                     .weight(1f)
-                                    .padding(top = 8.dp, end = 8.dp)
+                                    .padding(
+                                        top = dimensionResource(R.dimen.padding_tiny),
+                                        end = dimensionResource(R.dimen.padding_tiny)
+                                    )
                             )
                         } else {
                             Box(
                                 modifier = Modifier
                                     .weight(1f)
-                                    .padding(top = 8.dp, end = 8.dp)
+                                    .padding(
+                                        top = dimensionResource(R.dimen.padding_tiny),
+                                        end = dimensionResource(R.dimen.padding_tiny)
+                                    )
                             )
                         }
                     }
@@ -113,7 +125,7 @@ fun UnitCatScreenBody(
             modifier = Modifier
                 .fillMaxSize()
                 .statusBarsPadding()
-                .padding(25.dp)
+                .padding(dimensionResource(R.dimen.padding_big))
         ) {
             FloatingActionButton(
                 onClick = {
@@ -140,7 +152,7 @@ fun UnitCard(
         Row(
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(10.dp)
+            modifier = Modifier.padding(dimensionResource(R.dimen.padding_small))
         ) {
             //Main course info
             Column(
