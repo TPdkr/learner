@@ -8,8 +8,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -152,13 +152,15 @@ fun UnitCard(
         Row(
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(dimensionResource(R.dimen.padding_small))
+            modifier = Modifier
+                .height(70.dp)
+                .padding(dimensionResource(R.dimen.padding_small))
         ) {
             //Main course info
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .weight(3f),
+                    .weight(4f),
             ) {
                 Text(
                     text = stringResource(R.string.unit_number, unit.number),
@@ -167,14 +169,18 @@ fun UnitCard(
                 )
                 Text(text = unit.name)
             }
-            //how many words are in long term or memorized?
-            CircularProgressIndicator(
-                progress = { unit.getProgress() },
-                modifier = Modifier
-                    .size(50.dp)
-                    .fillMaxSize()
-                    .weight(1f)
-            )
+            Box(Modifier
+                .fillMaxSize()
+                .weight(2f)) {
+                //how many words are in long term or memorized?
+                CircularProgressIndicator(
+                    progress = { unit.getProgress() },
+                    modifier = Modifier
+                        .width(60.dp)
+                        .height(60.dp)
+                        .align(Alignment.Center)
+                )
+            }
         }
     }
 }
