@@ -19,4 +19,8 @@ class OfflineUnitRepository(private val unitDao: UnitDao) : UnitRepository {
     override suspend fun clear() = unitDao.clear()
 
     override suspend fun deleteById(id: Int) = unitDao.deleteById(id)
+
+    override suspend fun deleteUnitAndWords(id: Int) = unitDao.deleteUnitAndWords(id)
+
+    override suspend fun deleteUnitWithoutWords(id: Int) = unitDao.deleteUnitWithoutWords(id)
 }

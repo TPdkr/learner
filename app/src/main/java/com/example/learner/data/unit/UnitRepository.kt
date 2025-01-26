@@ -27,4 +27,10 @@ interface UnitRepository {
 
     /**delete unit by id*/
     suspend fun deleteById(id: Int)
+
+    /**delete unit and words in it*/
+    suspend fun deleteUnitAndWords(id: Int)
+
+    /**delete unit without words*/
+    suspend fun deleteUnitWithoutWords(id: Int)
 }
