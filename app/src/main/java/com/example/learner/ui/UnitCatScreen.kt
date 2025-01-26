@@ -8,8 +8,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -170,6 +170,7 @@ fun UnitCard(
                 Text(text = unit.name)
             }
             Column(
+                verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.End,
                 modifier = Modifier
                     .fillMaxSize()
@@ -179,7 +180,7 @@ fun UnitCard(
                 CircularProgressIndicator(
                     progress = { unit.getProgress() },
                     modifier = Modifier
-                        .width(60.dp)
+                        .size(50.dp)
                 )
             }
         }
