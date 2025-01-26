@@ -169,16 +169,17 @@ fun UnitCard(
                 )
                 Text(text = unit.name)
             }
-            Box(Modifier
-                .fillMaxSize()
-                .weight(2f)) {
+            Column(
+                horizontalAlignment = Alignment.End,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .weight(2f)
+            ) {
                 //how many words are in long term or memorized?
                 CircularProgressIndicator(
                     progress = { unit.getProgress() },
                     modifier = Modifier
                         .width(60.dp)
-                        .height(60.dp)
-                        .align(Alignment.Center)
                 )
             }
         }
