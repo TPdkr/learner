@@ -8,8 +8,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.OutlinedButton
@@ -27,6 +30,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.learner.ui.viewModels.AddUnitUiState
 import com.example.learner.ui.viewModels.AddUnitViewModel
@@ -42,7 +46,7 @@ fun AddUnitScreen(
             addUnitViewModel.submitChanges()
             toPrevious()
         }
-    }, { addUnitViewModel.onNameChange(it) }) { addUnitViewModel.onDescChange(it) }
+    }, { addUnitViewModel.onNameChange(it) }, { addUnitViewModel.onDescChange(it) }, toPrevious)
 }
 
 /**the body of the add unit screen*/
@@ -51,7 +55,8 @@ fun AddUnitBody(
     uiState: AddUnitUiState,
     submit: () -> Unit,
     onNameChange: (String) -> Unit,
-    onDescChange: (String) -> Unit
+    onDescChange: (String) -> Unit,
+    toPrevious: () -> Unit
 ) {
     Surface(modifier = Modifier.fillMaxSize()) {
         Column(
@@ -62,6 +67,15 @@ fun AddUnitBody(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            if (uiState.isEdit) {
+                OutlinedButton(
+                    { uiState.dialogSwitch() }, modifier = Modifier
+                        .align(Alignment.End)
+                        .padding(5.dp)
+                ) {
+                    Icon(Icons.Default.Delete, "delete word button")
+                }
+            }
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -124,17 +138,71 @@ fun AddUnitBody(
             }
 
         }
+        if (uiState.deleteDialog) {
+            DeleteDialogUnit(
+                onDismiss = { uiState.dialogSwitch() },
+                deleteApp = {
+                    uiState.deleteWithWords()
+                    toPrevious()
+                    toPrevious()
+                },
+                deleteLocal = {
+                    uiState.deleteWithoutWords()
+                    toPrevious()
+                    toPrevious()
+                }
+            )
+        }
+    }
+}
+
+/**dialog if the user want to delete a word from the unit*/
+@Preview
+@Composable
+fun DeleteDialogUnit(
+    onDismiss: () -> Unit = {},
+    deleteApp: () -> Unit = {},
+    deleteLocal: () -> Unit = {}
+) {
+    Dialog(onDismissRequest = onDismiss) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(300.dp)
+        ) {
+            Column(
+                Modifier
+                    .fillMaxSize()
+                    .padding(20.dp),
+                verticalArrangement = Arrangement.SpaceAround,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text("Are you sure you want to delete unit?", style = typography.titleLarge)
+                //delete all references unit and words in it
+                OutlinedButton(deleteApp, Modifier.fillMaxWidth()) {
+                    Text("delete with words")
+                }
+                //delete reference to unit but keep the words
+                OutlinedButton(deleteLocal, Modifier.fillMaxWidth()) {
+                    Text("delete without words")
+                }
+                //return back
+                Button(onDismiss, Modifier.fillMaxWidth()) {
+                    Text("return")
+                }
+            }
+        }
     }
 }
 
 @Composable
 @Preview
 fun AddUnitPreview() {
-    AddUnitBody(AddUnitUiState("test unit", "test description", true), {}, {}, {})
+    AddUnitBody(AddUnitUiState("test unit", "test description", true), {}, {}, {},{})
 }
 
 @Composable
 @Preview
 fun EditUnitPreview() {
-    AddUnitBody(AddUnitUiState("test unit", "test description", canAdd = true, true), {}, {}, {})
+    AddUnitBody(AddUnitUiState("test unit", "test description", canAdd = true, true), {}, {}, {},{})
 }

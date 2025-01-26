@@ -46,7 +46,11 @@ class AddUnitViewModel(
                             unitName = editUnit.name,
                             unitDesc = editUnit.desc,
                             canAdd = true,
-                            isEdit = true
+                            isEdit = true,
+                            deleteWithWords = ::deleteUnitAndWords,
+                            deleteWithoutWords = ::deleteUnitWithoutWords,
+                            dialogSwitch = ::dialogSwitch
+
                         )
                     }
                 } catch (e: Exception) {
@@ -132,6 +136,36 @@ class AddUnitViewModel(
         }
     }
 
+    /**delete unit and words in it*/
+    fun deleteUnitAndWords() {
+        viewModelScope.launch {
+            try {
+                unitRepository.deleteUnitAndWords(unitId)
+            } catch (e: Exception) {
+                Log.e("AddUnitViewModel", e.message ?: "no message given")
+            }
+        }
+    }
+
+    /**delete unit and words in it*/
+    fun deleteUnitWithoutWords() {
+        viewModelScope.launch {
+            try {
+                unitRepository.deleteUnitWithoutWords(unitId)
+            } catch (e: Exception) {
+                Log.e("AddUnitViewModel", e.message ?: "no message given")
+            }
+        }
+    }
+
+    /**switch the dialog state between visible and not*/
+    fun dialogSwitch() {
+        val visibility = _uiState.value.deleteDialog
+        _uiState.update { currentState ->
+            currentState.copy(deleteDialog = !visibility)
+        }
+    }
+
     /**can we add a course?*/
     fun canAdd(): Boolean =
         userInputName.isNotEmpty()
@@ -141,5 +175,10 @@ data class AddUnitUiState(
     val unitName: String = "",
     val unitDesc: String = "",
     val canAdd: Boolean = false,
-    val isEdit: Boolean = false
+    val isEdit: Boolean = false,
+    //delete dialog options
+    val deleteWithWords: () -> Unit = {},
+    val deleteWithoutWords: () -> Unit = {},
+    val dialogSwitch: () -> Unit = {},
+    val deleteDialog: Boolean = false
 )
