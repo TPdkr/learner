@@ -73,7 +73,7 @@ fun AddUnitBody(
                         .align(Alignment.End)
                         .padding(5.dp)
                 ) {
-                    Icon(Icons.Default.Delete, "delete word button")
+                    Icon(Icons.Default.Delete, "delete unit button")
                 }
             }
             Card(
@@ -156,7 +156,7 @@ fun AddUnitBody(
     }
 }
 
-/**dialog if the user want to delete a word from the unit*/
+/**dialog if the user want to delete a unit from the course*/
 @Preview
 @Composable
 fun DeleteDialogUnit(

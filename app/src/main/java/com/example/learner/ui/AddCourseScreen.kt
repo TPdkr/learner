@@ -8,8 +8,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.OutlinedButton
@@ -27,6 +30,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.learner.ui.viewModels.AddCourseUiState
 import com.example.learner.ui.viewModels.AddCourseViewModel
@@ -42,12 +46,17 @@ fun AddCourseScreen(
             addCourseViewModel.submitChanges()
             returnBack()
         }
-    }, { addCourseViewModel.onValueChange(it) })
+    }, { addCourseViewModel.onValueChange(it) }, returnBack)
 }
 
 /**the body of the add course screen*/
 @Composable
-fun AddCourseBody(uiState: AddCourseUiState, submit: () -> Unit, onValueChange: (String) -> Unit) {
+fun AddCourseBody(
+    uiState: AddCourseUiState,
+    submit: () -> Unit,
+    onValueChange: (String) -> Unit,
+    toPrevious: () -> Unit
+) {
     Surface(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
@@ -57,6 +66,15 @@ fun AddCourseBody(uiState: AddCourseUiState, submit: () -> Unit, onValueChange: 
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            if (uiState.isEdit) {
+                OutlinedButton(
+                    { uiState.dialogSwitch() }, modifier = Modifier
+                        .align(Alignment.End)
+                        .padding(5.dp)
+                ) {
+                    Icon(Icons.Default.Delete, "delete course button")
+                }
+            }
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -105,17 +123,69 @@ fun AddCourseBody(uiState: AddCourseUiState, submit: () -> Unit, onValueChange: 
                 }
             }
         }
+        if (uiState.deleteDialog) {
+            DeleteDialogUnit(
+                onDismiss = { uiState.dialogSwitch() },
+                deleteApp = {
+                    uiState.deleteWithWords()
+                    toPrevious()
+                },
+                deleteLocal = {
+                    uiState.deleteWithoutWords()
+                    toPrevious()
+                }
+            )
+        }
+    }
+}
+
+/**dialog if the user want to delete a course*/
+@Preview
+@Composable
+fun DeleteDialogCourse(
+    onDismiss: () -> Unit = {},
+    deleteApp: () -> Unit = {},
+    deleteLocal: () -> Unit = {}
+) {
+    Dialog(onDismissRequest = onDismiss) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(300.dp)
+        ) {
+            Column(
+                Modifier
+                    .fillMaxSize()
+                    .padding(20.dp),
+                verticalArrangement = Arrangement.SpaceAround,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text("Are you sure you want to delete course?", style = typography.titleLarge)
+                //delete all references course and words in it
+                OutlinedButton(deleteApp, Modifier.fillMaxWidth()) {
+                    Text("delete with words")
+                }
+                //delete reference to course but keep the words
+                OutlinedButton(deleteLocal, Modifier.fillMaxWidth()) {
+                    Text("delete without words")
+                }
+                //return back
+                Button(onDismiss, Modifier.fillMaxWidth()) {
+                    Text("return")
+                }
+            }
+        }
     }
 }
 
 @Preview
 @Composable
 fun AddScreenPreview() {
-    AddCourseBody(AddCourseUiState("new name...", true), {}, {})
+    AddCourseBody(AddCourseUiState("new name...", true), {}, {}, {})
 }
 
 @Preview
 @Composable
 fun ChangeScreenPreview() {
-    AddCourseBody(AddCourseUiState("old new name...", canAdd = true, true), {}, {})
+    AddCourseBody(AddCourseUiState("old new name...", canAdd = true, true), {}, {}, {})
 }

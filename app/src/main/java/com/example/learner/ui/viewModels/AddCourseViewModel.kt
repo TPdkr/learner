@@ -41,7 +41,10 @@ class AddCourseViewModel(private val courseRepository: CourseRepository) : ViewM
                             currentState.copy(
                                 courseName = editCourse.name,
                                 isEdit = true,
-                                canAdd = true
+                                canAdd = true,
+                                dialogSwitch = ::dialogSwitch,
+                                deleteWithWords = ::deleteCourseAndWords,
+                                deleteWithoutWords = ::deleteCourseWithoutWords
                             )
                         }
                     } catch (e: Exception) {
@@ -107,10 +110,46 @@ class AddCourseViewModel(private val courseRepository: CourseRepository) : ViewM
     /**can we add a course?*/
     fun canAdd(): Boolean =
         userInput.isNotEmpty() && !usedNames.contains(userInput)
+
+    //DELETE functions
+    /**delete unit and words in it*/
+    fun deleteCourseAndWords() {
+        viewModelScope.launch {
+            try {
+                //TODO()
+            } catch (e: Exception) {
+                Log.e("AddCourseViewModel", e.message ?: "no message given")
+            }
+        }
+    }
+
+    /**delete unit and words in it*/
+    fun deleteCourseWithoutWords() {
+        viewModelScope.launch {
+            try {
+                //TODO()
+            } catch (e: Exception) {
+                Log.e("AddCourseViewModel", e.message ?: "no message given")
+            }
+        }
+    }
+
+    /**switch the dialog state between visible and not*/
+    fun dialogSwitch() {
+        val visibility = _uiState.value.deleteDialog
+        _uiState.update { currentState ->
+            currentState.copy(deleteDialog = !visibility)
+        }
+    }
 }
 
 data class AddCourseUiState(
     val courseName: String = "",
     val canAdd: Boolean = false,
-    val isEdit: Boolean = false
+    val isEdit: Boolean = false,
+    //delete dialog data
+    val deleteWithWords: () -> Unit = {},
+    val deleteWithoutWords: () -> Unit = {},
+    val dialogSwitch: () -> Unit = {},
+    val deleteDialog: Boolean = false
 )
