@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Card
@@ -95,9 +96,9 @@ fun UnitCatScreenBody(
                             }, modifier = Modifier
                                 .weight(1f)
                                 .padding(
-                                    top = dimensionResource(R.dimen.padding_tiny),
-                                    end = dimensionResource(R.dimen.padding_tiny),
-                                    start = dimensionResource(R.dimen.padding_tiny)
+                                    top = dimensionResource(R.dimen.padding_small),
+                                    end = dimensionResource(R.dimen.padding_small),
+                                    start = dimensionResource(R.dimen.padding_small)
                                 )
                         )
                         if (pair.size == 2) {
@@ -108,8 +109,8 @@ fun UnitCatScreenBody(
                                 }, modifier = Modifier
                                     .weight(1f)
                                     .padding(
-                                        top = dimensionResource(R.dimen.padding_tiny),
-                                        end = dimensionResource(R.dimen.padding_tiny)
+                                        top = dimensionResource(R.dimen.padding_small),
+                                        end = dimensionResource(R.dimen.padding_small)
                                     )
                             )
                         } else {
@@ -117,8 +118,8 @@ fun UnitCatScreenBody(
                                 modifier = Modifier
                                     .weight(1f)
                                     .padding(
-                                        top = dimensionResource(R.dimen.padding_tiny),
-                                        end = dimensionResource(R.dimen.padding_tiny)
+                                        top = dimensionResource(R.dimen.padding_small),
+                                        end = dimensionResource(R.dimen.padding_small)
                                     )
                             )
                         }
@@ -158,7 +159,15 @@ fun UnitCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Card(modifier = modifier.height(70.dp), onClick = onClick) {
+    Card(
+        modifier = modifier.height(70.dp), onClick = onClick,
+        shape = RoundedCornerShape(
+            topStartPercent = 50,
+            topEndPercent = 50,
+            bottomStartPercent = 50,
+            bottomEndPercent = 50
+        )
+    ) {
         Row(
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically,
@@ -170,6 +179,7 @@ fun UnitCard(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
+                    .padding(start = dimensionResource(R.dimen.padding_small))
                     .weight(4f),
             ) {
                 Text(
