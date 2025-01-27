@@ -46,7 +46,7 @@ val testWords: List<Word> = listOf(
     Word(german = "lachen", translation = "to laugh"),
     Word(german = "very long word in german", translation = "very long translation")
 )
-val testUnit: CourseUnit = CourseUnit(testWords, "Test", 1, "test description")
+val testUnit: CourseUnit = CourseUnit(testWords, "Test. Unit name", 1, "test description")
 
 val testCourse: Course = Course(List(5) { testUnit }, "test course try")
 
