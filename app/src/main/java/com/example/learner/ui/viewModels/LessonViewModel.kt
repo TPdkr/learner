@@ -68,25 +68,31 @@ class LessonViewModel(
 
     /**update user guess after change*/
     fun updateUserGuess(newGuess: String) {
-        userGuess = newGuess
-        _uiState.update { currentState->
-            currentState.copy(currentGuess = newGuess)
+        if (!_uiState.value.isChecked) {
+            userGuess = newGuess
+            _uiState.update { currentState ->
+                currentState.copy(currentGuess = newGuess)
+            }
         }
     }
 
     /**update user gender guess for the word*/
     fun updateGenderGuess(gender: Int) {
-        userGenderGuess = gender
-        _uiState.update { currentState->
-            currentState.copy(genderGuess = gender)
+        if (!_uiState.value.isChecked) {
+            userGenderGuess = gender
+            _uiState.update { currentState ->
+                currentState.copy(genderGuess = gender)
+            }
         }
     }
 
     /**update plural guess for the word*/
     fun updatePluralGuess(plural: Int) {
-        userPluralGuess = plural
-        _uiState.update { currentState->
-            currentState.copy(plGuess = plural)
+        if (!_uiState.value.isChecked) {
+            userPluralGuess = plural
+            _uiState.update { currentState ->
+                currentState.copy(plGuess = plural)
+            }
         }
     }
 
@@ -124,7 +130,10 @@ class LessonViewModel(
                     taskNumber = nextTaskNumber,
                     currentTrans = currentWord.translation,
                     info = currentWord.toUiString(),
-                    currentTaskType = newTaskType
+                    currentTaskType = newTaskType,
+                    isGendCorrect = null,
+                    isPlCorrect = null,
+                    isGermCorrect = null
                 )
             }
             //reset the user guess values
@@ -138,6 +147,9 @@ class LessonViewModel(
     fun checkAnswer() {
         //is this answer correct?
         val isCorrect = currentWord.isCorrect(userGenderGuess, userGuess, userPluralGuess)
+        val isGermCorrect = currentWord.german.equals(userGuess.trim(), ignoreCase = true)
+        val isGendCorrect = currentWord.gender.code == userGenderGuess
+        val isPlCorrect = currentWord.plural.code == userPluralGuess
         if (!isCorrect) {
             currentWord.incMistakes()
         }
@@ -145,8 +157,15 @@ class LessonViewModel(
         //update ui state
         val inc = currentWord.countScore(userGenderGuess, userGuess, userPluralGuess)
         _uiState.update { currentState ->
-            val newScore = if (isCorrect) currentState.score.plus(inc) else currentState.score
-            currentState.copy(score = newScore, isChecked = true, isWrong = !isCorrect)
+            val newScore = currentState.score.plus(inc)
+            currentState.copy(
+                score = newScore,
+                isChecked = true,
+                isWrong = !isCorrect,
+                isGendCorrect = isGendCorrect,
+                isPlCorrect = isPlCorrect,
+                isGermCorrect = isGermCorrect
+            )
         }
         //we want to show the correct answer
         updateUserGuess(currentWord.german)
@@ -202,7 +221,7 @@ class LessonViewModel(
             else -> murder.random()
         }
         _uiState.update { currentSate ->
-            currentSate.copy(finalMessage = newInfo, finalScore = (lessonScore*100).toInt())
+            currentSate.copy(finalMessage = newInfo, finalScore = (lessonScore * 100).toInt())
         }
     }
 }
@@ -213,6 +232,9 @@ data class LessonUiState(
     val isChecked: Boolean = false,
     val isWrong: Boolean = false,
     val isNoun: Boolean = false,
+    val isGendCorrect: Boolean? = null,
+    val isPlCorrect: Boolean? = null,
+    val isGermCorrect: Boolean? = null,
     //progress indicator
     val taskNumber: Int = 0,
     val taskCount: Int = 0,
@@ -234,8 +256,8 @@ data class LessonUiState(
     val onCheckAnswer: () -> Unit = {},
     val onNextTask: () -> Unit = {},
     //changing the answer
-    val onGenderChange: (Int)->Unit = {},
-    val onGuessChange: (String)->Unit={},
-    val onPlChange: (Int)->Unit={}
+    val onGenderChange: (Int) -> Unit = {},
+    val onGuessChange: (String) -> Unit = {},
+    val onPlChange: (Int) -> Unit = {}
 
 )

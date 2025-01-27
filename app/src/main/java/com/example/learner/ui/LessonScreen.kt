@@ -23,12 +23,13 @@ import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SegmentedButtonColors
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -37,6 +38,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -195,48 +197,146 @@ fun TypeTaskCard(
                 AnswerSegmentedButton(
                     genders,
                     { index -> lessonUiState.onGenderChange(index) },
-                    lessonUiState.genderGuess
+                    lessonUiState.genderGuess,
+                    lessonUiState.isGendCorrect
                 )
             }
             //german translation field
-            OutlinedTextField(
-                value = lessonUiState.currentGuess,
-                singleLine = true,
-                modifier = Modifier.fillMaxWidth(),
-                onValueChange = { lessonUiState.onGuessChange(it) },
-                colors = TextFieldDefaults.colors(
-                    focusedContainerColor = colorScheme.surface,
-                    unfocusedContainerColor = colorScheme.surface,
-                    disabledContainerColor = colorScheme.surface,
-                ),
-                label = {
-                    if (!lessonUiState.isWrong) Text(text = "enter translation") else Text(
-                        text = "answer is wrong"
-                    )
-                },
-                isError = lessonUiState.isWrong,
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    imeAction = ImeAction.Done
-                ),
-                keyboardActions = KeyboardActions(
-                    onDone = { }//!!! complete the action
-                )
-            )
+            AnswerTextField(lessonUiState)
             //here the user chooses the plural form
             if (lessonUiState.isNoun) {
                 AnswerSegmentedButton(
                     endings,
                     { index -> lessonUiState.onPlChange(index) },
-                    lessonUiState.plGuess
+                    lessonUiState.plGuess,
+                    lessonUiState.isPlCorrect
                 )
             }
         }
     }
 }
 
+/**answer text field*/
+@Composable
+fun AnswerTextField(lessonUiState: LessonUiState) {
+    val textFieldColors = when (lessonUiState.isGermCorrect) {
+        true -> OutlinedTextFieldDefaults.colors(
+            focusedContainerColor = colorScheme.secondaryContainer,
+            unfocusedContainerColor = colorScheme.secondaryContainer,
+            disabledContainerColor = colorScheme.surface,
+            focusedTextColor = colorScheme.onSecondaryContainer,
+            unfocusedTextColor = colorScheme.onSecondaryContainer,
+            cursorColor = colorScheme.onSecondaryContainer,
+            errorCursorColor = colorScheme.error,
+            focusedBorderColor = colorScheme.onSecondaryContainer
+        )
+
+        false -> OutlinedTextFieldDefaults.colors(
+            focusedContainerColor = colorScheme.errorContainer,
+            unfocusedContainerColor = colorScheme.errorContainer,
+            disabledContainerColor = colorScheme.surface,
+            focusedTextColor = colorScheme.onErrorContainer,
+            unfocusedTextColor = colorScheme.onErrorContainer,
+            cursorColor = colorScheme.onErrorContainer,
+            errorCursorColor = colorScheme.error,
+            focusedBorderColor = colorScheme.onErrorContainer,
+        )
+
+        else -> OutlinedTextFieldDefaults.colors(
+            focusedContainerColor = colorScheme.surface,
+            unfocusedContainerColor = colorScheme.surface,
+            disabledContainerColor = colorScheme.surface,
+        )
+    }
+    val labelColors = when (lessonUiState.isGermCorrect) {
+        true -> colorScheme.onSecondaryContainer
+        false -> colorScheme.onErrorContainer
+        else -> colorScheme.onSurface
+    }
+    //german translation field
+    OutlinedTextField(
+        value = lessonUiState.currentGuess,
+        singleLine = true,
+        modifier = Modifier.fillMaxWidth(),
+        onValueChange = { lessonUiState.onGuessChange(it) },
+        colors = textFieldColors,
+        label = {
+            when (lessonUiState.isGermCorrect) {
+                null -> {
+                    Text(
+                        text = "enter translation",
+                        color = labelColors
+                    )
+                }
+
+                false -> {
+                    Text(
+                        text = "mistake was made",
+                        color = labelColors
+                    )
+                }
+
+                else -> {
+                    Text(
+                        text = "correct!",
+                        color = labelColors
+                    )
+                }
+            }
+        },
+        keyboardOptions = KeyboardOptions.Default.copy(
+            imeAction = ImeAction.Done
+        ),
+        keyboardActions = KeyboardActions(
+            onDone = { }//!!! complete the action
+        )
+    )
+}
+
 /**a segmented button that takes a  list of [options], what to do [onClick] and current [choice]*/
 @Composable
-fun AnswerSegmentedButton(options: List<String>, onClick: (Int) -> Unit, choice: Int) {
+fun AnswerSegmentedButton(
+    options: List<String>,
+    onClick: (Int) -> Unit,
+    choice: Int,
+    isCorrect: Boolean? = null
+) {
+    //we want the color scheme to change based on state
+    val buttonColors = when (isCorrect) {
+        true -> SegmentedButtonColors(
+            activeContainerColor = colorScheme.secondary,
+            activeContentColor = colorScheme.onSecondary,
+            activeBorderColor = colorScheme.onSecondaryContainer,
+            inactiveContainerColor = colorScheme.secondaryContainer,
+            inactiveContentColor = colorScheme.onSecondaryContainer,
+            inactiveBorderColor = colorScheme.onSecondaryContainer,
+            //doesn't matter as not used
+            disabledActiveContainerColor = Color.Transparent,
+            disabledActiveContentColor = colorScheme.onSurfaceVariant,
+            disabledActiveBorderColor = colorScheme.surfaceVariant,
+            disabledInactiveContainerColor = Color.Transparent,
+            disabledInactiveContentColor = colorScheme.onSurfaceVariant,
+            disabledInactiveBorderColor = colorScheme.surfaceVariant
+        )
+
+        false -> SegmentedButtonColors(
+            activeContainerColor = colorScheme.error,
+            activeContentColor = colorScheme.onError,
+            activeBorderColor = colorScheme.onErrorContainer,
+            inactiveContainerColor = colorScheme.errorContainer,
+            inactiveContentColor = colorScheme.onErrorContainer,
+            inactiveBorderColor = colorScheme.onErrorContainer,
+            //doesn't matter as not used
+            disabledActiveContainerColor = Color.Transparent,
+            disabledActiveContentColor = colorScheme.onSurfaceVariant,
+            disabledActiveBorderColor = colorScheme.surfaceVariant,
+            disabledInactiveContainerColor = Color.Transparent,
+            disabledInactiveContentColor = colorScheme.onSurfaceVariant,
+            disabledInactiveBorderColor = colorScheme.surfaceVariant
+        )
+
+        else -> SegmentedButtonDefaults.colors()
+    }
     SingleChoiceSegmentedButtonRow {
         options.forEachIndexed { index, label ->
             SegmentedButton(
@@ -246,7 +346,7 @@ fun AnswerSegmentedButton(options: List<String>, onClick: (Int) -> Unit, choice:
                 ),
                 onClick = { onClick(index) },
                 selected = index == choice,
-                label = { Text(label) }
+                label = { Text(label) }, colors = buttonColors
             )
         }
     }
@@ -371,7 +471,14 @@ fun FinalDialog(score: Int, toPrevious: () -> Unit, lessonUiState: LessonUiState
 @Composable
 fun LessonInfoPreview() {
     LessonScreenBody(
-        LessonUiState(currentTrans = "Car", currentGuess = "Auto", isNoun = true),
+        LessonUiState(
+            currentTrans = "Car",
+            currentGuess = "Auto",
+            isNoun = true,
+            genderGuess = 2,
+            plGuess = 0,
+            isGermCorrect = false
+        ),
         false,
         {},
         {})
