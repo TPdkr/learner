@@ -160,7 +160,6 @@ class LessonViewModel(
             val newScore = currentState.score.plus(inc)
             currentState.copy(
                 score = newScore,
-                isChecked = true,
                 isWrong = !isCorrect,
                 isGendCorrect = isGendCorrect,
                 isPlCorrect = isPlCorrect,
@@ -171,6 +170,10 @@ class LessonViewModel(
         updateUserGuess(currentWord.german)
         updateGenderGuess(currentWord.gender.code)
         updatePluralGuess(currentWord.plural.code)
+        //we mark the state as checked
+        _uiState.update { currentState ->
+            currentState.copy(isChecked = true)
+        }
     }
 
     /**get user overall score on the lesson*/
