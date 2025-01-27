@@ -67,7 +67,12 @@ fun UnitCatScreenBody(
             modifier = Modifier
                 .fillMaxSize()
                 .statusBarsPadding()
-                .padding(dimensionResource(R.dimen.padding_big))
+                .padding(
+                    end = dimensionResource(R.dimen.padding_big),
+                    start = dimensionResource(R.dimen.padding_big),
+                    bottom = dimensionResource(R.dimen.padding_big),
+                    top = dimensionResource(R.dimen.padding_tiny)
+                )
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
@@ -125,7 +130,12 @@ fun UnitCatScreenBody(
             modifier = Modifier
                 .fillMaxSize()
                 .statusBarsPadding()
-                .padding(dimensionResource(R.dimen.padding_big))
+                .padding(
+                    end = dimensionResource(R.dimen.padding_big),
+                    start = dimensionResource(R.dimen.padding_big),
+                    bottom = dimensionResource(R.dimen.padding_big),
+                    top = dimensionResource(R.dimen.padding_tiny)
+                )
         ) {
             FloatingActionButton(
                 onClick = {

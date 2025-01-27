@@ -69,7 +69,12 @@ fun CourseScreenBody(
             modifier = Modifier
                 .fillMaxSize()
                 .statusBarsPadding()
-                .padding(dimensionResource(R.dimen.padding_big))
+                .padding(
+                    end = dimensionResource(R.dimen.padding_big),
+                    start = dimensionResource(R.dimen.padding_big),
+                    bottom = dimensionResource(R.dimen.padding_big),
+                    top = dimensionResource(R.dimen.padding_tiny)
+                )
         ) {
             //HEADER
             Text(
@@ -129,7 +134,12 @@ fun CourseScreenBody(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(dimensionResource(R.dimen.padding_big))
+            .padding(
+                end = dimensionResource(R.dimen.padding_big),
+                start = dimensionResource(R.dimen.padding_big),
+                bottom = dimensionResource(R.dimen.padding_big),
+                top = dimensionResource(R.dimen.padding_tiny)
+            )
     ) {
         FloatingActionButton(
             onClick = { toAddCourse(-1) },

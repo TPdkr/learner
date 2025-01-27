@@ -69,7 +69,12 @@ fun UnitScreenBody(
             modifier = Modifier
                 .fillMaxSize()
                 .statusBarsPadding()
-                .padding(dimensionResource(R.dimen.padding_big))
+                .padding(
+                    end = dimensionResource(R.dimen.padding_big),
+                    start = dimensionResource(R.dimen.padding_big),
+                    bottom = dimensionResource(R.dimen.padding_big),
+                    top = dimensionResource(R.dimen.padding_tiny)
+                )
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -157,7 +162,12 @@ fun UnitScreenBody(
             Modifier
                 .fillMaxSize()
                 .statusBarsPadding()
-                .padding(dimensionResource(R.dimen.padding_big))
+                .padding(
+                    end = dimensionResource(R.dimen.padding_big),
+                    start = dimensionResource(R.dimen.padding_big),
+                    bottom = dimensionResource(R.dimen.padding_big),
+                    top = dimensionResource(R.dimen.padding_tiny)
+                )
         ) {
             Icon(
                 Icons.Filled.Create,
