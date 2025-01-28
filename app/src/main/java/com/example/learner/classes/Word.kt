@@ -228,7 +228,7 @@ data class Word(
         //we calculate the score
         return when{
             isCorrect-> 2
-            isNoun()->0
+            !isNoun()->0
             else ->(2F-isGenderCorrect-isPluralCorrect-isGermanCorrect).toInt()
         }
     }
