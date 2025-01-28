@@ -96,7 +96,7 @@ fun UnitCatScreenBody(
                                 .weight(1f)
                                 .padding(
                                     top = dimensionResource(R.dimen.padding_small),
-                                    end = dimensionResource(R.dimen.padding_small),
+                                    end = dimensionResource(R.dimen.padding_tiny),
                                     start = dimensionResource(R.dimen.padding_small)
                                 )
                         )
@@ -108,6 +108,7 @@ fun UnitCatScreenBody(
                                 }, modifier = Modifier
                                     .weight(1f)
                                     .padding(
+                                        start = dimensionResource(R.dimen.padding_tiny),
                                         top = dimensionResource(R.dimen.padding_small),
                                         end = dimensionResource(R.dimen.padding_small)
                                     )
@@ -117,6 +118,7 @@ fun UnitCatScreenBody(
                                 modifier = Modifier
                                     .weight(1f)
                                     .padding(
+                                        start = dimensionResource(R.dimen.padding_tiny),
                                         top = dimensionResource(R.dimen.padding_small),
                                         end = dimensionResource(R.dimen.padding_small)
                                     )

@@ -18,6 +18,7 @@ Try out new features as they come out and reach out with your valuable feedback.
 - easy to memorize nouns with important info about them(gender and plural form)
 - see your mistakes in a lesson when checking
 - get motivated at the end of each lesson to keep learning further
+- works offline
 
 ## Requirements
 

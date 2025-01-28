@@ -396,7 +396,11 @@ fun ControlBlock(
 @Composable
 fun LessonProgressBar(lessonUiState: LessonUiState) {
     val progress = if (lessonUiState.taskCount > 0) {
-        (lessonUiState.taskNumber).toFloat() / (lessonUiState.taskCount).toFloat()
+        if(lessonUiState.isChecked) {
+            (lessonUiState.taskNumber + 1).toFloat() / (lessonUiState.taskCount).toFloat()
+        } else {
+            (lessonUiState.taskNumber).toFloat() / (lessonUiState.taskCount).toFloat()
+        }
     } else {
         0f
     }
