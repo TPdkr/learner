@@ -7,28 +7,28 @@ data class Course(val units: List<CourseUnit>, val name: String, val cid: Int=0)
     private fun wordsToLearn(): List<Word> {
         val words = mutableListOf<Word>()
         units.forEach { words += (it.wordsToLearn()) }
-        return words.toList()
+        return words.toList().distinctBy { it.wid }
     }
 
     /**get words ready to review*/
     private fun wordsToReview(): List<Word> {
         val words = mutableListOf<Word>()
         units.forEach { words += (it.wordsToReview()) }
-        return words.toList()
+        return words.toList().distinctBy { it.wid }
     }
 
     /**get words that are in long term or permanent memory*/
     private fun wordsLearned(): List<Word> {
         val words = mutableListOf<Word>()
         units.forEach { words += (it.wordsLearned()) }
-        return words.toList()
+        return words.toList().distinctBy { it.wid }
     }
 
     /**get all words in a course*/
     private fun wordsAll(): List<Word> {
         val words = mutableListOf<Word>()
         units.forEach { words += (it.words) }
-        return words.toList()
+        return words.toList().distinctBy { it.wid }
     }
 
     /**value between 0 and 1 that shows how complete is the Course*/

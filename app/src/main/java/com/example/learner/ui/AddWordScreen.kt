@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -110,7 +111,7 @@ fun AddWordBody(
                 OutlinedButton(
                     { uiState.dialogSwitch() }, modifier = Modifier
                         .align(Alignment.End)
-                        .padding(bottom=dimensionResource(R.dimen.padding_tiny))
+                        .padding(bottom = dimensionResource(R.dimen.padding_tiny))
                 ) {
                     Icon(Icons.Default.Delete, "delete word button")
                 }
@@ -179,9 +180,22 @@ fun AddWordBody(
                                 Text(text = "submit changes")
                             }
                         } else {
-                            //this is the input button
-                            Button(onClick = submit, enabled = uiState.canInsert) {
-                                Text(text = "add a new word")
+                            Row(
+                                horizontalArrangement = if (uiState.isChosen) Arrangement.SpaceBetween else Arrangement.Center,
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                //this is the input button
+                                Button(onClick = submit, enabled = uiState.canInsert) {
+                                    Text(text = "add a new word")
+                                }
+                                if (uiState.isChosen) {
+                                    OutlinedButton(onClick = {
+                                        uiState.addAndEditExisting()
+                                        toPrevious()
+                                    }, enabled = uiState.canInsert) {
+                                        Text(text = "use existing")
+                                    }
+                                }
                             }
                         }
                     }
@@ -325,6 +339,12 @@ fun DeleteDialogWord(
 @Composable
 fun AddWordPreview() {
     AddWordBody(AddWordUiState(canInsert = true), {}, {}, {}, {}, {}, {}, {}, {})
+}
+
+@Preview
+@Composable
+fun AddWordPreview2() {
+    AddWordBody(AddWordUiState(canInsert = true, isChosen = true), {}, {}, {}, {}, {}, {}, {}, {})
 }
 
 @Preview

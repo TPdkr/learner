@@ -35,6 +35,8 @@ class AddWordViewModel(
     private var inpGend: Int = -1
     private var inpPl: Int = -1
 
+    private var choiceId: Int = -1
+
     //SETTERS:
     fun onGermChange(germ: String) {
         inpGerm = germ
@@ -87,7 +89,7 @@ class AddWordViewModel(
     }
 
     /**choose the word from list and set input fields*/
-    fun chooseWord(word: Word) {
+    fun chooseWord(word: Word){
         inpGerm = word.german
         inpTrans = word.translation
         inpGend = word.gender.code
@@ -99,12 +101,15 @@ class AddWordViewModel(
                 inpGend = inpGend,
                 inpGerm = inpGerm,
                 inpTrans = inpTrans,
-                isNoun = isNoun
+                isNoun = isNoun,
+                isChosen = true,
+                addAndEditExisting = ::insertAndUpdateExisting
             )
         }
         _uiState.update { currentState ->
             currentState.copy(canInsert = canAdd())
         }
+        choiceId=word.wid
     }
 
     init {
@@ -174,13 +179,35 @@ class AddWordViewModel(
         }
     }
 
+    /**insert an existing id into cross ref*/
+    private fun insertById(wid: Int) {
+        viewModelScope.launch {
+            try {
+                val currentUnit = AppData.unitUid
+                if (wid != -1) {
+                    unitWordRepository.addWordToUnit(wid, currentUnit)
+                }
+            } catch (e: Exception) {
+                Log.e("AddWordViewModel", e.message ?: "no message given")
+            }
+        }
+    }
+
+    /**insert and update existing word into the unit*/
+    fun insertAndUpdateExisting(){
+        if(_uiState.value.isChosen && choiceId!=-1){
+            insertById(choiceId)
+            update(choiceId)
+        }
+    }
+
     /**update the word in the database*/
-    fun update() {
+    fun update(wid: Int) {
         viewModelScope.launch {
             try {
                 wordRepository.updateWord(
                     WordEntity(
-                        wordId,
+                        wid,
                         inpGerm.trim(),
                         inpTrans.trim(),
                         inpGend,
@@ -197,8 +224,8 @@ class AddWordViewModel(
 
     /**submit changes to the database*/
     fun submitChanges() {
-        if (wordId != -1) {
-            update()
+        if (_uiState.value.isEdit) {
+            update(wordId)
         } else {
             insert()
         }
@@ -230,7 +257,7 @@ class AddWordViewModel(
     /**switch the dialog state between visible and not*/
     fun dialogSwitch() {
         val visibility = _uiState.value.deleteDialog
-        _uiState.update { currentState->
+        _uiState.update { currentState ->
             currentState.copy(deleteDialog = !visibility)
         }
     }
@@ -257,7 +284,10 @@ data class AddWordUiState(
     //delete dialog state
     var deleteFromUnit: () -> Unit = {},
     var deleteAll: () -> Unit = {},
-    var dialogSwitch: ()->Unit={},
-    var deleteDialog: Boolean = false
+    var dialogSwitch: () -> Unit = {},
+    var addAndEditExisting: ()->Unit={},
+    var deleteDialog: Boolean = false,
+    var isChosen: Boolean = false
+
 
 )
