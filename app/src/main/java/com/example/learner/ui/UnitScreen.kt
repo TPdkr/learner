@@ -21,6 +21,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.OutlinedButton
@@ -169,13 +170,13 @@ fun UnitScreenBody(
                     top = dimensionResource(R.dimen.padding_tiny)
                 )
         ) {
-            Icon(
-                Icons.Filled.Create,
-                contentDescription = "edit unit button",
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .clickable { toEditUnit(unit.uid) }
-            )
+            IconButton({toEditUnit(unit.uid)}, modifier = Modifier
+                .align(Alignment.TopEnd)) {
+                Icon(
+                    Icons.Filled.Create,
+                    contentDescription = "edit unit button",
+                )
+            }
         }
     }
 }

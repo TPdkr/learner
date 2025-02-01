@@ -19,17 +19,16 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Card
-import androidx.compose.material3.ElevatedButton
+import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
@@ -179,7 +178,7 @@ fun MainScreenBody(
                     SelfDestructDialog(buttonDialogSwitch, selfDestruct)
                 }
                 //INFO DIALOG BUTTON
-                TextButton(
+                IconButton(
                     onClick = infoDialogSwitch,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -292,17 +291,15 @@ fun SelfDestructDialog(onDismissRequest: () -> Unit = {}, onClick: () -> Unit = 
                         .fillMaxWidth()
                         .wrapContentSize(Alignment.Center)
                 )
-                ElevatedButton(
+                FilledIconButton(
                     onClick = { isWarningVisible = true },
-                    modifier = Modifier.size(150.dp),
-                    colors = ButtonColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        contentColor = MaterialTheme.colorScheme.onPrimary,
-                        disabledContentColor = MaterialTheme.colorScheme.primary,
-                        disabledContainerColor = MaterialTheme.colorScheme.onPrimary
-                    )
+                    modifier = Modifier.size(150.dp)
                 ) {
-                    Icon(Icons.Default.Clear, "self destruct button")
+                    Icon(
+                        Icons.Default.Star,
+                        "self destruct button",
+                        modifier = Modifier.size(100.dp)
+                    )
                 }
             }
         }
