@@ -17,6 +17,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Lightbulb
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.DropdownMenu
@@ -108,13 +109,17 @@ fun AddWordBody(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            if (uiState.isEdit) {
-                IconButton(
-                    { uiState.dialogSwitch() }, modifier = Modifier
-                        .align(Alignment.End)
-                        .padding(bottom = dimensionResource(R.dimen.padding_tiny))
-                ) {
-                    Icon(Icons.Default.Delete, "delete word button")
+            Row(
+                horizontalArrangement = Arrangement.End,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = dimensionResource(R.dimen.padding_tiny))
+            ) {
+                IconButton({}) { Icon(Icons.Filled.Lightbulb, "smart translate button")}
+                if (uiState.isEdit) {
+                    IconButton({ uiState.dialogSwitch() }) {
+                        Icon(Icons.Filled.Delete, "delete word button")
+                    }
                 }
             }
             Card(modifier = Modifier.height(380.dp)) {

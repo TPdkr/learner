@@ -66,5 +66,7 @@ dependencies {
     implementation(libs.androidx.room.ktx)
     //to convert the json string
     implementation(libs.kotlinx.serialization.json)
+    //icons
+    implementation(libs.androidx.material.icons.extended)
 
 }
