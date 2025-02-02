@@ -1,6 +1,7 @@
 package com.example.learner.ui
 
 import android.util.Log
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
@@ -20,6 +22,7 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Lightbulb
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -44,6 +47,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -115,7 +119,10 @@ fun AddWordBody(
                     .fillMaxWidth()
                     .padding(bottom = dimensionResource(R.dimen.padding_tiny))
             ) {
-                IconButton({uiState.translateWord()}, enabled = uiState.inpGerm.isNotEmpty()) { Icon(Icons.Filled.Lightbulb, "smart translate button")}
+                IconButton(
+                    { uiState.translateWord() },
+                    enabled = uiState.inpGerm.isNotEmpty()
+                ) { Icon(Icons.Filled.Lightbulb, "smart translate button") }
                 if (uiState.isEdit) {
                     IconButton({ uiState.dialogSwitch() }) {
                         Icon(Icons.Filled.Delete, "delete word button")
@@ -214,6 +221,23 @@ fun AddWordBody(
                 }
             }
         }
+        //this is a loading indicator
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .statusBarsPadding()
+                .background(Color.Transparent)
+                .padding(dimensionResource(R.dimen.padding_big))
+        ) {
+            if (uiState.isLoading) {
+                CircularProgressIndicator(
+                    Modifier
+                        .size(40.dp)
+                        .align(Alignment.TopCenter)
+                )
+            }
+        }
+        //deletion dialog
         if (uiState.deleteDialog) {
             DeleteDialogWord(
                 onDismiss = { uiState.dialogSwitch() },
@@ -350,7 +374,16 @@ fun AddWordPreview() {
 @Preview
 @Composable
 fun AddWordPreview2() {
-    AddWordBody(AddWordUiState(canInsert = true, isChosen = true), {}, {}, {}, {}, {}, {}, {}, {})
+    AddWordBody(
+        AddWordUiState(canInsert = true, isChosen = true, isLoading = true),
+        {},
+        {},
+        {},
+        {},
+        {},
+        {},
+        {},
+        {})
 }
 
 @Preview

@@ -274,12 +274,20 @@ class AddWordViewModel(
 
     /**translate the word into english*/
     fun translate() {
+        //we set the state to loading
+        _uiState.update { currentState ->
+            currentState.copy(isLoading = true)
+        }
+        //data is fetched from the api
         viewModelScope.launch {
             Log.d("AddWordViewModel", "asked for response")
             val translation = getTranslation(_uiState.value.inpGerm.trim())
-            //val translation = "dummy"
-            Log.d("AddWordViewModel", "got response")
+            Log.d("AddWordViewModel", "got response $translation")
             onTransChange(translation)
+            //we set the state to not loading
+            _uiState.update { currentState ->
+                currentState.copy(isLoading = false)
+            }
         }
     }
 }
@@ -300,8 +308,7 @@ data class AddWordUiState(
     var addAndEditExisting: () -> Unit = {},
     //translate a word the user entered
     var translateWord: ()->Unit={},
+    var isLoading: Boolean = false,
     var deleteDialog: Boolean = false,
     var isChosen: Boolean = false
-
-
 )
