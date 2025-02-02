@@ -4,6 +4,8 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.learner.api.translation.getTranslation
+import com.example.learner.classes.Gender
+import com.example.learner.classes.Plural
 import com.example.learner.classes.Word
 import com.example.learner.data.relations.unitwithwords.UnitWithWordsRepository
 import com.example.learner.data.word.WordEntity
@@ -148,7 +150,13 @@ class AddWordViewModel(
                 val words = wordRepository.getAllWords().filterNotNull().firstOrNull()
                     ?.map { it.toWord() }
                     ?: emptyList()
-                _uiState.update { currentState -> currentState.copy(wordList = words, translateWord = ::translate) }
+                _uiState.update { currentState ->
+                    currentState.copy(
+                        wordList = words,
+                        translateWord = ::translate,
+                        snackbarAction = ::snackHide
+                    )
+                }
             } catch (e: Exception) {
                 Log.e("AddWordViewModel", e.message ?: "no message given")
             }
@@ -159,6 +167,7 @@ class AddWordViewModel(
     fun insert() {
         viewModelScope.launch {
             try {
+                //we insert into the general word repo
                 val wid: Int =
                     wordRepository.insertWord(
                         WordEntity(
@@ -170,9 +179,24 @@ class AddWordViewModel(
                         )
                     )
                         .toInt()
+                //we add the word to unit now that we know its iD
                 val currentUnit = AppData.unitUid
                 if (wid != -1) {
                     unitWordRepository.addWordToUnit(wid, currentUnit)
+                }
+                //we want to display a word
+                val addedWord = Word(
+                    0,
+                    inpGerm.trim(),
+                    inpTrans.trim(),
+                    gender = Gender.fromCode(inpGend),
+                    plural = Plural.fromCode(inpPl)
+                )
+                _uiState.update { currentState ->
+                    currentState.copy(
+                        snackbarText = "added: ${addedWord.toUiString()}",
+                        snackbarVisible = true
+                    )
                 }
             } catch (e: Exception) {
                 Log.e("AddWordViewModel", e.message ?: "no message given")
@@ -199,6 +223,19 @@ class AddWordViewModel(
         if (_uiState.value.isChosen && choiceId != -1) {
             insertById(choiceId)
             update(choiceId)
+            val addedWord = Word(
+                0,
+                inpGerm.trim(),
+                inpTrans,
+                gender = Gender.fromCode(inpGend),
+                plural = Plural.fromCode(inpPl)
+            )
+            _uiState.update { currentState ->
+                currentState.copy(
+                    snackbarText = "updated and added to unit: ${addedWord.toUiString()}",
+                    snackbarVisible = true
+                )
+            }
         }
     }
 
@@ -206,7 +243,7 @@ class AddWordViewModel(
     fun update(wid: Int) {
         viewModelScope.launch {
             try {
-                val chosenWord  = wordRepository.getWordStream(wordId).filterNotNull().first()
+                val chosenWord = wordRepository.getWordStream(wordId).filterNotNull().first()
                 wordRepository.updateWord(
                     WordEntity(
                         wid,
@@ -264,6 +301,13 @@ class AddWordViewModel(
         }
     }
 
+    /**switch the snackbar state between visible and not*/
+    fun snackHide() {
+        _uiState.update { currentState ->
+            currentState.copy(snackbarVisible = false)
+        }
+    }
+
     /**can we add the word into the database?*/
     fun canAdd(): Boolean {
         return if (uiState.value.isNoun) {
@@ -287,7 +331,7 @@ class AddWordViewModel(
             onTransChange(translation)
             //we set the state to not loading
             _uiState.update { currentState ->
-                currentState.copy(isLoading = false)
+                currentState.copy(isLoading = false, canInsert = canAdd())
             }
         }
     }
@@ -302,13 +346,17 @@ data class AddWordUiState(
     var isNoun: Boolean = true,
     var canInsert: Boolean = false,
     var isEdit: Boolean = false,
+    //snackbar data
+    var snackbarVisible: Boolean = false,
+    var snackbarText: String = "",
+    var snackbarAction: () -> Unit = {},
     //delete dialog state
     var deleteFromUnit: () -> Unit = {},
     var deleteAll: () -> Unit = {},
     var dialogSwitch: () -> Unit = {},
     var addAndEditExisting: () -> Unit = {},
     //translate a word the user entered
-    var translateWord: ()->Unit={},
+    var translateWord: () -> Unit = {},
     var isLoading: Boolean = false,
     var deleteDialog: Boolean = false,
     var isChosen: Boolean = false

@@ -18,6 +18,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Lightbulb
 import androidx.compose.material3.Button
@@ -34,6 +35,7 @@ import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Snackbar
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -69,6 +71,7 @@ fun AddWordScreen(
     addWordViewModel: AddWordViewModel = viewModel(factory = ViewModelFactory.Factory)
 ) {
     val uiSate by addWordViewModel.uiState.collectAsState()
+
     AddWordBody(
         uiSate,
         { addWordViewModel.onPlChange(it) },
@@ -80,7 +83,6 @@ fun AddWordScreen(
         {
             if (addWordViewModel.canAdd()) {
                 addWordViewModel.submitChanges()
-                toPrevious()
             }
         },
         toPrevious = toPrevious
@@ -189,7 +191,10 @@ fun AddWordBody(
                         }
                         if (uiState.isEdit) {
                             //submit the edit
-                            OutlinedButton(onClick = submit, enabled = uiState.canInsert) {
+                            OutlinedButton(onClick = {
+                                submit()
+                                toPrevious()
+                            }, enabled = uiState.canInsert) {
                                 Text(text = "submit changes")
                             }
                         } else {
@@ -204,7 +209,6 @@ fun AddWordBody(
                                 if (uiState.isChosen) {
                                     OutlinedButton(onClick = {
                                         uiState.addAndEditExisting()
-                                        toPrevious()
                                     }, enabled = uiState.canInsert) {
                                         Text(text = "use existing")
                                     }
@@ -235,6 +239,16 @@ fun AddWordBody(
                         .size(40.dp)
                         .align(Alignment.TopCenter)
                 )
+            }
+            //this is a info message that follows from user action
+            if (uiState.snackbarVisible) {
+                Snackbar(dismissAction = { }, action = {
+                    IconButton({ uiState.snackbarAction() }) { Icon(Icons.Filled.Clear, "dismiss") }
+                }, modifier = Modifier.align(Alignment.BottomCenter)) {
+                    Row {
+                        Text(uiState.snackbarText)
+                    }
+                }
             }
         }
         //deletion dialog
@@ -389,5 +403,5 @@ fun AddWordPreview2() {
 @Preview
 @Composable
 fun EditWordPreview() {
-    AddWordBody(AddWordUiState(isEdit = true, canInsert = true), {}, {}, {}, {}, {}, {}, {}, {})
+    AddWordBody(AddWordUiState(isEdit = true, canInsert = true, snackbarVisible = true), {}, {}, {}, {}, {}, {}, {}, {})
 }
