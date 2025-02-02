@@ -21,6 +21,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Lightbulb
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
@@ -42,6 +43,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -64,6 +66,7 @@ import com.example.learner.R
 import com.example.learner.classes.Word
 import com.example.learner.ui.viewModels.AddWordUiState
 import com.example.learner.ui.viewModels.AddWordViewModel
+import kotlinx.coroutines.delay
 
 @Composable
 fun AddWordScreen(
@@ -121,6 +124,9 @@ fun AddWordBody(
                     .fillMaxWidth()
                     .padding(bottom = dimensionResource(R.dimen.padding_tiny))
             ) {
+                IconButton({uiState.reset()}) {
+                    Icon(Icons.Default.Refresh,"clear user input")
+                }
                 IconButton(
                     { uiState.translateWord() },
                     enabled = uiState.inpGerm.isNotEmpty()
@@ -242,6 +248,12 @@ fun AddWordBody(
             }
             //this is a info message that follows from user action
             if (uiState.snackbarVisible) {
+                LaunchedEffect(key1 = Unit) {
+                    if (uiState.snackbarVisible) {
+                        delay(3000)
+                        uiState.snackbarAction()
+                    }
+                }
                 Snackbar(dismissAction = { }, action = {
                     IconButton({ uiState.snackbarAction() }) { Icon(Icons.Filled.Clear, "dismiss") }
                 }, modifier = Modifier.align(Alignment.BottomCenter)) {

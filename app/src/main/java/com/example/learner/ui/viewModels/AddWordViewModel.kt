@@ -115,6 +115,17 @@ class AddWordViewModel(
         choiceId = word.wid
     }
 
+    /**resets the state of the screen*/
+    fun reset(){
+        onTransChange("")
+        onPlChange(-1)
+        onGendChange(-1)
+        onGermChange("")
+        _uiState.update{currentState->
+            currentState.copy(isChosen = false, canInsert = false)
+        }
+    }
+
     init {
         viewModelScope.launch {
             if (wordId != -1) {
@@ -154,7 +165,8 @@ class AddWordViewModel(
                     currentState.copy(
                         wordList = words,
                         translateWord = ::translate,
-                        snackbarAction = ::snackHide
+                        snackbarAction = ::snackHide,
+                        reset = ::reset
                     )
                 }
             } catch (e: Exception) {
@@ -355,6 +367,7 @@ data class AddWordUiState(
     var deleteAll: () -> Unit = {},
     var dialogSwitch: () -> Unit = {},
     var addAndEditExisting: () -> Unit = {},
+    var reset: () -> Unit = {},
     //translate a word the user entered
     var translateWord: () -> Unit = {},
     var isLoading: Boolean = false,
