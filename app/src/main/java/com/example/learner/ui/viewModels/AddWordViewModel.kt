@@ -206,6 +206,7 @@ class AddWordViewModel(
     fun update(wid: Int) {
         viewModelScope.launch {
             try {
+                val chosenWord  = wordRepository.getWordStream(wordId).filterNotNull().first()
                 wordRepository.updateWord(
                     WordEntity(
                         wid,
@@ -213,8 +214,8 @@ class AddWordViewModel(
                         inpTrans.trim(),
                         inpGend,
                         inpPl,
-                        wordRev,
-                        wordRevTime
+                        chosenWord.revision,
+                        chosenWord.revisionTime
                     )
                 )
             } catch (e: Exception) {
