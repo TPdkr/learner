@@ -68,5 +68,12 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     //icons
     implementation(libs.androidx.material.icons.extended)
+    // Retrofit
+    implementation(libs.retrofit)
+    // Retrofit with Scalar Converter
+    implementation(libs.retrofit2.kotlinx.serialization.converter)
+    implementation(libs.okhttp)
+    implementation(libs.converter.gson)
+
 
 }

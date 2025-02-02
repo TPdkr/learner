@@ -115,7 +115,7 @@ fun AddWordBody(
                     .fillMaxWidth()
                     .padding(bottom = dimensionResource(R.dimen.padding_tiny))
             ) {
-                IconButton({}) { Icon(Icons.Filled.Lightbulb, "smart translate button")}
+                IconButton({uiState.translateWord()}, enabled = uiState.inpGerm.isNotEmpty()) { Icon(Icons.Filled.Lightbulb, "smart translate button")}
                 if (uiState.isEdit) {
                     IconButton({ uiState.dialogSwitch() }) {
                         Icon(Icons.Filled.Delete, "delete word button")

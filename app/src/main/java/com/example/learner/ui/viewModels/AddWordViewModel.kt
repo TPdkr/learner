@@ -3,6 +3,7 @@ package com.example.learner.ui.viewModels
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.learner.api.translation.getTranslation
 import com.example.learner.classes.Word
 import com.example.learner.data.relations.unitwithwords.UnitWithWordsRepository
 import com.example.learner.data.word.WordEntity
@@ -89,7 +90,7 @@ class AddWordViewModel(
     }
 
     /**choose the word from list and set input fields*/
-    fun chooseWord(word: Word){
+    fun chooseWord(word: Word) {
         inpGerm = word.german
         inpTrans = word.translation
         inpGend = word.gender.code
@@ -109,7 +110,7 @@ class AddWordViewModel(
         _uiState.update { currentState ->
             currentState.copy(canInsert = canAdd())
         }
-        choiceId=word.wid
+        choiceId = word.wid
     }
 
     init {
@@ -135,7 +136,7 @@ class AddWordViewModel(
                                 isNoun = editWord.toWord().isNoun(),
                                 deleteFromUnit = ::deleteFromUnit,
                                 deleteAll = ::deleteAll,
-                                dialogSwitch = ::dialogSwitch
+                                dialogSwitch = ::dialogSwitch,
                             )
                         }
                     } catch (e: Exception) {
@@ -147,7 +148,7 @@ class AddWordViewModel(
                 val words = wordRepository.getAllWords().filterNotNull().firstOrNull()
                     ?.map { it.toWord() }
                     ?: emptyList()
-                _uiState.update { currentState -> currentState.copy(wordList = words) }
+                _uiState.update { currentState -> currentState.copy(wordList = words, translateWord = ::translate) }
             } catch (e: Exception) {
                 Log.e("AddWordViewModel", e.message ?: "no message given")
             }
@@ -194,8 +195,8 @@ class AddWordViewModel(
     }
 
     /**insert and update existing word into the unit*/
-    fun insertAndUpdateExisting(){
-        if(_uiState.value.isChosen && choiceId!=-1){
+    fun insertAndUpdateExisting() {
+        if (_uiState.value.isChosen && choiceId != -1) {
             insertById(choiceId)
             update(choiceId)
         }
@@ -270,6 +271,17 @@ class AddWordViewModel(
             inpGerm.isNotEmpty() && inpTrans.isNotEmpty()
         }
     }
+
+    /**translate the word into english*/
+    fun translate() {
+        viewModelScope.launch {
+            Log.d("AddWordViewModel", "asked for response")
+            val translation = getTranslation(_uiState.value.inpGerm.trim())
+            //val translation = "dummy"
+            Log.d("AddWordViewModel", "got response")
+            onTransChange(translation)
+        }
+    }
 }
 
 data class AddWordUiState(
@@ -285,7 +297,9 @@ data class AddWordUiState(
     var deleteFromUnit: () -> Unit = {},
     var deleteAll: () -> Unit = {},
     var dialogSwitch: () -> Unit = {},
-    var addAndEditExisting: ()->Unit={},
+    var addAndEditExisting: () -> Unit = {},
+    //translate a word the user entered
+    var translateWord: ()->Unit={},
     var deleteDialog: Boolean = false,
     var isChosen: Boolean = false
 
