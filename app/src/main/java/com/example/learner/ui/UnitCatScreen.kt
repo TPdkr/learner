@@ -30,6 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -184,12 +185,7 @@ fun UnitCard(
                     .weight(4f),
                 verticalArrangement = Arrangement.Center
             ) {
-                /*Text(
-                    text = stringResource(R.string.unit_number, unit.number),
-                    style = typography.bodyLarge,
-                    fontWeight = FontWeight.Bold
-                )*/
-                Text(text = unit.name, fontWeight = FontWeight.Bold)
+                Text(text = unit.name, fontWeight = FontWeight.Bold, overflow = TextOverflow.Ellipsis)
             }
             Column(
                 verticalArrangement = Arrangement.Center,
