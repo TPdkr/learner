@@ -2,7 +2,7 @@ package com.example.learner.classes
 
 /**A course instance stores a list of [units] and has a [name], which is displayed in catalogue and
  *  on units page*/
-data class Course(val units: List<CourseUnit>, val name: String, val cid: Int=0) {
+data class Course(val units: List<CourseUnit>, val name: String, val cid: Int = 0) {
     /**get all ready to learn words*/
     private fun wordsToLearn(): List<Word> {
         val words = mutableListOf<Word>()
@@ -49,4 +49,23 @@ data class Course(val units: List<CourseUnit>, val name: String, val cid: Int=0)
 
     /**how many words to review at the moment?*/
     fun reviewCount(): Int = wordsToReview().size
+
+    /**how many words are in long term memory*/
+    fun longTermWordCount(): Int {
+        val words = mutableListOf<Word>()
+        units.forEach { words += (it.words) }
+        val longTerm =
+            words.filter { it.getWordStatus() == Status.LONG_TERM || it.getWordStatus() == Status.MEMORIZED }
+                .toList().distinctBy { it.wid }
+        return longTerm.size
+    }
+
+    /**how many words are started*/
+    fun startedWordCount(): Int {
+        val words = mutableListOf<Word>()
+        units.forEach { words += (it.words) }
+        val longTerm =
+            words.filter { it.getWordStatus() != Status.NEW }.toList().distinctBy { it.wid }
+        return longTerm.size
+    }
 }

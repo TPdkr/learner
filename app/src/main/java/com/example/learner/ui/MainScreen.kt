@@ -130,6 +130,17 @@ fun MainScreenBody(
                             stringResource(R.string.words_learned_mainScr, mainUiState.wordCount),
                             textAlign = TextAlign.Center
                         )
+                        Text(
+                            stringResource(
+                                R.string.started_count_mainScr,
+                                mainUiState.currentCourse.startedWordCount()
+                            ),
+                            textAlign = TextAlign.Center
+                        )
+                        Text(
+                            stringResource(R.string.long_term_word_count_mainScr, mainUiState.currentCourse.longTermWordCount()),
+                            textAlign = TextAlign.Center
+                        )
                     }
                     Spacer(modifier = Modifier.height(100.dp))
                     //NAVIGATION:
