@@ -42,16 +42,20 @@ class AddWordViewModel(
 
     //SETTERS:
     fun onGermChange(germ: String) {
-        inpGerm = germ
-        _uiState.update { currentState ->
-            currentState.copy(inpGerm = germ)
+        if (germ.length <= 200) {
+            inpGerm = germ
+            _uiState.update { currentState ->
+                currentState.copy(inpGerm = germ)
+            }
         }
     }
 
     fun onTransChange(tr: String) {
-        inpTrans = tr
-        _uiState.update { currentState ->
-            currentState.copy(inpTrans = tr)
+        if (tr.length <= 200) {
+            inpTrans = tr
+            _uiState.update { currentState ->
+                currentState.copy(inpTrans = tr)
+            }
         }
     }
 
@@ -116,12 +120,12 @@ class AddWordViewModel(
     }
 
     /**resets the state of the screen*/
-    fun reset(){
+    fun reset() {
         onTransChange("")
         onPlChange(-1)
         onGendChange(-1)
         onGermChange("")
-        _uiState.update{currentState->
+        _uiState.update { currentState ->
             currentState.copy(isChosen = false, canInsert = false)
         }
     }
@@ -310,7 +314,7 @@ class AddWordViewModel(
         }
     }
 
-    private fun snackShow(text: String){
+    private fun snackShow(text: String) {
         _uiState.update { currentState ->
             currentState.copy(snackbarVisible = true, snackbarText = text)
         }
@@ -338,7 +342,7 @@ class AddWordViewModel(
             Log.d("AddWordViewModel", "got response $translation")
 
             //we check for error state
-            if(translation.isNotEmpty()){
+            if (translation.isNotEmpty()) {
                 onTransChange(translation)
             } else {
                 snackShow("error occurred try later")
