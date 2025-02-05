@@ -55,7 +55,7 @@ data class Course(val units: List<CourseUnit>, val name: String, val cid: Int = 
         val words = mutableListOf<Word>()
         units.forEach { words += (it.words) }
         val longTerm =
-            words.filter { it.getWordStatus() == Status.LONG_TERM || it.getWordStatus() == Status.MEMORIZED }
+            words.filter { it.getWordStatus() == Status.LONG_TERM }
                 .toList().distinctBy { it.wid }
         return longTerm.size
     }
@@ -65,7 +65,8 @@ data class Course(val units: List<CourseUnit>, val name: String, val cid: Int = 
         val words = mutableListOf<Word>()
         units.forEach { words += (it.words) }
         val longTerm =
-            words.filter { it.getWordStatus() != Status.NEW }.toList().distinctBy { it.wid }
+            words.filter { it.getWordStatus() != Status.NEW && it.getWordStatus() != Status.MEMORIZED }
+                .toList().distinctBy { it.wid }
         return longTerm.size
     }
 }
