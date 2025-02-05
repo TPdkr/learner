@@ -204,12 +204,7 @@ class AddWordViewModel(
                     gender = Gender.fromCode(inpGend),
                     plural = Plural.fromCode(inpPl)
                 )
-                _uiState.update { currentState ->
-                    currentState.copy(
-                        snackbarText = "added: ${addedWord.toUiString()}",
-                        snackbarVisible = true
-                    )
-                }
+                snackShow("added: ${addedWord.toUiString()}")
             } catch (e: Exception) {
                 Log.e("AddWordViewModel", e.message ?: "no message given")
             }
@@ -242,12 +237,7 @@ class AddWordViewModel(
                 gender = Gender.fromCode(inpGend),
                 plural = Plural.fromCode(inpPl)
             )
-            _uiState.update { currentState ->
-                currentState.copy(
-                    snackbarText = "updated and added to unit: ${addedWord.toUiString()}",
-                    snackbarVisible = true
-                )
-            }
+            snackShow("updated and added to unit: ${addedWord.toUiString()}")
         }
     }
 
@@ -320,6 +310,12 @@ class AddWordViewModel(
         }
     }
 
+    private fun snackShow(text: String){
+        _uiState.update { currentState ->
+            currentState.copy(snackbarVisible = true, snackbarText = text)
+        }
+    }
+
     /**can we add the word into the database?*/
     fun canAdd(): Boolean {
         return if (uiState.value.isNoun) {
@@ -340,7 +336,14 @@ class AddWordViewModel(
             Log.d("AddWordViewModel", "asked for response")
             val translation = getTranslation(_uiState.value.inpGerm.trim())
             Log.d("AddWordViewModel", "got response $translation")
-            onTransChange(translation)
+
+            //we check for error state
+            if(translation.isNotEmpty()){
+                onTransChange(translation)
+            } else {
+                snackShow("error occurred try later")
+            }
+
             //we set the state to not loading
             _uiState.update { currentState ->
                 currentState.copy(isLoading = false, canInsert = canAdd())

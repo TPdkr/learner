@@ -11,6 +11,6 @@ suspend fun getTranslation(word: String, sourceLang: String = "de", targetLang: 
         return response
     } catch(e: Exception){
         Log.e("LingvaTranslate", e.message?:"no message given")
-        return "error"
+        return ""
     }
 }
