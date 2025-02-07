@@ -93,7 +93,7 @@ fun AddUnitBody(
                 ) {
                     //title
                     Text(
-                        text = if (uiState.isEdit) "Edit unit" else "Add unit",
+                        text = if (uiState.isEdit) "Edit set" else "Add set",
                         style = typography.titleLarge,
                         fontWeight = FontWeight.Bold,
                         fontSize = 40.sp,

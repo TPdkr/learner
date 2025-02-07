@@ -3,7 +3,7 @@
     <string name="xp">XP: %d</string>
     <string name="task_number">%d/%d</string>
     <string name="you_earned_xp">You earned %d XP!</string>
-    <string name="unit_number">Unit: %d</string>
+    <string name="unit_number">Set: %d</string>
     <string name="to_review_button">review %d words</string>
     <string name="info_app_message">Early development. Please report errors and
         bugs. If you have any suggestions feel free to reach out!</string>
