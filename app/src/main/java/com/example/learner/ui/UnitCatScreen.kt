@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Card
@@ -26,7 +27,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -41,7 +42,7 @@ import com.example.learner.ui.viewModels.UnitCatViewModel
 @Composable
 fun UnitCatScreen(
     unitCatViewModel: UnitCatViewModel = viewModel(factory = ViewModelFactory.Factory),
-    toAddUnit: () -> Unit,
+    toAddUnit: (Int) -> Unit,
     toUnit: (CourseUnit) -> Unit
 ) {
     val courseUiState by unitCatViewModel.uiState.collectAsState()
@@ -58,7 +59,7 @@ fun UnitCatScreen(
 @Composable
 fun UnitCatScreenBody(
     unitCatUiState: UnitCatUiState,
-    toAddUnit: () -> Unit,
+    toAddUnit: (Int) -> Unit,
     toUnit: (CourseUnit) -> Unit
 ) {
     Surface(modifier = Modifier.fillMaxSize()) {
@@ -66,6 +67,12 @@ fun UnitCatScreenBody(
             modifier = Modifier
                 .fillMaxSize()
                 .statusBarsPadding()
+                .padding(
+                    end = dimensionResource(R.dimen.padding_big),
+                    start = dimensionResource(R.dimen.padding_big),
+                    bottom = dimensionResource(R.dimen.padding_big),
+                    top = dimensionResource(R.dimen.padding_tiny)
+                )
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
@@ -85,26 +92,36 @@ fun UnitCatScreenBody(
                             pair[0],
                             {
                                 toUnit(pair[0])
-                            },
-                            modifier = Modifier
+                            }, modifier = Modifier
                                 .weight(1f)
-                                .padding(top = 8.dp, end = 8.dp, start = 8.dp)
+                                .padding(
+                                    top = dimensionResource(R.dimen.padding_small),
+                                    end = dimensionResource(R.dimen.padding_tiny),
+                                    start = dimensionResource(R.dimen.padding_small)
+                                )
                         )
                         if (pair.size == 2) {
                             UnitCard(
                                 pair[1],
                                 {
                                     toUnit(pair[1])
-                                },
-                                modifier = Modifier
+                                }, modifier = Modifier
                                     .weight(1f)
-                                    .padding(top = 8.dp, end = 8.dp)
+                                    .padding(
+                                        start = dimensionResource(R.dimen.padding_tiny),
+                                        top = dimensionResource(R.dimen.padding_small),
+                                        end = dimensionResource(R.dimen.padding_small)
+                                    )
                             )
                         } else {
                             Box(
                                 modifier = Modifier
                                     .weight(1f)
-                                    .padding(top = 8.dp, end = 8.dp)
+                                    .padding(
+                                        start = dimensionResource(R.dimen.padding_tiny),
+                                        top = dimensionResource(R.dimen.padding_small),
+                                        end = dimensionResource(R.dimen.padding_small)
+                                    )
                             )
                         }
                     }
@@ -115,12 +132,17 @@ fun UnitCatScreenBody(
             modifier = Modifier
                 .fillMaxSize()
                 .statusBarsPadding()
-                .padding(25.dp)
+                .padding(
+                    end = dimensionResource(R.dimen.padding_big),
+                    start = dimensionResource(R.dimen.padding_big),
+                    bottom = dimensionResource(R.dimen.padding_big),
+                    top = dimensionResource(R.dimen.padding_tiny)
+                )
         ) {
             FloatingActionButton(
                 onClick = {
                     if (unitCatUiState.cid != 1) {
-                        toAddUnit()
+                        toAddUnit(-1)
                     }
                 },
                 modifier = Modifier.align(Alignment.BottomEnd)
@@ -133,34 +155,51 @@ fun UnitCatScreenBody(
 
 /**A single unit card that displays key unit info*/
 @Composable
-fun UnitCard(unit: CourseUnit, onClick: () -> Unit, modifier: Modifier = Modifier) {
-    Card(modifier = modifier.height(70.dp), onClick = onClick) {
+fun UnitCard(
+    unit: CourseUnit,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        modifier = modifier.height(70.dp), onClick = onClick,
+        shape = RoundedCornerShape(
+            topStartPercent = 50,
+            topEndPercent = 50,
+            bottomStartPercent = 50,
+            bottomEndPercent = 50
+        )
+    ) {
         Row(
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(10.dp)
+            modifier = Modifier
+                .height(70.dp)
+                .padding(dimensionResource(R.dimen.padding_small))
         ) {
             //Main course info
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .weight(3f),
+                    .padding(start = dimensionResource(R.dimen.padding_small))
+                    .weight(4f),
+                verticalArrangement = Arrangement.Center
             ) {
-                Text(
-                    text = stringResource(R.string.unit_number, unit.number),
-                    style = typography.bodyLarge,
-                    fontWeight = FontWeight.Bold
-                )
-                Text(text = unit.name)
+                Text(text = unit.name, fontWeight = FontWeight.Bold)
             }
-            //how many words are in long term or memorized?
-            CircularProgressIndicator(
-                progress = { unit.getProgress() },
+            Column(
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.End,
                 modifier = Modifier
-                    .size(50.dp)
                     .fillMaxSize()
-                    .weight(1f)
-            )
+                    .weight(2f)
+            ) {
+                //how many words are in long term or memorized?
+                CircularProgressIndicator(
+                    progress = { unit.getProgress() },
+                    modifier = Modifier
+                        .size(50.dp)
+                )
+            }
         }
     }
 }

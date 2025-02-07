@@ -12,7 +12,7 @@ class OfflineWordRepository(private val wordDao: WordDao) : WordRepository {
     }
 
     override fun getAllWords(): Flow<List<WordEntity>> = wordDao.getAllWords()
-
+    override fun getDoneWordCount(): Flow<Int> = wordDao.getDoneWordCount()
     override suspend fun deleteWord(word: WordEntity) = wordDao.delete(word)
 
     override suspend fun insertWord(word: WordEntity): Long {
@@ -28,4 +28,6 @@ class OfflineWordRepository(private val wordDao: WordDao) : WordRepository {
         (word.gender == -1 && word.plural == -1) || (word.gender != -1 && word.plural != -1)
 
     override suspend fun clear() = wordDao.clear()
+
+    override suspend fun deleteById(id: Int) = wordDao.deleteById(id)
 }

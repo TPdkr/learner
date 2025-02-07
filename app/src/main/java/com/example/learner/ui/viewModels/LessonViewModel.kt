@@ -6,7 +6,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.learner.classes.CourseUnit
 import com.example.learner.classes.Lesson
 import com.example.learner.classes.TaskType
 import com.example.learner.classes.Word
@@ -20,12 +19,6 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-object LessonData {
-    var lesson: Lesson = Lesson(listOf())
-    var unit: CourseUnit = CourseUnit(listOf(), "", 0, "")
-    var unitUid: Int = 1
-}
-
 class LessonViewModel(
     private val wordRepository: WordRepository,
     private val userRepository: UserRepository
@@ -35,7 +28,7 @@ class LessonViewModel(
     val uiState: StateFlow<LessonUiState> = _uiState.asStateFlow()
 
     //this is the lesson data passed to the function
-    private val currentLesson: Lesson = LessonData.lesson
+    private val currentLesson: Lesson = AppData.lesson
 
     //this is the current word data
     private lateinit var currentWord: Word
@@ -75,25 +68,31 @@ class LessonViewModel(
 
     /**update user guess after change*/
     fun updateUserGuess(newGuess: String) {
-        userGuess = newGuess
-        _uiState.update { currentState->
-            currentState.copy(currentGuess = newGuess)
+        if (!_uiState.value.isChecked) {
+            userGuess = newGuess
+            _uiState.update { currentState ->
+                currentState.copy(currentGuess = newGuess)
+            }
         }
     }
 
     /**update user gender guess for the word*/
     fun updateGenderGuess(gender: Int) {
-        userGenderGuess = gender
-        _uiState.update { currentState->
-            currentState.copy(genderGuess = gender)
+        if (!_uiState.value.isChecked) {
+            userGenderGuess = gender
+            _uiState.update { currentState ->
+                currentState.copy(genderGuess = gender)
+            }
         }
     }
 
     /**update plural guess for the word*/
     fun updatePluralGuess(plural: Int) {
-        userPluralGuess = plural
-        _uiState.update { currentState->
-            currentState.copy(plGuess = plural)
+        if (!_uiState.value.isChecked) {
+            userPluralGuess = plural
+            _uiState.update { currentState ->
+                currentState.copy(plGuess = plural)
+            }
         }
     }
 
@@ -131,7 +130,10 @@ class LessonViewModel(
                     taskNumber = nextTaskNumber,
                     currentTrans = currentWord.translation,
                     info = currentWord.toUiString(),
-                    currentTaskType = newTaskType
+                    currentTaskType = newTaskType,
+                    isGendCorrect = null,
+                    isPlCorrect = null,
+                    isGermCorrect = null
                 )
             }
             //reset the user guess values
@@ -145,6 +147,9 @@ class LessonViewModel(
     fun checkAnswer() {
         //is this answer correct?
         val isCorrect = currentWord.isCorrect(userGenderGuess, userGuess, userPluralGuess)
+        val isGermCorrect = currentWord.german.equals(userGuess.trim(), ignoreCase = true)
+        val isGendCorrect = currentWord.gender.code == userGenderGuess
+        val isPlCorrect = currentWord.plural.code == userPluralGuess
         if (!isCorrect) {
             currentWord.incMistakes()
         }
@@ -152,13 +157,23 @@ class LessonViewModel(
         //update ui state
         val inc = currentWord.countScore(userGenderGuess, userGuess, userPluralGuess)
         _uiState.update { currentState ->
-            val newScore = if (isCorrect) currentState.score.plus(inc) else currentState.score
-            currentState.copy(score = newScore, isChecked = true, isWrong = !isCorrect)
+            val newScore = currentState.score.plus(inc)
+            currentState.copy(
+                score = newScore,
+                isWrong = !isCorrect,
+                isGendCorrect = isGendCorrect,
+                isPlCorrect = isPlCorrect,
+                isGermCorrect = isGermCorrect
+            )
         }
         //we want to show the correct answer
         updateUserGuess(currentWord.german)
         updateGenderGuess(currentWord.gender.code)
         updatePluralGuess(currentWord.plural.code)
+        //we mark the state as checked
+        _uiState.update { currentState ->
+            currentState.copy(isChecked = true)
+        }
     }
 
     /**get user overall score on the lesson*/
@@ -173,7 +188,12 @@ class LessonViewModel(
             "Du bist mein Lebkuchen",
             "I would hug you, but I'm just a text. I bet you give great hugs",
             "Main character energy right there",
-            "You’re the blueprint, darling. Everyone else? Irrelevant. ✨"
+            "You’re the blueprint, darling. Everyone else? Irrelevant. ✨",
+            "You must’ve cheated, right? There's no way this is real.",
+            "Wow, you actually did it. Who would've thought?",
+            "So you’re just going to make the rest of us look bad, huh?",
+            "Are you sure you're not secretly a robot? This is too perfect.",
+            "I think you’re making everyone else look bad... and I kind of love it."
         )
         val good = listOf(
             "This? This is the lukewarm tea of results. Sipable, but barely.",
@@ -181,35 +201,52 @@ class LessonViewModel(
             "I think for you it is a decent score",
             "You are giving almost there vibes I like it",
             "A round of applause! But like the slow slightly sarcastic kind...",
-            "You have potential! Too bad it decided to take a nap"
-
+            "You have potential! Too bad it decided to take a nap",
+            "You’re on the right track, just don’t get comfortable yet.",
+            "Well, it's not terrible... for now. But, you can do better, right?",
+            "Good enough for now, but if I’m being honest, you’ve got potential to disappoint.",
+            "You’re not embarrassing yourself... for the moment.",
+            "This is a fine effort... if mediocrity was your goal.",
+            "You definitely tried, and that’s... well, something. Let’s see if you can do it without my pity."
         )
         val ok = listOf(
-            "You could have done better",
+            "You could have done better. You didn't",
             "And you call this a decent result??",
             "It's ok for memory to fade with time but not this fast",
             "Do better",
             "Mediocrity at its finest",
-            "If I could sigh in text, I would"
+            "If I could sigh in text, I would",
+            "You didn’t totally bomb it, so... that’s something, right?",
+            "Oh, so you did make an effort... cute.",
+            "Honestly, I’m surprised it’s even this good. But I’m not impressed.",
+            "You’re lucky this isn’t worse... but honestly, not by much.",
+            "Let’s just call this ‘adequate,’ and hope you don’t repeat it.",
+            "If ‘barely passing’ was a thing, you’d be a shining example."
         )
         val murder = listOf(
             "Pathetic",
-            "Try cocaine, maybe that might help",
             "Can you allow me access to your location? No reason at all",
             "I would say I'm disappointed, but that would imply I had expectations",
             "You are making me want to uninstall myself",
             "Honey, even my error logs are cringing rn",
             "Are you doing this on purpose? If not, then it's just sad",
-            "You’ve officially hit rock bottom. Congrats, I guess?"
+            "You’ve officially hit rock bottom. Congrats, I guess?",
+            "I think even a potato could’ve done better than this. No offense to potatoes.",
+            "I would say this is a disaster, but that’s giving disasters a bad name.",
+            "This score is like a glitch in the matrix, right?",
+            "I feel embarrassed for you, honestly. Are you okay?",
+            "Did you even try? Or was this just a test in how to waste everyone’s time?",
+            "If I could facepalm in text form, you’d be getting a round of applause.",
+            "At this point, I’m just wondering if you’ve heard of the concept of ‘trying.’"
         )
         val newInfo = when {
-            lessonScore in 0.8..1.0 -> excellent.random()
-            0.6 <= lessonScore && lessonScore < 0.8 -> good.random()
-            0.45 <= lessonScore && lessonScore < 0.6 -> ok.random()
+            lessonScore in 0.85..1.0 -> excellent.random()
+            0.65 <= lessonScore && lessonScore < 0.85 -> good.random()
+            0.5 <= lessonScore && lessonScore < 0.65 -> ok.random()
             else -> murder.random()
         }
         _uiState.update { currentSate ->
-            currentSate.copy(finalMessage = newInfo)
+            currentSate.copy(finalMessage = newInfo, finalScore = (lessonScore * 100).toInt())
         }
     }
 }
@@ -220,6 +257,9 @@ data class LessonUiState(
     val isChecked: Boolean = false,
     val isWrong: Boolean = false,
     val isNoun: Boolean = false,
+    val isGendCorrect: Boolean? = null,
+    val isPlCorrect: Boolean? = null,
+    val isGermCorrect: Boolean? = null,
     //progress indicator
     val taskNumber: Int = 0,
     val taskCount: Int = 0,
@@ -235,13 +275,14 @@ data class LessonUiState(
     val info: String = "",
     //final message data
     val finalMessage: String = "",
+    val finalScore: Int = 0,
     val currentTaskType: TaskType = TaskType.TYPE_TEXT,
     //lambdas-------------------------------------------
     val onCheckAnswer: () -> Unit = {},
     val onNextTask: () -> Unit = {},
     //changing the answer
-    val onGenderChange: (Int)->Unit = {},
-    val onGuessChange: (String)->Unit={},
-    val onPlChange: (Int)->Unit={}
+    val onGenderChange: (Int) -> Unit = {},
+    val onGuessChange: (String) -> Unit = {},
+    val onPlChange: (Int) -> Unit = {}
 
 )

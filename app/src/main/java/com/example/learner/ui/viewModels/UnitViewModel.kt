@@ -19,7 +19,7 @@ class UnitViewModel(unitRepository: UnitRepository) : ViewModel() {
     init {
         viewModelScope.launch {
             try {
-                unitRepository.getUnitWithWords(LessonData.unitUid).filterNotNull().collect{ unitWithWords->
+                unitRepository.getUnitWithWords(AppData.unitUid).filterNotNull().collect{ unitWithWords->
                     val unit = unitWithWords.toCourseUnit()
                     _uiState.update { currentState->
                         currentState.copy(unit=unit)

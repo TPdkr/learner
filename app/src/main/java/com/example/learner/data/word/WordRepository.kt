@@ -9,6 +9,9 @@ interface WordRepository {
     /**get all words in the database*/
     fun getAllWords(): Flow<List<WordEntity>>
 
+    /**get the number of completed words*/
+    fun getDoneWordCount(): Flow<Int>
+
     /**insert a word into the database*/
     suspend fun insertWord(word: WordEntity): Long
 
@@ -20,4 +23,7 @@ interface WordRepository {
 
     /**delete all entries*/
     suspend fun clear()
+
+    /**delete a word by its ID*/
+    suspend fun deleteById(id: Int)
 }

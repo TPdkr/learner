@@ -23,21 +23,27 @@ import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Card
-import androidx.compose.material3.ElevatedButton
+import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme.typography
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -120,6 +126,21 @@ fun MainScreenBody(
                             stringResource(R.string.xp, mainUiState.xp),
                             textAlign = TextAlign.Center
                         )
+                        Text(
+                            stringResource(R.string.words_learned_mainScr, mainUiState.wordCount),
+                            textAlign = TextAlign.Center
+                        )
+                        Text(
+                            stringResource(
+                                R.string.started_count_mainScr,
+                                mainUiState.currentCourse.startedWordCount()
+                            ),
+                            textAlign = TextAlign.Center
+                        )
+                        Text(
+                            stringResource(R.string.long_term_word_count_mainScr, mainUiState.currentCourse.longTermWordCount()),
+                            textAlign = TextAlign.Center
+                        )
                     }
                     Spacer(modifier = Modifier.height(100.dp))
                     //NAVIGATION:
@@ -157,7 +178,7 @@ fun MainScreenBody(
                         style = typography.labelMedium,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(10.dp)
+                            .padding(dimensionResource(R.dimen.padding_small))
                     )
                 }
                 //this checks if the dialog should be visible or not
@@ -168,7 +189,7 @@ fun MainScreenBody(
                     SelfDestructDialog(buttonDialogSwitch, selfDestruct)
                 }
                 //INFO DIALOG BUTTON
-                TextButton(
+                IconButton(
                     onClick = infoDialogSwitch,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -199,7 +220,7 @@ fun MainScreenBody(
 fun MenuButton(onClick: () -> Unit, text: String, icon: ImageVector, enabled: Boolean = true) {
     val buttonModifier = Modifier
         .width(300.dp)
-        .padding(8.dp)
+        .padding(dimensionResource(R.dimen.padding_tiny))
     Button(onClick = onClick, modifier = buttonModifier, enabled = enabled) {
         Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxSize()) {
             Icon(
@@ -221,8 +242,7 @@ fun InfoDialog(onDismissRequest: () -> Unit = {}) {
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(200.dp)
-                .padding(5.dp),
+                .height(200.dp),
             shape = RoundedCornerShape(16.dp),
         ) {
             //The info message about the app is displayed
@@ -230,12 +250,13 @@ fun InfoDialog(onDismissRequest: () -> Unit = {}) {
                 verticalArrangement = Arrangement.Center,
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(10.dp)
+                    .padding(dimensionResource(R.dimen.padding_big))
             ) {
                 Text(
                     text = stringResource(R.string.tanks_for_testing),
                     textAlign = TextAlign.Center,
                     fontWeight = FontWeight.Bold,
+                    style = typography.titleLarge,
                     modifier = Modifier
                         .fillMaxWidth()
                         .wrapContentSize(Alignment.Center)
@@ -256,12 +277,12 @@ fun InfoDialog(onDismissRequest: () -> Unit = {}) {
 @Preview
 @Composable
 fun SelfDestructDialog(onDismissRequest: () -> Unit = {}, onClick: () -> Unit = {}) {
+    var isWarningVisible by rememberSaveable { mutableStateOf(false) }
     Dialog(onDismissRequest = onDismissRequest) {
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(300.dp)
-                .padding(5.dp),
+                .height(350.dp),
             shape = RoundedCornerShape(16.dp),
         ) {
             //The info message about the app is displayed
@@ -270,27 +291,81 @@ fun SelfDestructDialog(onDismissRequest: () -> Unit = {}, onClick: () -> Unit = 
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(10.dp)
+                    .padding(dimensionResource(R.dimen.padding_big))
             ) {
                 Text(
-                    text = "OH NO! PERRY! you have found my self destruct button! It resets all user progress!",
+                    text = "You have found my self destruct button! It resets all user progress!",
                     textAlign = TextAlign.Center,
                     fontWeight = FontWeight.Bold,
+                    style = typography.titleLarge,
                     modifier = Modifier
                         .fillMaxWidth()
                         .wrapContentSize(Alignment.Center)
                 )
-                ElevatedButton(
-                    onClick = onClick,
-                    modifier = Modifier.size(150.dp),
-                    colors = ButtonColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        contentColor = MaterialTheme.colorScheme.onPrimary,
-                        disabledContentColor = MaterialTheme.colorScheme.primary,
-                        disabledContainerColor = MaterialTheme.colorScheme.onPrimary
-                    )
+                FilledIconButton(
+                    onClick = { isWarningVisible = true },
+                    modifier = Modifier.size(150.dp)
                 ) {
-                    Text(text = "Self Destruct")
+                    Icon(
+                        Icons.Default.Star,
+                        "self destruct button",
+                        modifier = Modifier.size(100.dp)
+                    )
+                }
+            }
+        }
+    }
+    //the warning if user tries to delete all app data
+    if (isWarningVisible) {
+        SelfDestructWarning(
+            onDismissRequest = {
+                isWarningVisible = false
+                onDismissRequest()
+            },
+            onDestruct = {
+                isWarningVisible = false
+                onClick()
+                onDismissRequest()
+            }
+        )
+    }
+}
+
+/**dialog asking if the user is sure about deleting all app data*/
+@Preview
+@Composable
+fun SelfDestructWarning(onDismissRequest: () -> Unit = {}, onDestruct: () -> Unit = {}) {
+    Dialog(onDismissRequest = onDismissRequest) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(300.dp),
+            shape = RoundedCornerShape(16.dp),
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.SpaceEvenly,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(dimensionResource(R.dimen.padding_big))
+            ) {
+                Text(
+                    text = "Are you sure?",
+                    textAlign = TextAlign.Center,
+                    fontWeight = FontWeight.Bold,
+                    style = typography.titleLarge,
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Text(
+                    "content will be deleted permanently",
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center
+                )
+                OutlinedButton(onDestruct, Modifier.fillMaxWidth()) {
+                    Text("delete all app data")
+                }
+                Button(onDismissRequest, Modifier.fillMaxWidth()) {
+                    Text("return")
                 }
             }
         }
@@ -300,6 +375,6 @@ fun SelfDestructDialog(onDismissRequest: () -> Unit = {}, onClick: () -> Unit = 
 @Preview
 @Composable
 fun MainScreenPreview() {
-    MainScreenBody({}, {}, {}, {}, {}, {}, MainScreenUiState(testCourse, 45, false))
+    MainScreenBody({}, {}, {}, {}, {}, {}, MainScreenUiState(testCourse, 45, 8, false))
 }
 

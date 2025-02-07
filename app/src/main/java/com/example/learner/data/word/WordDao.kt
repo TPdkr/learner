@@ -17,6 +17,9 @@ interface WordDao {
     @Query("SELECT * FROM words")
     fun getAllWords(): Flow<List<WordEntity>>
 
+    @Query("SELECT COUNT(*) FROM words WHERE revision=-1 LIMIT 1")
+    fun getDoneWordCount(): Flow<Int>
+
     @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun insert(wordEntity: WordEntity): Long
 
@@ -28,4 +31,7 @@ interface WordDao {
 
     @Query("DELETE FROM words")
     suspend fun clear()
+
+    @Query("DELETE FROM words WHERE wid = :id")
+    suspend fun deleteById(id: Int)
 }

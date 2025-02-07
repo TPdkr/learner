@@ -33,4 +33,35 @@ interface UnitDao {
 
     @Query("DELETE FROM units")
     suspend fun clear()
+
+    @Query("DELETE FROM units WHERE uid=:id")
+    suspend fun deleteById(id: Int)
+
+    //delete all references to unit is cross reference table
+    @Query("DELETE FROM WordUnitCrossRef WHERE uid = :uid")
+    suspend fun deleteUnitMappings(uid: Int)
+
+    //delete all word in a unit from the app
+    @Query(
+        """
+        DELETE FROM words 
+        WHERE wid IN (SELECT wid FROM WordUnitCrossRef WHERE uid = :uid)
+    """
+    )
+    suspend fun deleteWordsForUnit(uid: Int)
+
+    //delete all unit data with words in it
+    @Transaction
+    suspend fun deleteUnitAndWords(uid: Int) {
+        deleteWordsForUnit(uid)
+        deleteUnitMappings(uid)
+        deleteById(uid)
+    }
+
+    //delete unit but not the words used in it
+    @Transaction
+    suspend fun deleteUnitWithoutWords(uid: Int) {
+        deleteUnitMappings(uid)
+        deleteById(uid)
+    }
 }

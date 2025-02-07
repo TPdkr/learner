@@ -4,7 +4,6 @@ import androidx.compose.ui.util.fastJoinToString
 import com.example.learner.data.word.WordEntity
 import com.example.learner.data.word.WordRepository
 import java.util.Calendar
-import kotlin.math.max
 import kotlin.math.pow
 
 /**
@@ -199,9 +198,9 @@ data class Word(
         dif /=1000
         dif/=60
         return when{
-            (revision==-1)->"learned"
+            (revision==-1)->"done"
             revision<2->"-"
-            (dif)<0->"revision"
+            (dif)<0->"review"
             (dif<60)->"in $dif min"
             (dif/60<24)->"in ${dif/60} h"
             else -> "in ${dif/60/24} d"
@@ -222,19 +221,15 @@ data class Word(
     fun countScore(genderGuess: Int, germanGuess: String, pluralGuess: Int): Int {
         //we calculate key values:
         val isCorrect = isCorrect(genderGuess, germanGuess, pluralGuess)
-        val isGenderCorrect = if (genderGuess == gender.code) 0F else 1F
+        val isGenderCorrect = if (genderGuess == gender.code) 0F else 0.5F
         val isGermanCorrect =
             if (germanGuess.trimEnd().equals(german, ignoreCase = true)) 0F else 1F
-        val isPluralCorrect = if (pluralGuess == plural.code) 0F else 1F
-        //the value between 0 and 1 telling us how close the guess was
-        val guessScore = if (isNoun()) {
-            isPluralCorrect * 0.25F + isGenderCorrect * 0.25F + isGermanCorrect * 0.5F
-        } else {
-            isGermanCorrect
+        val isPluralCorrect = if (pluralGuess == plural.code) 0F else 0.5F
+        //we calculate the score
+        return when{
+            isCorrect-> 2
+            !isNoun()->0
+            else ->(2F-isGenderCorrect-isPluralCorrect-isGermanCorrect).toInt()
         }
-        //we want to account for the attempt count, the higher the more points are taken off
-        val attemptMargin = if (!isCorrect) round.toFloat() * 0.5F else 0F
-        //return the final value
-        return max((20 - guessScore * 20 - attemptMargin).toInt(), 0)
     }
 }

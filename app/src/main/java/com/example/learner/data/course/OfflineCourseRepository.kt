@@ -27,4 +27,9 @@ class OfflineCourseRepository(private val courseDao: CourseDao) : CourseReposito
     }
 
     override suspend fun clear() = courseDao.clear()
+
+    override suspend fun deleteCourseAndWords(cid: Int) = courseDao.deleteCourseAndWords(cid)
+
+    override suspend fun deleteCourseWithoutWords(cid: Int) =
+        courseDao.deleteCourseWithoutWords(cid)
 }

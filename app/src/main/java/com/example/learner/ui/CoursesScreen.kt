@@ -1,5 +1,6 @@
 package com.example.learner.ui
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Card
@@ -28,11 +30,13 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.learner.R
 import com.example.learner.classes.Course
 import com.example.learner.data.testCourse
 import com.example.learner.data.testCourses
@@ -41,7 +45,7 @@ import com.example.learner.ui.viewModels.CoursesViewModel
 
 @Composable
 fun CoursesScreen(
-    toAddCourse: ()->Unit,
+    toAddCourse: (Int) -> Unit,
     coursesViewModel: CoursesViewModel = viewModel(factory = ViewModelFactory.Factory)
 ) {
     //we get the ui state
@@ -53,7 +57,11 @@ fun CoursesScreen(
 
 /**this function assembles ui from given ui state*/
 @Composable
-fun CourseScreenBody(uiState: CoursesUiState, toAddCourse: () -> Unit, onCheck: (Course) -> Unit) {
+fun CourseScreenBody(
+    uiState: CoursesUiState,
+    toAddCourse: (Int) -> Unit,
+    onCheck: (Course) -> Unit
+) {
     Surface(
         modifier = Modifier
             .fillMaxSize()
@@ -62,7 +70,12 @@ fun CourseScreenBody(uiState: CoursesUiState, toAddCourse: () -> Unit, onCheck: 
             modifier = Modifier
                 .fillMaxSize()
                 .statusBarsPadding()
-                .padding(10.dp)
+                .padding(
+                    end = dimensionResource(R.dimen.padding_big),
+                    start = dimensionResource(R.dimen.padding_big),
+                    bottom = dimensionResource(R.dimen.padding_big),
+                    top = dimensionResource(R.dimen.padding_tiny)
+                )
         ) {
             //HEADER
             Text(
@@ -77,12 +90,18 @@ fun CourseScreenBody(uiState: CoursesUiState, toAddCourse: () -> Unit, onCheck: 
             //COURSES LIST:
             LazyColumn {
                 items(uiState.courses.filter { it.cid != 1 }) { course ->
-                    Row(modifier = Modifier.padding(5.dp)) {
+                    Row(modifier = Modifier.padding(dimensionResource(R.dimen.padding_tiny))) {
                         //each course is encapsulated in a card composable
                         Card(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(50.dp)
+                                .height(50.dp),
+                            shape = RoundedCornerShape(
+                                topStartPercent = 50,
+                                topEndPercent = 50,
+                                bottomStartPercent = 50,
+                                bottomEndPercent = 50
+                            )
                         ) {
                             //in a row we display the name, status and progress of a course
                             Row(
@@ -90,9 +109,18 @@ fun CourseScreenBody(uiState: CoursesUiState, toAddCourse: () -> Unit, onCheck: 
                                 horizontalArrangement = Arrangement.SpaceBetween,
                                 modifier = Modifier
                                     .fillMaxSize()
-                                    .padding(10.dp)
+                                    .padding(
+                                        top = dimensionResource(R.dimen.padding_small),
+                                        bottom = dimensionResource(R.dimen.padding_small),
+                                        end = dimensionResource(R.dimen.padding_small),
+                                        start = dimensionResource(R.dimen.padding_medium)
+                                    )
                             ) {
-                                Text(text = course.name, fontWeight = FontWeight.Bold)
+
+                                Text(
+                                    text = course.name,
+                                    fontWeight = FontWeight.Bold,
+                                    modifier = Modifier.clickable { toAddCourse(course.cid) })
                                 Row(
                                     modifier = Modifier.width(90.dp),
                                     horizontalArrangement = Arrangement.SpaceBetween
@@ -118,9 +146,17 @@ fun CourseScreenBody(uiState: CoursesUiState, toAddCourse: () -> Unit, onCheck: 
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(25.dp)
+            .padding(
+                end = dimensionResource(R.dimen.padding_big),
+                start = dimensionResource(R.dimen.padding_big),
+                bottom = dimensionResource(R.dimen.padding_big),
+                top = dimensionResource(R.dimen.padding_tiny)
+            )
     ) {
-        FloatingActionButton(onClick = toAddCourse, modifier = Modifier.align(Alignment.BottomEnd)) {
+        FloatingActionButton(
+            onClick = { toAddCourse(-1) },
+            modifier = Modifier.align(Alignment.BottomEnd)
+        ) {
             Icon(Icons.Filled.Add, "")
         }
     }
@@ -129,5 +165,5 @@ fun CourseScreenBody(uiState: CoursesUiState, toAddCourse: () -> Unit, onCheck: 
 @Preview
 @Composable
 fun CoursesScreenPreview() {
-    CourseScreenBody(CoursesUiState(testCourse, testCourses),{}) { }
+    CourseScreenBody(CoursesUiState(testCourse, testCourses), {}) { }
 }

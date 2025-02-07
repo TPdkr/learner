@@ -30,4 +30,10 @@ interface CourseRepository {
 
     /**delete all entries*/
     suspend fun clear()
+
+    /**delete with words*/
+    suspend fun deleteCourseAndWords(cid: Int)
+
+    /**delete without words*/
+    suspend fun deleteCourseWithoutWords(cid: Int)
 }
